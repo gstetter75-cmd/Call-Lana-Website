@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Funktionen — Call Lana</title>
+  <meta name="description" content="Alle Funktionen von Call Lana: KI-Anrufannahme, Terminbuchung, Transkription, Dashboard und mehr." />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: {
+          brand: { 50:'#FAF5FF', 100:'#F3E8FF', 200:'#E9D5FF', 300:'#D8B4FE', 400:'#7C3AED', 500:'#6D28D9', 600:'#5B21B6', 700:'#4C1D95', 800:'#3B0764', 900:'#2E1065' },
+          dark: { 950:'#FFFFFF', 900:'#F9FAFB', 850:'#F5F3FF', 800:'#F3F4F6', 700:'#E5E7EB', 600:'#D1D5DB', 500:'#9CA3AF' },
+          surface: { dark:'#FFFFFF', mid:'#F9FAFB' },
+        },
+        fontFamily: { display: ['"Space Grotesk"', 'system-ui', 'sans-serif'], body: ['"Inter"', 'system-ui', 'sans-serif'] },
+      }}
+    }
+  </script>
+</head>
+<body class="bg-white text-gray-900 antialiased overflow-x-hidden">
+  <div id="nav-container"></div>
+
+  <main class="page-content">
+
+    <!-- ===== HERO ===== -->
+    <section class="relative bg-section-dark noise-overlay pt-28 pb-20 lg:pt-32 lg:pb-28" style="background: linear-gradient(135deg, #FFFFFF 0%, #FBF7FF 30%, #F5EEFF 60%, #EFE8FF 100%);">
+      <div class="warp-hero-bg" style="position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none;"><canvas class="warp-bg-canvas" style="display:block;width:100%;height:100%;"></canvas></div>
+      <div class="hero-beam-bg"></div>
+      <div class="relative z-10 max-w-5xl mx-auto px-6 text-center">
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-400/10 border border-brand-400/20 mb-8">
+          <span class="w-2 h-2 rounded-full bg-brand-400"></span>
+          <span class="text-brand-400 text-xs font-semibold tracking-wide uppercase lang-de">Alle Funktionen</span>
+          <span class="text-brand-400 text-xs font-semibold tracking-wide uppercase lang-en hidden">All Features</span>
+        </div>
+        <h1 class="font-display text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight mb-6" style="letter-spacing:-0.03em;">
+          <span class="lang-de">Alles, was deine <span class="text-brand-400">KI-Rezeptionistin</span> kann</span>
+          <span class="lang-en hidden">Everything your <span class="text-brand-400">AI receptionist</span> can do</span>
+        </h1>
+        <p class="text-gray-500 text-lg sm:text-xl max-w-2xl mx-auto mb-10" style="line-height:1.7;">
+          <span class="lang-de">Von der Anrufannahme bis zur Terminbuchung — Call Lana erledigt alles professionell, rund um die Uhr.</span>
+          <span class="lang-en hidden">From answering calls to booking appointments — Call Lana handles everything professionally, 24/7.</span>
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="registrierung.html" class="btn-brand px-8 py-3.5 rounded-xl text-base font-bold">
+            <span class="lang-de">Jetzt starten</span>
+            <span class="lang-en hidden">Get started</span>
+          </a>
+          <a href="preise.html" class="btn-outline px-8 py-3.5 rounded-xl text-base font-bold">
+            <span class="lang-de">Preise ansehen</span>
+            <span class="lang-en hidden">View pricing</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 6 FEATURE CARDS ===== -->
+    <section class="relative bg-section-light noise-overlay py-20 lg:py-28">
+      <div class="relative z-10 max-w-6xl mx-auto px-6">
+        <div class="text-center mb-16">
+          <h2 class="font-display text-3xl sm:text-4xl font-bold mb-4" style="letter-spacing:-0.03em;">
+            <span class="lang-de">Leistungsstarke Funktionen</span>
+            <span class="lang-en hidden">Powerful Features</span>
+          </h2>
+          <p class="text-gray-500 text-base max-w-xl mx-auto" style="line-height:1.7;">
+            <span class="lang-de">Jede Funktion wurde speziell für Handwerksbetriebe entwickelt.</span>
+            <span class="lang-en hidden">Every feature was designed specifically for trade businesses.</span>
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6 lg:gap-8">
+
+          <!-- Card 1: Natürlicher Dialog -->
+          <div class="feature-card bg-dark-800/50 border border-gray-200 rounded-2xl p-8 lg:p-10">
+            <div class="w-14 h-14 rounded-2xl bg-brand-400/10 flex items-center justify-center mb-6">
+              <svg class="w-7 h-7 text-brand-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8.625 12a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H8.25m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0H12m4.125 0a.375.375 0 11-.75 0 .375.375 0 01.75 0zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 01-2.555-.337A5.972 5.972 0 015.41 20.97a5.969 5.969 0 01-.474-.065 4.48 4.48 0 00.978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25z"/>
+              </svg>
+            </div>
+            <h3 class="font-display text-xl font-bold mb-3">
+              <span class="lang-de">Natürlicher Dialog</span>
+              <span class="lang-en hidden">Natural Conversations</span>
+            </h3>
+            <p class="text-gray-500 text-sm mb-4" style="line-height:1.7;">
+              <span class="lang-de">Lana führt Gespräche, die sich menschlich anfühlen. Sie versteht Kontext, Absichten und antwortet in natürlichem Deutsch — damit deine Anrufer sich gut aufgehoben fühlen.</span>
+              <span class="lang-en hidden">Lana holds conversations that feel human. She understands context, intent, and responds in natural language — so your callers feel well taken care of.</span>
+            </p>
+            <ul class="space-y-2">
+              <li class="flex items-start gap-2 text-sm text-gray-500">
+                <svg class="w-5 h-5 text-brand-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                <span class="lang-de">Kontextbezogene Antworten</span>
+                <span class="lang-en hidden">Context-aware responses</span>
+              </li>
+              <li class="flex items-start gap-2 text-sm text-gray-500">
+                <svg class="w-5 h-5 text-brand-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                <span class="lang-de">Erkennung von Anruferabsicht</span>
+                <span class="lang-en hidden">Caller intent recognition</span>
+              </li>
+              <li class="flex items-start gap-2 text-sm text-gray-500">
+                <svg class="w-5 h-5 text-brand-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                <span class="lang-de">Mehrsprachig (DE &amp; EN)</span>
+                <span class="lang-en hidden">Multilingual (DE &amp; EN)</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Card 2: Terminbuchung -->
+          <div class="feature-card bg-dark-800/50 border border-gray-200 rounded-2xl p-8 lg:p-10">
+            <div class="w-14 h-14 rounded-2xl bg-brand-400/10 flex items-center justify-center mb-6">
+              <svg class="w-7 h-7 text-brand-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"/>
+              </svg>
+            </div>
+            <h3 class="font-display text-xl font-bold mb-3">
+              <span class="lang-de">Terminbuchung</span>
+              <span class="lang-en hidden">Appointment Booking</span>
+            </h3>
+            <p class="text-gray-500 text-sm mb-4" style="line-height:1.7;">
+              <span class="lang-de">Lana bucht, verschiebt und bestätigt Termine automatisch — synchronisiert mit deinem Google Calendar. Kein manueller Aufwand mehr.</span>
+              <span class="lang-en hidden">Lana books, reschedules, and confirms appointments automatically — synced with your Google Calendar. No more manual effort.</span>
+            </p>
+            <ul class="space-y-2">
+              <li class="flex items-start gap-2 text-sm text-gray-500">
+                <svg class="w-5 h-5 text-brand-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                <span class="lang-de">Google Calendar Sync</span>
+                <span class="lang-en hidden">Google Calendar sync</span>
+              </li>
+              <li class="flex items-start gap-2 text-sm text-gray-500">
+                <svg class="w-5 h-5 text-brand-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                <span class="lang-de">Automatische Bestätigung per SMS</span>
+                <span class="lang-en hidden">Automatic confirmation via SMS</span>
+              </li>
+              <li class="flex items-start gap-2 text-sm text-gray-500">
+                <svg class="w-5 h-5 text-brand-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                <span class="lang-de">Termin-Umplanung &amp; Stornierung</span>
+                <span class="lang-en hidden">Rescheduling &amp; cancellation</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Card 3: Echtzeit-Dashboard -->
+          <div class="feature-card bg-dark-800/50 border border-gray-200 rounded-2xl p-8 lg:p-10">
+            <div class="w-14 h-14 rounded-2xl bg-brand-400/10 flex items-center justify-center mb-6">
+              <svg class="w-7 h-7 text-brand-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z"/>
+              </svg>
+            </div>
+            <h3 class="font-display text-xl font-bold mb-3">
+              <span class="lang-de">Echtzeit-Dashboard</span>
+              <span class="lang-en hidden">Real-time Dashboard</span>
+            </h3>
+            <p class="text-gray-500 text-sm mb-4" style="line-height:1.7;">
+              <span class="lang-de">Behalte den Überblick: Live-Statistiken zu allen Anrufen, gebuchten Terminen und Performance-Metriken — alles an einem Ort.</span>
+              <span class="lang-en hidden">Stay on top of things: live stats on all calls, booked appointments, and performance metrics — all in one place.</span>
+            </p>
+            <ul class="space-y-2">
+              <li class="flex items-start gap-2 text-sm text-gray-500">
+                <svg class="w-5 h-5 text-brand-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                <span class="lang-de">Anruf-Verlauf &amp; Statistiken</span>
+                <span class="lang-en hidden">Call history &amp; statistics</span>
+              </li>
+              <li class="flex items-start gap-2 text-sm text-gray-500">
+                <svg class="w-5 h-5 text-brand-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                <span class="lang-de">Echtzeit-Benachrichtigungen</span>
+                <span class="lang-en hidden">Real-time notifications</span>
+              </li>
+              <li class="flex items-start gap-2 text-sm text-gray-500">
+                <svg class="w-5 h-5 text-brand-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                <span class="lang-de">Export als CSV / PDF</span>
+                <span class="lang-en hidden">Export as CSV / PDF</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Card 4: Lead-Qualifizierung -->
+          <div class="feature-card bg-dark-800/50 border border-gray-200 rounded-2xl p-8 lg:p-10">
+            <div class="w-14 h-14 rounded-2xl bg-brand-400/10 flex items-center justify-center mb-6">
+              <svg class="w-7 h-7 text-brand-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"/>
+              </svg>
+            </div>
+            <h3 class="font-display text-xl font-bold mb-3">
+              <span class="lang-de">Lead-Qualifizierung</span>
+              <span class="lang-en hidden">Lead Qualification</span>
+            </h3>
+            <p class="text-gray-500 text-sm mb-4" style="line-height:1.7;">
+              <span class="lang-de">Lana erkennt wertvolle Leads automatisch und priorisiert sie in deinem CRM. So konzentrierst du dich auf die wichtigsten Aufträge.</span>
+              <span class="lang-en hidden">Lana automatically identifies high-value leads and prioritizes them in your CRM. So you focus on the most important jobs.</span>
+            </p>
+            <ul class="space-y-2">
+              <li class="flex items-start gap-2 text-sm text-gray-500">
+                <svg class="w-5 h-5 text-brand-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                <span class="lang-de">Automatische Lead-Bewertung</span>
+                <span class="lang-en hidden">Automatic lead scoring</span>
+              </li>
+              <li class="flex items-start gap-2 text-sm text-gray-500">
+                <svg class="w-5 h-5 text-brand-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                <span class="lang-de">Prioritäts-Benachrichtigungen</span>
+                <span class="lang-en hidden">Priority notifications</span>
+              </li>
+              <li class="flex items-start gap-2 text-sm text-gray-500">
+                <svg class="w-5 h-5 text-brand-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                <span class="lang-de">CRM-Anbindung</span>
+                <span class="lang-en hidden">CRM integration</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Card 5: Transkription -->
+          <div class="feature-card bg-dark-800/50 border border-gray-200 rounded-2xl p-8 lg:p-10">
+            <div class="w-14 h-14 rounded-2xl bg-brand-400/10 flex items-center justify-center mb-6">
+              <svg class="w-7 h-7 text-brand-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z"/>
+              </svg>
+            </div>
+            <h3 class="font-display text-xl font-bold mb-3">
+              <span class="lang-de">Transkription</span>
+              <span class="lang-en hidden">Transcription</span>
+            </h3>
+            <p class="text-gray-500 text-sm mb-4" style="line-height:1.7;">
+              <span class="lang-de">Jedes Gespräch wird automatisch transkribiert und per E-Mail oder SMS zugestellt. So verpasst du kein Detail.</span>
+              <span class="lang-en hidden">Every conversation is automatically transcribed and delivered via email or SMS. So you never miss a detail.</span>
+            </p>
+            <ul class="space-y-2">
+              <li class="flex items-start gap-2 text-sm text-gray-500">
+                <svg class="w-5 h-5 text-brand-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                <span class="lang-de">Vollständige Gesprächs-Transkripte</span>
+                <span class="lang-en hidden">Complete call transcripts</span>
+              </li>
+              <li class="flex items-start gap-2 text-sm text-gray-500">
+                <svg class="w-5 h-5 text-brand-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                <span class="lang-de">Zustellung per E-Mail &amp; SMS</span>
+                <span class="lang-en hidden">Delivery via email &amp; SMS</span>
+              </li>
+              <li class="flex items-start gap-2 text-sm text-gray-500">
+                <svg class="w-5 h-5 text-brand-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                <span class="lang-de">Durchsuchbares Archiv</span>
+                <span class="lang-en hidden">Searchable archive</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Card 6: Weiterleitung -->
+          <div class="feature-card bg-dark-800/50 border border-gray-200 rounded-2xl p-8 lg:p-10">
+            <div class="w-14 h-14 rounded-2xl bg-brand-400/10 flex items-center justify-center mb-6">
+              <svg class="w-7 h-7 text-brand-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M7.5 21L3 16.5m0 0L7.5 12M3 16.5h13.5m0-13.5L21 7.5m0 0L16.5 12M21 7.5H7.5"/>
+              </svg>
+            </div>
+            <h3 class="font-display text-xl font-bold mb-3">
+              <span class="lang-de">Weiterleitung</span>
+              <span class="lang-en hidden">Call Routing</span>
+            </h3>
+            <p class="text-gray-500 text-sm mb-4" style="line-height:1.7;">
+              <span class="lang-de">Intelligente Weiterleitung an den richtigen Mitarbeiter — basierend auf Dringlichkeit, Verfügbarkeit und deinen Regeln.</span>
+              <span class="lang-en hidden">Smart routing to the right team member — based on urgency, availability, and your rules.</span>
+            </p>
+            <ul class="space-y-2">
+              <li class="flex items-start gap-2 text-sm text-gray-500">
+                <svg class="w-5 h-5 text-brand-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                <span class="lang-de">Regelbasierte Weiterleitung</span>
+                <span class="lang-en hidden">Rule-based routing</span>
+              </li>
+              <li class="flex items-start gap-2 text-sm text-gray-500">
+                <svg class="w-5 h-5 text-brand-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                <span class="lang-de">Dringlichkeits-Erkennung</span>
+                <span class="lang-en hidden">Urgency detection</span>
+              </li>
+              <li class="flex items-start gap-2 text-sm text-gray-500">
+                <svg class="w-5 h-5 text-brand-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+                <span class="lang-de">Notfall-Eskalation</span>
+                <span class="lang-en hidden">Emergency escalation</span>
+              </li>
+            </ul>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== INTEGRATIONS ===== -->
+    <section class="relative bg-section-dark noise-overlay py-20 lg:py-28">
+      <div class="relative z-10 max-w-5xl mx-auto px-6 text-center">
+        <h2 class="font-display text-3xl sm:text-4xl font-bold mb-4" style="letter-spacing:-0.03em;">
+          <span class="lang-de">Nahtlose Integrationen</span>
+          <span class="lang-en hidden">Seamless Integrations</span>
+        </h2>
+        <p class="text-gray-500 text-base max-w-xl mx-auto mb-14" style="line-height:1.7;">
+          <span class="lang-de">Call Lana verbindet sich mit den Tools, die du bereits nutzt.</span>
+          <span class="lang-en hidden">Call Lana connects with the tools you already use.</span>
+        </p>
+        <div class="flex flex-wrap items-center justify-center gap-8 sm:gap-12 lg:gap-16">
+          <div class="flex flex-col items-center gap-3 group">
+            <div class="w-20 h-20 rounded-2xl bg-dark-800/80 border border-gray-200 flex items-center justify-center p-4" style="transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s ease;">
+              <img src="pictures/google_calendar_logo_icon_159345.png" alt="Google Calendar" class="w-10 h-10 object-contain" />
+            </div>
+            <span class="text-gray-500 text-xs font-medium">Google Calendar</span>
+          </div>
+          <div class="flex flex-col items-center gap-3 group">
+            <div class="w-20 h-20 rounded-2xl bg-dark-800/80 border border-gray-200 flex items-center justify-center p-4" style="transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s ease;">
+              <img src="pictures/whatsapp_101778.png" alt="WhatsApp" class="w-10 h-10 object-contain" />
+            </div>
+            <span class="text-gray-500 text-xs font-medium">WhatsApp</span>
+          </div>
+          <div class="flex flex-col items-center gap-3 group">
+            <div class="w-20 h-20 rounded-2xl bg-dark-800/80 border border-gray-200 flex items-center justify-center p-4" style="transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s ease;">
+              <img src="pictures/telegram_icon-icons.com_72055.png" alt="Telegram" class="w-10 h-10 object-contain" />
+            </div>
+            <span class="text-gray-500 text-xs font-medium">Telegram</span>
+          </div>
+          <div class="flex flex-col items-center gap-3 group">
+            <div class="w-20 h-20 rounded-2xl bg-dark-800/80 border border-gray-200 flex items-center justify-center p-4" style="transition: transform 0.25s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.25s ease;">
+              <img src="pictures/gmail_new_logo_icon_159149.png" alt="Gmail" class="w-10 h-10 object-contain" />
+            </div>
+            <span class="text-gray-500 text-xs font-medium">Gmail</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== IN 5 SCHRITTEN STARTKLAR ===== -->
+    <section class="relative bg-section-light noise-overlay py-20 lg:py-28">
+      <div class="relative z-10 max-w-5xl mx-auto px-6">
+        <div class="text-center mb-14">
+          <p class="text-brand-400 text-xs font-medium tracking-wide uppercase mb-4 lang-de">So richtest du Lana ein</p>
+          <p class="text-brand-400 text-xs font-medium tracking-wide uppercase mb-4 lang-en hidden">How to set up Lana</p>
+          <h2 class="font-display text-3xl sm:text-4xl font-bold mb-4" style="letter-spacing:-0.03em;">
+            <span class="lang-de">In 5 Schritten startklar.</span>
+            <span class="lang-en hidden">Ready in 5 steps.</span>
+          </h2>
+          <p class="text-gray-500 text-base max-w-xl mx-auto" style="line-height:1.7;">
+            <span class="lang-de">Einrichtung in unter 15 Minuten — kein technisches Wissen nötig.</span>
+            <span class="lang-en hidden">Setup in under 15 minutes — no technical knowledge required.</span>
+          </p>
+        </div>
+        <div class="grid sm:grid-cols-2 gap-5">
+          <!-- Step 1 -->
+          <div class="step-card bg-dark-900 border border-gray-200 rounded-2xl p-7">
+            <div class="step-card-number">01</div>
+            <div class="w-10 h-10 rounded-xl bg-brand-400/10 flex items-center justify-center mb-5">
+              <svg class="w-5 h-5 text-brand-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+            </div>
+            <h3 class="font-display text-base font-semibold text-gray-900 mb-2 lang-de">Stimme wählen</h3>
+            <h3 class="font-display text-base font-semibold text-gray-900 mb-2 lang-en hidden">Choose a voice</h3>
+            <p class="text-gray-500 text-sm" style="line-height:1.7;">
+              <span class="lang-de">Wähle die Stimme deiner Assistentin — männlich oder weiblich, jung oder reif. Deine Kunden sollen sich sofort wohlfühlen.</span>
+              <span class="lang-en hidden">Choose your assistant's voice — male or female, young or mature. Your customers should feel comfortable right away.</span>
+            </p>
+          </div>
+          <!-- Step 2 -->
+          <div class="step-card bg-dark-900 border border-gray-200 rounded-2xl p-7">
+            <div class="step-card-number">02</div>
+            <div class="w-10 h-10 rounded-xl bg-brand-400/10 flex items-center justify-center mb-5">
+              <svg class="w-5 h-5 text-brand-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+            </div>
+            <h3 class="font-display text-base font-semibold text-gray-900 mb-2 lang-de">Aufgaben &amp; Skripte festlegen</h3>
+            <h3 class="font-display text-base font-semibold text-gray-900 mb-2 lang-en hidden">Define tasks &amp; scripts</h3>
+            <p class="text-gray-500 text-sm" style="line-height:1.7;">
+              <span class="lang-de">Teile Lana mit, was sie wissen soll — deine Leistungen, Preise, FAQs und wie sie auf bestimmte Anfragen reagieren soll.</span>
+              <span class="lang-en hidden">Tell Lana what she should know — your services, prices, FAQs and how she should respond to specific requests.</span>
+            </p>
+          </div>
+          <!-- Step 3 -->
+          <div class="step-card bg-dark-900 border border-gray-200 rounded-2xl p-7">
+            <div class="step-card-number">03</div>
+            <div class="w-10 h-10 rounded-xl bg-brand-400/10 flex items-center justify-center mb-5">
+              <svg class="w-5 h-5 text-brand-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+            </div>
+            <h3 class="font-display text-base font-semibold text-gray-900 mb-2 lang-de">Rufnummer &amp; Weiterleitung einrichten</h3>
+            <h3 class="font-display text-base font-semibold text-gray-900 mb-2 lang-en hidden">Set up phone number &amp; routing</h3>
+            <p class="text-gray-500 text-sm" style="line-height:1.7;">
+              <span class="lang-de">Leite deine bestehende Rufnummer weiter oder bekomme eine neue deutsche Nummer. Regeln für dringende Weiterleitungen kannst du selbst festlegen.</span>
+              <span class="lang-en hidden">Forward your existing number or get a new German number. You set the rules for urgent call routing.</span>
+            </p>
+          </div>
+          <!-- Step 4 -->
+          <div class="step-card bg-dark-900 border border-gray-200 rounded-2xl p-7">
+            <div class="step-card-number">04</div>
+            <div class="w-10 h-10 rounded-xl bg-brand-400/10 flex items-center justify-center mb-5">
+              <svg class="w-5 h-5 text-brand-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+            </div>
+            <h3 class="font-display text-base font-semibold text-gray-900 mb-2 lang-de">Systeme verbinden</h3>
+            <h3 class="font-display text-base font-semibold text-gray-900 mb-2 lang-en hidden">Connect your systems</h3>
+            <p class="text-gray-500 text-sm" style="line-height:1.7;">
+              <span class="lang-de">Verbinde Lana mit deinem Kalender, CRM oder anderen Tools. Google Calendar, WhatsApp, E-Mail — alles mit wenigen Klicks.</span>
+              <span class="lang-en hidden">Connect Lana to your calendar, CRM, or other tools. Google Calendar, WhatsApp, email — all with a few clicks.</span>
+            </p>
+          </div>
+          <!-- Step 5 — full width, highlighted -->
+          <div class="step-card step-card-last bg-dark-900 border border-gray-200 rounded-2xl p-7 sm:col-span-2">
+            <div class="step-card-number" style="right:2rem;">05</div>
+            <div class="flex flex-col sm:flex-row sm:items-start gap-6">
+              <div class="flex-1">
+                <div class="inline-block bg-brand-400/10 border border-brand-400/20 rounded-full px-3 py-0.5 text-brand-400 text-xs font-semibold mb-4">
+                  <span class="lang-de">Fertig — Live in unter 15 Min.</span>
+                  <span class="lang-en hidden">Done — Live in under 15 min.</span>
+                </div>
+                <div class="w-10 h-10 rounded-xl bg-brand-400/15 flex items-center justify-center mb-4">
+                  <svg class="w-5 h-5 text-brand-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
+                </div>
+                <h3 class="font-display text-lg font-semibold text-gray-900 mb-2 lang-de">Live gehen &amp; Gespräche im Dashboard verfolgen</h3>
+                <h3 class="font-display text-lg font-semibold text-gray-900 mb-2 lang-en hidden">Go live &amp; monitor conversations in the dashboard</h3>
+                <p class="text-gray-500 text-sm" style="line-height:1.7;">
+                  <span class="lang-de">Lana nimmt sofort Anrufe an. Im Dashboard siehst du alle Gespräche, Transkriptionen und Terminbuchungen in Echtzeit.</span>
+                  <span class="lang-en hidden">Lana starts taking calls immediately. The dashboard shows all conversations, transcriptions and appointments in real-time.</span>
+                </p>
+              </div>
+              <div class="shrink-0 flex sm:flex-col items-center sm:items-end gap-4 sm:pt-1">
+                <div class="text-center sm:text-right">
+                  <p class="font-display text-3xl font-extrabold text-brand-400" style="letter-spacing:-0.03em;">&lt; 15 Min</p>
+                  <p class="text-gray-500 text-xs lang-de">bis zur ersten Annahme</p>
+                  <p class="text-gray-500 text-xs lang-en hidden">until first call answered</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== DSGVO ===== -->
+    <section class="relative bg-section-dark noise-overlay py-20 lg:py-28">
+      <div class="relative z-10 max-w-4xl mx-auto px-6">
+        <div class="bg-dark-800/50 border border-gray-200 rounded-2xl p-10 lg:p-14 text-center">
+          <div class="w-16 h-16 rounded-2xl bg-brand-400/10 flex items-center justify-center mx-auto mb-8">
+            <svg class="w-8 h-8 text-brand-400" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z"/>
+            </svg>
+          </div>
+          <h2 class="font-display text-3xl sm:text-4xl font-bold mb-4" style="letter-spacing:-0.03em;">
+            <span class="lang-de">100% DSGVO-konform</span>
+            <span class="lang-en hidden">100% GDPR Compliant</span>
+          </h2>
+          <p class="text-gray-500 text-base max-w-2xl mx-auto mb-6" style="line-height:1.7;">
+            <span class="lang-de">Alle Gespräche werden auf deutschen Servern verarbeitet und gespeichert. Deine Daten bleiben in Deutschland — keine Weitergabe an Dritte. Volle Transparenz, jederzeit löschbar.</span>
+            <span class="lang-en hidden">All conversations are processed and stored on German servers. Your data stays in Germany — no sharing with third parties. Full transparency, deletable at any time.</span>
+          </p>
+          <div class="flex flex-wrap justify-center gap-6 text-sm text-gray-500">
+            <div class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-brand-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+              <span class="lang-de">Deutsche Server</span>
+              <span class="lang-en hidden">German servers</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-brand-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+              <span class="lang-de">SSL-Verschlüsselung</span>
+              <span class="lang-en hidden">SSL encryption</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-brand-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4.5 12.75l6 6 9-13.5"/></svg>
+              <span class="lang-de">Daten jederzeit löschbar</span>
+              <span class="lang-en hidden">Data deletable at any time</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== CTA ===== -->
+    <section class="relative bg-section-light noise-overlay py-20 lg:py-28">
+      <div class="relative z-10 max-w-3xl mx-auto px-6 text-center">
+        <h2 class="font-display text-3xl sm:text-4xl lg:text-5xl font-bold mb-6" style="letter-spacing:-0.03em;">
+          <span class="lang-de">Bereit, keinen Anruf mehr zu verpassen?</span>
+          <span class="lang-en hidden">Ready to never miss a call again?</span>
+        </h2>
+        <p class="text-gray-500 text-lg max-w-xl mx-auto mb-10" style="line-height:1.7;">
+          <span class="lang-de">Starte jetzt — 30 Tage Geld-zurück-Garantie. Monatlich kündbar.</span>
+          <span class="lang-en hidden">Get started — 30-day money-back guarantee. Cancel monthly.</span>
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="registrierung.html" class="btn-brand px-10 py-4 rounded-xl text-base font-bold">
+            <span class="lang-de">Jetzt starten – 30 Tage Geld-zurück-Garantie</span>
+            <span class="lang-en hidden">Get started – 30-day money-back guarantee</span>
+          </a>
+          <a href="demo.html" class="btn-outline px-10 py-4 rounded-xl text-base font-bold">
+            <span class="lang-de">Teste Call Lana in einem kurzen Gespräch</span>
+            <span class="lang-en hidden">Try Call Lana in a short call</span>
+          </a>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <div id="footer-container"></div>
+  <script src="components.js"></script>
+  <script src="warp-bg.js"></script>
+</body>
+</html>

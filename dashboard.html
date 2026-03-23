@@ -1,0 +1,1596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CLana Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              dark:  '#5B21B6',
+              mid:   '#6D28D9',
+              gold:  '#7C3AED',
+              lime:  '#8B5CF6',
+            },
+            surface: {
+              base:     '#FFFFFF',
+              elevated: '#F9FAFB',
+              float:    '#F3F4F6',
+              border:   '#E5E7EB',
+            }
+          },
+          fontFamily: {
+            display: ['"Playfair Display"', 'serif'],
+            body:    ['"Inter"', 'sans-serif'],
+          },
+        }
+      }
+    }
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="logger.js"></script>
+  <script src="supabase-init.js"></script>
+  <script src="auth.js"></script>
+  <script src="db.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Inter', sans-serif; background: #FFFFFF; color: #1F2937; height: 100vh; display: flex; overflow: hidden; }
+
+    /* ── Sidebar ── */
+    #sidebar {
+      width: 220px; flex-shrink: 0;
+      background: #F9FAFB;
+      border-right: 1px solid #E5E7EB;
+      display: flex; flex-direction: column;
+      height: 100vh; overflow: hidden;
+    }
+
+    .logo-area {
+      padding: 18px 18px 14px;
+      border-bottom: 1px solid #E5E7EB;
+      flex-shrink: 0;
+    }
+    .logo-area img { height: 34px; width: auto; display: block; }
+
+    nav { flex: 1; padding: 10px 8px; overflow-y: auto; }
+
+    .nav-label {
+      font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
+      color: #9CA3AF; text-transform: uppercase;
+      padding: 14px 10px 4px; display: block;
+    }
+
+    .nav-item {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 12px; border-radius: 8px;
+      font-size: 13.5px; font-weight: 500; color: #6B7280;
+      cursor: pointer; transition: background 0.13s, color 0.13s;
+      user-select: none;
+    }
+    .nav-item:hover { background: #F3F4F6; color: #1F2937; }
+    .nav-item.active {
+      background: linear-gradient(135deg, #5B21B6 0%, #8B5CF6 100%);
+      color: #fff;
+      box-shadow: 0 2px 10px rgba(124,58,237,0.15);
+    }
+    .nav-item svg { flex-shrink: 0; }
+
+    .sidebar-footer {
+      flex-shrink: 0;
+      padding: 12px 8px;
+      border-top: 1px solid #E5E7EB;
+    }
+    .user-chip {
+      display: flex; align-items: center; gap: 10px;
+      padding: 8px 10px; border-radius: 8px; cursor: pointer;
+      transition: background 0.13s;
+    }
+    .user-chip:hover { background: #F3F4F6; }
+    .avatar {
+      width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+      background: linear-gradient(135deg, #5B21B6, #8B5CF6);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; color: #fff;
+    }
+    .user-name { font-size: 13px; font-weight: 600; color: #1F2937; }
+    .user-role { font-size: 11px; color: #9CA3AF; }
+
+    /* ── Main ── */
+    #main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+
+    #topbar {
+      height: 54px; flex-shrink: 0;
+      background: #F9FAFB;
+      border-bottom: 1px solid #E5E7EB;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 28px;
+    }
+    .page-title { font-family: 'Playfair Display', serif; font-size: 18px; letter-spacing: -0.02em; color: #1F2937; }
+
+    .topbar-actions { display: flex; gap: 8px; }
+    .icon-btn {
+      width: 32px; height: 32px; border-radius: 8px;
+      background: #F3F4F6; border: 1px solid #E5E7EB;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; color: #9CA3AF;
+      transition: color 0.13s, background 0.13s;
+    }
+    .icon-btn:hover { color: #1F2937; background: #E5E7EB; }
+
+    #content { flex: 1; overflow-y: auto; padding: 28px; }
+
+    /* ── Pages ── */
+    .page { display: none; }
+    .page.active { display: block; }
+
+    .placeholder-shell {
+      background: #F9FAFB;
+      border: 1px solid #E5E7EB;
+      border-radius: 14px;
+      padding: 64px 32px;
+      text-align: center;
+      color: #9CA3AF;
+    }
+    .placeholder-shell .ph-icon { margin: 0 auto 18px; display: block; opacity: 0.35; }
+    .placeholder-shell h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px; color: #6B7280; margin-bottom: 6px;
+    }
+    .placeholder-shell p { font-size: 13px; color: #9CA3AF; }
+
+    /* ── Home page ── */
+    .home-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    .metric-card {
+      background: #F9FAFB;
+      border: 1px solid #E5E7EB;
+      border-radius: 12px;
+      padding: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .metric-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, #5B21B6, #8B5CF6);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .metric-card:hover::before { opacity: 1; }
+    .metric-label {
+      font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.08em; color: #9CA3AF; margin-bottom: 10px;
+    }
+    .metric-value {
+      font-family: 'Playfair Display', serif;
+      font-size: 28px; color: #1F2937; line-height: 1;
+      margin-bottom: 8px;
+    }
+    .metric-delta {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 11.5px; font-weight: 500; padding: 2px 7px;
+      border-radius: 20px;
+    }
+    .delta-up   { background: rgba(74,222,128,0.1); color: #4ade80; }
+    .delta-down { background: rgba(248,113,113,0.1); color: #f87171; }
+    .metric-icon {
+      position: absolute; bottom: 14px; right: 16px;
+      opacity: 0.08;
+    }
+
+    .home-lower { display: grid; grid-template-columns: 1fr 320px; gap: 16px; }
+
+    .panel {
+      background: #F9FAFB;
+      border: 1px solid #E5E7EB;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .panel-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid #E5E7EB;
+    }
+    .panel-title {
+      font-size: 13px; font-weight: 600; color: #1F2937;
+    }
+    .panel-link {
+      font-size: 12px; color: #6D28D9; cursor: pointer;
+      transition: color 0.13s;
+    }
+    .panel-link:hover { color: #8B5CF6; }
+
+    /* Activity feed */
+    .activity-list { padding: 4px 0; }
+    .activity-item {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 12px 20px;
+      border-bottom: 1px solid #F3F4F6;
+      transition: background 0.13s;
+    }
+    .activity-item:last-child { border-bottom: none; }
+    .activity-item:hover { background: #F3F4F6; }
+    .activity-dot {
+      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+      margin-top: 5px;
+    }
+    .dot-call    { background: #8B5CF6; box-shadow: 0 0 6px rgba(139,92,246,0.4); }
+    .dot-message { background: #60a5fa; box-shadow: 0 0 6px rgba(96,165,250,0.4); }
+    .dot-contact { background: #a78bfa; box-shadow: 0 0 6px rgba(167,139,250,0.4); }
+    .dot-system  { background: #52525B; }
+    .activity-body { flex: 1; min-width: 0; }
+    .activity-text { font-size: 13px; color: #4B5563; line-height: 1.4; }
+    .activity-text strong { color: #1F2937; font-weight: 600; }
+    .activity-time { font-size: 11px; color: #9CA3AF; margin-top: 2px; }
+
+    /* Quick stats panel */
+    .stat-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 13px 20px;
+      border-bottom: 1px solid #F3F4F6;
+    }
+    .stat-row:last-child { border-bottom: none; }
+    .stat-name { font-size: 13px; color: #6B7280; }
+    .stat-bar-wrap {
+      flex: 1; margin: 0 14px;
+      height: 4px; background: #E5E7EB; border-radius: 4px; overflow: hidden;
+    }
+    .stat-bar { height: 100%; border-radius: 4px; background: linear-gradient(90deg, #5B21B6, #8B5CF6); }
+    .stat-val { font-size: 13px; font-weight: 600; color: #1F2937; min-width: 36px; text-align: right; }
+
+    /* ── Assistants page ── */
+    .page-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 22px;
+    }
+    .page-heading {
+      font-family: 'Playfair Display', serif;
+      font-size: 20px; color: #1F2937; letter-spacing: -0.02em;
+    }
+    .page-sub { font-size: 12px; color: #9CA3AF; margin-top: 2px; }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer;
+      font-size: 13px; font-weight: 600; font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #5B21B6, #8B5CF6);
+      color: #fff;
+      box-shadow: 0 2px 12px rgba(124,58,237,0.2);
+      transition: opacity 0.15s, transform 0.15s;
+    }
+    .btn-primary:hover  { opacity: 0.88; transform: translateY(-1px); }
+    .btn-primary:active { opacity: 1;    transform: translateY(0); }
+
+    .assistants-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .assistant-card {
+      background: #F9FAFB;
+      border: 1px solid #E5E7EB;
+      border-radius: 12px;
+      overflow: hidden;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      cursor: pointer;
+    }
+    .assistant-card:hover {
+      border-color: #7C3AED;
+      box-shadow: 0 4px 20px rgba(124,58,237,0.15);
+    }
+    .assistant-card-top {
+      padding: 18px 18px 14px;
+      display: flex; align-items: flex-start; gap: 14px;
+    }
+    .assistant-avatar {
+      width: 42px; height: 42px; border-radius: 10px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; font-weight: 700;
+    }
+    .av-gold   { background: linear-gradient(135deg, #5B21B6, #8B5CF6); color: #fff; }
+    .av-blue   { background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: #fff; }
+    .av-purple { background: linear-gradient(135deg, #4c1d95, #a78bfa); color: #fff; }
+
+    .assistant-meta { flex: 1; min-width: 0; }
+    .assistant-name { font-size: 14px; font-weight: 600; color: #1F2937; margin-bottom: 3px; }
+    .assistant-role { font-size: 12px; color: #9CA3AF; }
+
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 11px; font-weight: 500; padding: 2px 8px;
+      border-radius: 20px; flex-shrink: 0;
+    }
+    .status-active   { background: rgba(74,222,128,0.1); color: #4ade80; }
+    .status-inactive { background: rgba(156,163,175,0.2); color: #9CA3AF; }
+    .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+    .assistant-card-stats {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      border-top: 1px solid #E5E7EB;
+    }
+    .astat {
+      padding: 10px 14px;
+      border-right: 1px solid #E5E7EB;
+      text-align: center;
+    }
+    .astat:last-child { border-right: none; }
+    .astat-val  { font-size: 14px; font-weight: 600; color: #1F2937; }
+    .astat-lbl  { font-size: 10px; color: #9CA3AF; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 1px; }
+
+    .assistant-card-footer {
+      padding: 10px 18px;
+      border-top: 1px solid #E5E7EB;
+      display: flex; gap: 8px;
+    }
+    .btn-ghost {
+      flex: 1; padding: 6px 0; border-radius: 7px; border: 1px solid #E5E7EB;
+      background: transparent; font-size: 12px; font-weight: 500;
+      color: #6B7280; cursor: pointer; font-family: 'Inter', sans-serif;
+      transition: background 0.13s, color 0.13s, border-color 0.13s;
+      text-align: center;
+    }
+    .btn-ghost:hover { background: #F3F4F6; color: #1F2937; border-color: #D1D5DB; }
+    .btn-ghost.danger:hover { background: rgba(248,113,113,0.08); color: #f87171; border-color: rgba(248,113,113,0.3); }
+
+    /* Settings panel */
+    .settings-panel {
+      background: #F9FAFB;
+      border: 1px solid #E5E7EB;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .settings-section { padding: 18px 20px; border-bottom: 1px solid #E5E7EB; }
+    .settings-section:last-child { border-bottom: none; }
+    .settings-section-title {
+      font-size: 11px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 0.08em; color: #9CA3AF; margin-bottom: 14px;
+    }
+    .settings-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 7px 0;
+    }
+    .settings-label { font-size: 13px; color: #6B7280; }
+    .settings-value { font-size: 13px; color: #1F2937; font-weight: 500; }
+    .toggle {
+      width: 36px; height: 20px; border-radius: 10px; cursor: pointer;
+      position: relative; flex-shrink: 0;
+      transition: background 0.2s;
+    }
+    .toggle.on  { background: linear-gradient(90deg, #5B21B6, #8B5CF6); }
+    .toggle.off { background: #E5E7EB; }
+    .toggle::after {
+      content: ''; position: absolute;
+      width: 14px; height: 14px; border-radius: 50%; background: #fff;
+      top: 3px; transition: left 0.2s;
+    }
+    .toggle.on::after  { left: 19px; }
+    .toggle.off::after { left: 3px; }
+
+    /* ── Billing page ── */
+    .billing-grid {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 16px;
+      align-items: start;
+    }
+    .billing-left { display: flex; flex-direction: column; gap: 16px; }
+    .billing-right { display: flex; flex-direction: column; gap: 16px; }
+
+    .credit-card {
+      background: linear-gradient(135deg, #EDE9FE 0%, #DDD6FE 50%, #C4B5FD 100%);
+      border: 1px solid #C4B5FD;
+      border-radius: 14px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+    .credit-card::before {
+      content: '';
+      position: absolute; top: -40px; right: -40px;
+      width: 180px; height: 180px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(139,92,246,0.12) 0%, transparent 70%);
+    }
+    .credit-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #6B7280; margin-bottom: 6px; }
+    .credit-balance { font-family: 'Playfair Display', serif; font-size: 38px; color: #1F2937; line-height: 1; margin-bottom: 4px; }
+    .credit-balance span { font-size: 20px; color: #6D28D9; margin-right: 4px; }
+    .credit-sub { font-size: 12px; color: #6B7280; margin-bottom: 20px; }
+
+    .credit-actions { display: flex; gap: 10px; }
+    .btn-outline {
+      padding: 7px 16px; border-radius: 8px;
+      border: 1px solid #C4B5FD; background: rgba(124,58,237,0.1);
+      font-size: 12px; font-weight: 600; color: #7C3AED;
+      cursor: pointer; font-family: 'Inter', sans-serif;
+      transition: background 0.13s, border-color 0.13s;
+    }
+    .btn-outline:hover { background: rgba(124,58,237,0.2); border-color: #7C3AED; }
+
+    .usage-section { background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 12px; overflow: hidden; }
+
+    .usage-bar-row { padding: 14px 20px; border-bottom: 1px solid #F3F4F6; }
+    .usage-bar-row:last-child { border-bottom: none; }
+    .usage-bar-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+    .usage-bar-name { font-size: 13px; color: #6B7280; }
+    .usage-bar-vals { font-size: 12px; color: #9CA3AF; }
+    .usage-bar-vals strong { color: #1F2937; font-weight: 600; }
+    .usage-track { height: 6px; background: #E5E7EB; border-radius: 6px; overflow: hidden; }
+    .usage-fill  { height: 100%; border-radius: 6px; background: linear-gradient(90deg, #5B21B6, #8B5CF6); }
+    .usage-fill.warn { background: linear-gradient(90deg, #92400e, #f59e0b); }
+
+    .limit-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 13px 20px; border-bottom: 1px solid #F3F4F6;
+    }
+    .limit-row:last-child { border-bottom: none; }
+    .limit-left { flex: 1; }
+    .limit-name { font-size: 13px; color: #1F2937; font-weight: 500; }
+    .limit-desc { font-size: 11px; color: #9CA3AF; margin-top: 2px; }
+    .limit-val  { font-size: 13px; font-weight: 600; color: #1F2937; margin-right: 16px; }
+
+    /* Payment methods */
+    .pm-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 14px 20px; border-bottom: 1px solid #F3F4F6;
+    }
+    .pm-item:last-child { border-bottom: none; }
+    .pm-icon {
+      width: 40px; height: 26px; border-radius: 5px;
+      background: #F3F4F6; border: 1px solid #E5E7EB;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; font-size: 10px; font-weight: 700; color: #9CA3AF;
+    }
+    .pm-info { flex: 1; }
+    .pm-name { font-size: 13px; color: #1F2937; font-weight: 500; }
+    .pm-detail { font-size: 11px; color: #9CA3AF; margin-top: 1px; }
+    .pm-default {
+      font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 20px;
+      background: rgba(124,58,237,0.1); color: #7C3AED;
+    }
+    .pm-remove {
+      font-size: 12px; color: #9CA3AF; cursor: pointer; padding: 4px 8px;
+      border-radius: 6px; transition: color 0.13s, background 0.13s;
+      background: none; border: none; font-family: 'Inter', sans-serif;
+    }
+    .pm-remove:hover { color: #f87171; background: rgba(248,113,113,0.08); }
+
+    .invoice-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 20px; border-bottom: 1px solid #F3F4F6;
+      font-size: 13px;
+    }
+    .invoice-row:last-child { border-bottom: none; }
+    .invoice-date { color: #9CA3AF; width: 90px; }
+    .invoice-desc { flex: 1; color: #6B7280; }
+    .invoice-amt  { font-weight: 600; color: #1F2937; width: 70px; text-align: right; }
+    .invoice-dl   { color: #6D28D9; cursor: pointer; font-size: 11px; margin-left: 12px; }
+    .invoice-dl:hover { color: #8B5CF6; }
+
+    /* ── New Assistant Modal ── */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(17,24,39,0.4);
+      display: flex; align-items: center; justify-content: center; padding: 24px;
+    }
+    .modal-overlay.hidden { display: none; }
+    .modal-box {
+      background: #fff; border: 1px solid #E5E7EB; border-radius: 14px;
+      width: 100%; max-width: 420px; overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.12);
+    }
+    .modal-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px; border-bottom: 1px solid #E5E7EB;
+    }
+    .modal-title { font-family: 'Playfair Display', serif; font-size: 17px; color: #1F2937; }
+    .modal-close {
+      width: 28px; height: 28px; border-radius: 7px; border: 1px solid #E5E7EB;
+      background: #F3F4F6; cursor: pointer; display: flex; align-items: center;
+      justify-content: center; color: #9CA3AF; font-size: 18px; line-height: 1;
+      transition: background 0.13s, color 0.13s; font-family: 'Inter', sans-serif;
+    }
+    .modal-close:hover { background: #E5E7EB; color: #1F2937; }
+    .modal-body { padding: 20px; }
+    .form-group { margin-bottom: 16px; }
+    .form-group:last-child { margin-bottom: 0; }
+    .form-label {
+      display: block; font-size: 11px; font-weight: 600; color: #6B7280;
+      text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px;
+    }
+    .form-control {
+      width: 100%; padding: 9px 12px; border-radius: 8px;
+      border: 1px solid #E5E7EB; background: #F9FAFB;
+      font-size: 13px; color: #1F2937; font-family: 'Inter', sans-serif;
+      outline: none; transition: border-color 0.15s, background 0.15s;
+      -webkit-appearance: none; appearance: none;
+    }
+    .form-control:focus { border-color: #7C3AED; background: #fff; }
+    .modal-error {
+      font-size: 12px; color: #f87171;
+      background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.2);
+      border-radius: 8px; padding: 9px 12px; margin-bottom: 14px; display: none;
+    }
+    .modal-footer {
+      padding: 14px 20px; border-top: 1px solid #E5E7EB;
+      display: flex; gap: 8px; justify-content: flex-end;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Sidebar ── -->
+<aside id="sidebar">
+  <div class="logo-area">
+    <img src="brand_assets/A_vector-style_digital_logo_for_the_brand_Clana_.png" alt="Call Lana" />
+  </div>
+
+  <nav>
+    <!-- Workspace -->
+    <span class="nav-label">Workspace</span>
+    <div class="nav-item active" data-page="home">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
+      Home
+    </div>
+    <div class="nav-item" data-page="assistants">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      Assistants
+    </div>
+
+    <!-- Communication -->
+    <span class="nav-label">Communication</span>
+    <div class="nav-item" data-page="calls">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8 19.79 19.79 0 01.08 2.18 2 2 0 012.07 0h3a2 2 0 012 1.72c.13.96.36 1.9.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0122 14.92v2z"/></svg>
+      Calls
+    </div>
+    <div class="nav-item" data-page="messages">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+      Messages
+    </div>
+    <div class="nav-item" data-page="contacts">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+      Contacts
+    </div>
+
+    <!-- Configuration -->
+    <span class="nav-label">Configuration</span>
+    <div class="nav-item" data-page="integrations">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="7" height="7" rx="1"/><rect x="15" y="7" width="7" height="7" rx="1"/><path d="M9 10.5h6M12 7V4M12 20v-3"/></svg>
+      Integrations
+    </div>
+    <div class="nav-item" data-page="team">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+      Team
+    </div>
+
+    <!-- Account -->
+    <span class="nav-label">Account</span>
+    <div class="nav-item" data-page="billing">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+      Billing
+    </div>
+    <div class="nav-item" data-page="packages">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+      Packages
+    </div>
+    <div class="nav-item" data-page="settings">
+      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+      Settings
+    </div>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="user-chip" onclick="handleLogout()" title="Abmelden">
+      <div class="avatar" id="user-avatar">?</div>
+      <div>
+        <div class="user-name" id="user-name">…</div>
+        <div class="user-role" id="user-role">…</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- ── Main ── -->
+<div id="main">
+  <header id="topbar">
+    <span class="page-title" id="page-title">Home</span>
+    <div class="topbar-actions">
+      <div class="icon-btn" title="Notifications">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+      </div>
+      <div class="icon-btn" title="Help">
+        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+      </div>
+    </div>
+  </header>
+
+  <main id="content">
+
+    <div id="page-home" class="page active">
+
+      <!-- Greeting -->
+      <div style="margin-bottom:22px;">
+        <p style="font-size:12px;color:#9CA3AF;margin-bottom:2px;" id="greeting-date"></p>
+        <h1 style="font-family:'Playfair Display',serif;font-size:22px;color:#1F2937;letter-spacing:-0.02em;" id="greeting-text">…</h1>
+      </div>
+
+      <!-- Metric cards -->
+      <div class="home-grid">
+
+        <div class="metric-card">
+          <div class="metric-label">Total Calls</div>
+          <div class="metric-value" id="metric-calls">—</div>
+          <span class="metric-delta delta-up" id="metric-calls-sub" style="opacity:0.5">loading…</span>
+          <svg class="metric-icon" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8 19.79 19.79 0 01.08 2.18 2 2 0 012.07 0h3a2 2 0 012 1.72c.13.96.36 1.9.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6z"/></svg>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-label">Avg. Call Duration</div>
+          <div class="metric-value" id="metric-duration">—</div>
+          <span class="metric-delta delta-up" style="opacity:0.5">this month</span>
+          <svg class="metric-icon" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-label">Messages Sent</div>
+          <div class="metric-value" id="metric-messages">—</div>
+          <span class="metric-delta delta-up" style="opacity:0.5">total</span>
+          <svg class="metric-icon" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        </div>
+
+        <div class="metric-card">
+          <div class="metric-label">Active Assistants</div>
+          <div class="metric-value" id="metric-assistants">—</div>
+          <span class="metric-delta delta-up" style="opacity:0.5" id="metric-assistants-sub">loading…</span>
+          <svg class="metric-icon" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        </div>
+
+      </div>
+
+      <!-- Lower: activity + quick stats -->
+      <div class="home-lower">
+
+        <!-- Recent Activity -->
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">Recent Activity</span>
+            <span class="panel-link" onclick="document.querySelector('[data-page=calls]').click()">View all</span>
+          </div>
+          <div class="activity-list" id="activity-list">
+            <!-- Rendered dynamically by JS -->
+          </div>
+        </div>
+
+        <!-- Quick Stats -->
+        <div class="panel">
+          <div class="panel-header">
+            <span class="panel-title">This Week</span>
+          </div>
+          <div id="weekly-stats-container"></div>
+        </div>
+
+      </div>
+    </div>
+
+    <div id="page-assistants" class="page">
+
+      <div class="page-header">
+        <div>
+          <div class="page-heading">Assistants</div>
+          <div class="page-sub" id="assistants-sub">…</div>
+        </div>
+        <button class="btn-primary" onclick="openNewAssistantModal()">
+          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          New Assistant
+        </button>
+      </div>
+
+      <!-- Assistant cards -->
+      <div class="assistants-grid" id="assistants-grid">
+
+        <!-- Cards rendered dynamically by JS -->
+
+      </div>
+
+      <!-- Assistant Settings Panel (shown on Settings click) -->
+      <div id="assistant-settings-panel" style="display:none;">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
+          <button onclick="closeAssistantSettings()" style="background:#F3F4F6;border:1px solid #E5E7EB;border-radius:7px;padding:5px 10px;color:#6B7280;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;">← Back</button>
+          <span id="settings-panel-title" style="font-size:14px;font-weight:600;color:#1F2937;"></span>
+        </div>
+
+        <div class="settings-panel">
+
+          <div class="settings-section">
+            <div class="settings-section-title">General</div>
+            <div class="settings-row">
+              <span class="settings-label">Assistant name</span>
+              <span class="settings-value" id="sp-name">—</span>
+            </div>
+            <div class="settings-row">
+              <span class="settings-label">Language</span>
+              <span class="settings-value" id="sp-lang">—</span>
+            </div>
+            <div class="settings-row">
+              <span class="settings-label">Direction</span>
+              <span class="settings-value" id="sp-dir">—</span>
+            </div>
+            <div class="settings-row">
+              <span class="settings-label">Voice model</span>
+              <span class="settings-value">ElevenLabs · Multilingual v2</span>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <div class="settings-section-title">Behaviour</div>
+            <div class="settings-row">
+              <span class="settings-label">Interrupt on silence</span>
+              <div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div>
+            </div>
+            <div class="settings-row">
+              <span class="settings-label">Record calls</span>
+              <div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div>
+            </div>
+            <div class="settings-row">
+              <span class="settings-label">Send post-call SMS</span>
+              <div class="toggle off" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div>
+            </div>
+            <div class="settings-row">
+              <span class="settings-label">Escalate to human</span>
+              <div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div>
+            </div>
+          </div>
+
+          <div class="settings-section">
+            <div class="settings-section-title">Phone</div>
+            <div class="settings-row">
+              <span class="settings-label">Assigned number</span>
+              <span class="settings-value">+49 800 123 4567</span>
+            </div>
+            <div class="settings-row">
+              <span class="settings-label">Max concurrent calls</span>
+              <span class="settings-value">5</span>
+            </div>
+            <div class="settings-row">
+              <span class="settings-label">Timeout (no answer)</span>
+              <span class="settings-value">30s</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── New Assistant Modal ─────────────────────────────────────────────── -->
+    <div id="modal-new-assistant" class="modal-overlay hidden">
+      <div class="modal-box">
+        <div class="modal-header">
+          <span class="modal-title">New Assistant</span>
+          <button class="modal-close" onclick="closeNewAssistantModal()">&#x2715;</button>
+        </div>
+        <div class="modal-body">
+          <p id="modal-assistant-error" class="modal-error"></p>
+          <div class="form-group">
+            <label class="form-label">Name</label>
+            <input type="text" id="ma-name" class="form-control" placeholder="e.g. Lana" maxlength="60" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Language</label>
+            <select id="ma-language" class="form-control">
+              <option value="de">Deutsch</option>
+              <option value="en">English</option>
+              <option value="fr">Français</option>
+              <option value="es">Español</option>
+              <option value="it">Italiano</option>
+              <option value="nl">Nederlands</option>
+              <option value="pl">Polski</option>
+              <option value="pt">Português</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Voice</label>
+            <select id="ma-voice" class="form-control">
+              <option value="Marie">Marie (female, neutral)</option>
+              <option value="Emma">Emma (female, warm)</option>
+              <option value="Laura">Laura (female, professional)</option>
+              <option value="Max">Max (male, friendly)</option>
+              <option value="David">David (male, authoritative)</option>
+            </select>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-ghost" style="flex:none;padding:7px 16px;" onclick="closeNewAssistantModal()">Cancel</button>
+          <button class="btn-primary" id="modal-create-btn" onclick="handleCreateAssistant()">Create Assistant</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="page-calls" class="page">
+      <div class="page-header">
+        <div>
+          <div class="page-heading">Calls</div>
+          <div class="page-sub" id="calls-sub">Loading…</div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Call History</span>
+        </div>
+        <div id="calls-list" class="activity-list"></div>
+      </div>
+    </div>
+
+    <div id="page-messages" class="page">
+      <div class="placeholder-shell">
+        <svg class="ph-icon" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+        <h2>Messages</h2>
+        <p>SMS and messaging history</p>
+      </div>
+    </div>
+
+    <div id="page-contacts" class="page">
+      <div class="page-header">
+        <div>
+          <div class="page-heading">Contacts</div>
+          <div class="page-sub" id="contacts-sub">Loading…</div>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <span class="panel-title">Contact List</span>
+        </div>
+        <div id="contacts-list"></div>
+      </div>
+    </div>
+
+    <div id="page-integrations" class="page">
+      <div class="placeholder-shell">
+        <svg class="ph-icon" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="7" width="7" height="7" rx="1"/><rect x="15" y="7" width="7" height="7" rx="1"/><path d="M9 10.5h6M12 7V4M12 20v-3"/></svg>
+        <h2>Integrations</h2>
+        <p>Connect third-party services and APIs</p>
+      </div>
+    </div>
+
+    <div id="page-team" class="page">
+      <div class="placeholder-shell">
+        <svg class="ph-icon" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
+        <h2>Team</h2>
+        <p>Invite and manage team members</p>
+      </div>
+    </div>
+
+    <div id="page-billing" class="page">
+
+      <div class="page-header">
+        <div>
+          <div class="page-heading">Billing</div>
+          <div class="page-sub">Manage credits, usage, and payment methods</div>
+        </div>
+      </div>
+
+      <div class="billing-grid">
+
+        <!-- Left column -->
+        <div class="billing-left">
+
+          <!-- Credit balance -->
+          <div class="credit-card">
+            <div class="credit-label">Current Balance</div>
+            <div class="credit-balance" id="billing-balance"><span>€</span>—</div>
+            <div class="credit-sub" id="billing-plan-sub">Loading…</div>
+            <div class="credit-actions">
+              <button class="btn-primary" style="font-size:12px;padding:7px 14px;" onclick="handleAddCredits()">+ Add Credits</button>
+              <button class="btn-outline" onclick="handleTransactionHistory()">Transaction History</button>
+            </div>
+          </div>
+
+          <!-- Monthly usage -->
+          <div class="usage-section">
+            <div class="panel-header">
+              <span class="panel-title">Monthly Usage</span>
+              <span style="font-size:12px;color:#9CA3AF;" id="billing-month-label">…</span>
+            </div>
+            <div class="usage-bar-row">
+              <div class="usage-bar-header">
+                <span class="usage-bar-name">Call minutes</span>
+                <span class="usage-bar-vals" id="billing-minutes-label"><strong>—</strong></span>
+              </div>
+              <div class="usage-track"><div class="usage-fill" id="billing-minutes-bar" style="width:0%"></div></div>
+            </div>
+          </div>
+
+          <!-- Spending limit & auto top-up -->
+          <div class="usage-section">
+            <div class="panel-header">
+              <span class="panel-title">Limits & Auto Top-Up</span>
+            </div>
+            <div class="limit-row">
+              <div class="limit-left">
+                <div class="limit-name">Monthly spending limit</div>
+                <div class="limit-desc">Pause usage when limit is reached</div>
+              </div>
+              <span class="limit-val">€ 150</span>
+              <button class="btn-ghost" style="flex:none;padding:5px 12px;font-size:12px;">Edit</button>
+            </div>
+            <div class="limit-row">
+              <div class="limit-left">
+                <div class="limit-name">Auto top-up</div>
+                <div class="limit-desc">Add €25 when balance drops below €10</div>
+              </div>
+              <div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div>
+            </div>
+            <div class="limit-row">
+              <div class="limit-left">
+                <div class="limit-name">Low balance alert</div>
+                <div class="limit-desc">Email when balance is below €5</div>
+              </div>
+              <div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right column -->
+        <div class="billing-right">
+
+          <!-- Payment methods -->
+          <div class="panel">
+            <div class="panel-header">
+              <span class="panel-title">Payment Methods</span>
+              <span class="panel-link" onclick="handleAddPaymentMethod()">+ Add</span>
+            </div>
+            <div id="billing-payment-list"></div>
+          </div>
+
+          <!-- Recent invoices -->
+          <div class="panel">
+            <div class="panel-header">
+              <span class="panel-title">Recent Invoices</span>
+              <span class="panel-link">All invoices</span>
+            </div>
+            <div id="billing-tx-list"></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <div id="page-packages" class="page">
+      <div class="placeholder-shell">
+        <svg class="ph-icon" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        <h2>Packages</h2>
+        <p>Subscription plans and add-ons</p>
+      </div>
+    </div>
+
+    <div id="page-settings" class="page">
+      <div class="placeholder-shell">
+        <svg class="ph-icon" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        <h2>Settings</h2>
+        <p>Account preferences and configuration</p>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  // ── Backend ─────────────────────────────────────────────────────────────────
+  // supabaseClient, auth, db are loaded from the external backend files
+  const sb   = supabaseClient;       // from supabase-init.js
+  const auth = window.clanaAuth;     // from auth.js
+  const db   = window.clanaDB;       // from db.js
+
+  // ── Auth guard ───────────────────────────────────────────────────────────────
+  let currentUser   = null;
+  let currentProfile = null;
+
+  (async () => {
+    const session = await auth.getSession();
+
+    if (!session) {
+      window.location.href = 'login.html';
+      return;
+    }
+
+    currentUser = session.user;
+    await loadDashboard();
+  })();
+
+  // Continuously watch for sign-out events (tab close/reopen, token revocation)
+  sb.auth.onAuthStateChange((event, session) => {
+    if (event === 'SIGNED_OUT') {
+      window.location.href = 'login.html';
+    }
+  });
+
+  async function handleLogout() {
+    await auth.signOut();
+    window.location.href = 'login.html';
+  }
+
+  // ── Greeting ─────────────────────────────────────────────────────────────────
+  function setGreeting(firstName) {
+    const now = new Date();
+    const h = now.getHours();
+    const greeting = h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
+    document.getElementById('greeting-text').textContent = greeting + ', ' + (firstName || 'there');
+    document.getElementById('greeting-date').textContent = now.toLocaleDateString('en-DE', {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
+    });
+  }
+
+  // ── Load dashboard ────────────────────────────────────────────────────────────
+  async function loadDashboard() {
+    const uid     = currentUser.id;
+    const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+
+    // Profile
+    const { data: profile } = await sb.from('profiles').select('*').eq('id', uid).single();
+    // Fallback: email-confirmation flow means profile wasn't created at signup.
+    // Upsert a minimal row so subsequent loads find it.
+    if (!profile) {
+      const meta = currentUser.user_metadata || {};
+      await sb.from('profiles').upsert({
+        id:         uid,
+        email:      currentUser.email,
+        first_name: meta.firstName || null,
+        last_name:  meta.lastName  || null,
+        company:    meta.company   || null,
+        industry:   meta.industry  || null,
+      }, { onConflict: 'id' });
+    }
+    currentProfile = profile;
+
+    const firstName = profile?.first_name || currentUser.email.split('@')[0];
+    const lastName  = profile?.last_name  || '';
+    const initials  = (firstName[0] + (lastName[0] || '')).toUpperCase();
+    const roleLabel = profile?.role === 'superadmin' ? 'Super Admin'
+                    : profile?.role === 'sales'      ? 'Sales' : 'Owner';
+
+    document.getElementById('user-avatar').textContent = initials;
+    document.getElementById('user-name').textContent   = firstName + (lastName ? ' ' + lastName : '');
+    document.getElementById('user-role').textContent   = roleLabel;
+
+    if (profile?.role === 'superadmin') {
+      const adminLink = document.createElement('a');
+      adminLink.href = 'admin.html';
+      adminLink.className = 'nav-item';
+      adminLink.style.color = '#7C3AED';
+      adminLink.innerHTML = `<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> Admin`;
+      document.querySelector('nav').appendChild(adminLink);
+    }
+
+    setGreeting(firstName);
+
+    // Parallel home-page queries
+    const [callsRes, assistantsRes, recentCallsRes, weekCallsRes, subRes, ctcCountRes] = await Promise.all([
+      sb.from('calls').select('id, duration_seconds, created_at').eq('user_id', uid),
+      sb.from('assistants').select('id, name, voice, language, status, phone_number, created_at').eq('user_id', uid),
+      sb.from('calls')
+        .select('id, phone_number, caller_name, duration_seconds, status, created_at, assistant_name')
+        .eq('user_id', uid).order('created_at', { ascending: false }).limit(8),
+      sb.from('calls').select('id, duration_seconds').eq('user_id', uid).gte('created_at', weekAgo),
+      sb.from('subscriptions').select('*').eq('user_id', uid).maybeSingle(),
+      sb.from('customer_contacts').select('*', { count: 'exact', head: true }).eq('user_id', uid),
+    ]);
+
+    const calls          = callsRes.data     || [];
+    const assistants     = assistantsRes.data || [];
+    const weekCalls      = weekCallsRes.data  || [];
+    const sub            = subRes.data;
+    const totalCalls     = calls.length;
+    const contactsCount  = ctcCountRes.count  || 0;
+    const activeCount    = assistants.filter(a => a.status === 'active' || a.status === 'online').length;
+
+    // Metric cards
+    document.getElementById('metric-calls').textContent = totalCalls.toLocaleString();
+    document.getElementById('metric-calls-sub').textContent = totalCalls === 0 ? 'No calls yet' : 'total calls';
+    document.getElementById('metric-calls-sub').style.opacity = '1';
+
+    if (totalCalls > 0) {
+      const avgSec = Math.round(calls.reduce((s, c) => s + (c.duration_seconds || 0), 0) / totalCalls);
+      document.getElementById('metric-duration').textContent = fmtDur(avgSec);
+    } else {
+      document.getElementById('metric-duration').textContent = '—';
+    }
+
+    // "Messages Sent" card shows total contacts (SMS tracking not yet available)
+    document.getElementById('metric-messages').textContent = contactsCount.toLocaleString();
+
+    document.getElementById('metric-assistants').textContent = assistants.length;
+    document.getElementById('metric-assistants-sub').textContent = `${activeCount} active`;
+    document.getElementById('metric-assistants-sub').style.opacity = '1';
+    document.getElementById('assistants-sub').textContent =
+      `${assistants.length} assistant${assistants.length !== 1 ? 's' : ''} · ${activeCount} active`;
+
+    renderAssistants(assistants);
+    renderActivity(recentCallsRes.data || []);
+    renderWeeklyStats(weekCalls, assistants, contactsCount);
+    renderBilling(sub);
+  }
+
+  // ── Weekly stats ─────────────────────────────────────────────────────────────
+  function renderWeeklyStats(weekCalls, assistants, contactsTotal) {
+    const container = document.getElementById('weekly-stats-container');
+    if (!container) return;
+    const weekMin   = Math.round(weekCalls.reduce((s, c) => s + (c.duration_seconds || 0), 0) / 60);
+    const activeAst = assistants.filter(a => a.status === 'active' || a.status === 'online').length;
+
+    const stats = [
+      { name: 'Calls this week',    val: weekCalls.length.toString(),              pct: weekCalls.length > 0 ? 100 : 0 },
+      { name: 'Minutes used',       val: weekMin + 'm',                            pct: Math.min(100, (weekMin / 60) * 100) },
+      { name: 'Assistants active',  val: `${activeAst} / ${assistants.length}`,   pct: assistants.length ? Math.round((activeAst / assistants.length) * 100) : 0 },
+      { name: 'Total contacts',     val: contactsTotal.toString(),                 pct: contactsTotal > 0 ? 100 : 0 },
+    ];
+
+    container.innerHTML = stats.map(s => `
+      <div class="stat-row">
+        <span class="stat-name">${s.name}</span>
+        <div class="stat-bar-wrap"><div class="stat-bar" style="width:${s.pct}%"></div></div>
+        <span class="stat-val">${s.val}</span>
+      </div>`).join('');
+  }
+
+  // ── Billing ───────────────────────────────────────────────────────────────────
+  function renderBilling(sub) {
+    const now = new Date();
+    const el  = document.getElementById('billing-month-label');
+    if (el) el.textContent = now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+    if (!sub) {
+      document.getElementById('billing-balance').innerHTML = '<span>€</span>0.00';
+      document.getElementById('billing-plan-sub').textContent = 'No active subscription';
+      document.getElementById('billing-minutes-label').innerHTML = '<strong>0</strong> / — min';
+      document.getElementById('billing-minutes-bar').style.width = '0%';
+      document.getElementById('billing-tx-list').innerHTML =
+        `<div style="padding:24px 20px;text-align:center;color:#9CA3AF;font-size:13px;">No transactions yet</div>`;
+      document.getElementById('billing-payment-list').innerHTML =
+        `<div style="padding:24px 20px;text-align:center;color:#9CA3AF;font-size:13px;">No payment methods added</div>`;
+      return;
+    }
+
+    const balance  = ((sub.balance_cents || 0) / 100).toFixed(2);
+    const usedMin  = Math.round(Number(sub.used_minutes) || 0);
+    const inclMin  = sub.included_minutes || 60;
+    const pct      = inclMin > 0 ? Math.min(100, Math.round((usedMin / inclMin) * 100)) : 0;
+    const planNames = { trial: 'Trial', solo: 'Solo', team: 'Team', business: 'Business' };
+    const periodEnd = sub.current_period_end
+      ? new Date(sub.current_period_end).toLocaleDateString('de-DE') : '—';
+
+    document.getElementById('billing-balance').innerHTML = `<span>€</span>${balance}`;
+    document.getElementById('billing-plan-sub').textContent =
+      `${planNames[sub.plan] || sub.plan} · Renews ${periodEnd}`;
+    document.getElementById('billing-minutes-label').innerHTML =
+      `<strong>${usedMin}</strong> / ${inclMin} min`;
+    const bar = document.getElementById('billing-minutes-bar');
+    bar.style.width = pct + '%';
+    if (pct >= 85) bar.classList.add('warn'); else bar.classList.remove('warn');
+
+    // Transactions
+    sb.from('billing_transactions').select('*')
+      .eq('user_id', currentUser.id)
+      .order('created_at', { ascending: false }).limit(5)
+      .then(({ data }) => {
+        const list = document.getElementById('billing-tx-list');
+        if (!data || !data.length) {
+          list.innerHTML = `<div style="padding:24px 20px;text-align:center;color:#9CA3AF;font-size:13px;">No transactions yet</div>`;
+          return;
+        }
+        list.innerHTML = data.map(tx => {
+          const d   = new Date(tx.created_at).toLocaleDateString('de-DE', { month: 'short', year: 'numeric' });
+          const amt = ((Math.abs(tx.amount_cents) || 0) / 100).toFixed(2);
+          return `<div class="invoice-row">
+            <span class="invoice-date">${d}</span>
+            <span class="invoice-desc">${escHtml(tx.description || tx.type || '—')}</span>
+            <span class="invoice-amt">€ ${amt}</span>
+          </div>`;
+        }).join('');
+      });
+
+    // Payment methods
+    sb.from('payment_methods').select('*')
+      .eq('user_id', currentUser.id)
+      .then(({ data }) => {
+        const list = document.getElementById('billing-payment-list');
+        if (!data || !data.length) {
+          list.innerHTML = `<div style="padding:24px 20px;text-align:center;color:#9CA3AF;font-size:13px;">No payment methods added</div>`;
+          return;
+        }
+        list.innerHTML = data.map(pm => {
+          const isDefault = pm.priority === 1;
+          const typeLabel = pm.type === 'sepa'        ? 'SEPA'
+                          : pm.type === 'credit_card' ? (pm.card_brand || 'CARD').toUpperCase().slice(0, 4)
+                          : 'PP';
+          const name = pm.type === 'sepa'   ? `SEPA •••• ${(pm.iban || '').slice(-4)}`
+                     : pm.type === 'paypal' ? `PayPal (${escHtml(pm.paypal_email || '—')})`
+                     : `${escHtml(pm.card_brand || 'Card')} •••• ${pm.card_last4 || '????'}`;
+          const detail = pm.type === 'credit_card' ? `Expires ${pm.card_expiry || '—'}`
+                       : pm.type === 'sepa'         ? escHtml(pm.account_holder || '') : '';
+          return `<div class="pm-item">
+            <div class="pm-icon">${escHtml(typeLabel)}</div>
+            <div class="pm-info">
+              <div class="pm-name">${name}</div>
+              ${detail ? `<div class="pm-detail">${detail}</div>` : ''}
+            </div>
+            ${isDefault ? '<span class="pm-default">Default</span>' : ''}
+          </div>`;
+        }).join('');
+      });
+  }
+
+  // ── Assistants ────────────────────────────────────────────────────────────────
+  let _assistants = [];
+  const AV_COLORS = ['av-gold', 'av-blue', 'av-purple'];
+
+  function renderAssistants(assistants) {
+    _assistants = assistants;
+    const grid = document.getElementById('assistants-grid');
+    if (assistants.length === 0) {
+      grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:48px;color:#9CA3AF;">
+        <p style="font-size:14px;">No assistants yet. Click <strong style="color:#7C3AED">New Assistant</strong> to create one.</p>
+      </div>`;
+      return;
+    }
+    grid.innerHTML = assistants.map((a, i) => {
+      const isActive = a.status === 'active' || a.status === 'online';
+      const avClass  = AV_COLORS[i % AV_COLORS.length];
+      const initial  = (a.name || '?')[0].toUpperCase();
+      const role     = [a.language, a.voice].filter(Boolean).join(' · ');
+      return `
+        <div class="assistant-card">
+          <div class="assistant-card-top">
+            <div class="assistant-avatar ${avClass}">${initial}</div>
+            <div class="assistant-meta">
+              <div class="assistant-name">${escHtml(a.name)}</div>
+              <div class="assistant-role">${escHtml(role || 'Voice')}</div>
+            </div>
+            <span class="status-badge ${isActive ? 'status-active' : 'status-inactive'}">
+              <span class="status-dot"></span>${isActive ? 'Active' : 'Inactive'}
+            </span>
+          </div>
+          <div class="assistant-card-stats">
+            <div class="astat"><div class="astat-val">—</div><div class="astat-lbl">Calls</div></div>
+            <div class="astat"><div class="astat-val">—</div><div class="astat-lbl">Avg. dur.</div></div>
+            <div class="astat"><div class="astat-val">${escHtml(a.phone_number || '—')}</div><div class="astat-lbl">Number</div></div>
+          </div>
+          <div class="assistant-card-footer">
+            <button class="btn-ghost" onclick="openAssistantSettingsById('${a.id}')">Settings</button>
+            <button class="btn-ghost" onclick="handleTestCall('${escHtml(a.name)}')">Test Call</button>
+            <button class="btn-ghost ${isActive ? 'danger' : ''}"
+              style="${isActive ? '' : 'color:#4ade80;border-color:rgba(74,222,128,0.2);'}"
+              onclick="toggleAssistant('${a.id}', ${isActive})">
+              ${isActive ? 'Pause' : 'Activate'}
+            </button>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  async function toggleAssistant(id, isCurrentlyActive) {
+    console.log('[BTN] Toggle Assistant clicked — id:', id, '| currently active:', isCurrentlyActive);
+    if (!currentUser) {
+      console.error('[TOGGLE ASSISTANT] BLOCKED — Not authenticated');
+      return;
+    }
+    const newStatus = isCurrentlyActive ? 'offline' : 'active';
+    const updateRes = await db.updateAssistant(id, { status: newStatus });
+    if (!updateRes.success) {
+      console.error('[TOGGLE ASSISTANT] Update error:', updateRes.error);
+      return;
+    }
+    const listRes = await db.getAssistants();
+    if (!listRes.success) { console.error('[TOGGLE ASSISTANT] Fetch error:', listRes.error); return; }
+    renderAssistants(listRes.data);
+  }
+
+  function openAssistantSettingsById(id) {
+    console.log('[BTN] Settings clicked — assistant id:', id);
+    const assistant = _assistants.find(a => a.id === id);
+    if (!assistant) { console.error('[SETTINGS] No assistant found for id:', id); return; }
+    document.getElementById('assistant-settings-panel').style.display = 'block';
+    document.getElementById('assistants-grid').style.display = 'none';
+    document.querySelector('#page-assistants .page-header').style.display = 'none';
+    document.getElementById('settings-panel-title').textContent = assistant.name + ' — Settings';
+    document.getElementById('sp-name').textContent = assistant.name;
+    document.getElementById('sp-lang').textContent = assistant.language || '—';
+    document.getElementById('sp-dir').textContent  = assistant.outbound?.enabled ? 'Outbound' : 'Inbound';
+  }
+
+  // ── New Assistant Modal ───────────────────────────────────────────────────────
+  function openNewAssistantModal() {
+    console.log('[BTN] New Assistant clicked — opening modal');
+    document.getElementById('ma-name').value      = '';
+    document.getElementById('ma-language').value  = 'de';
+    document.getElementById('ma-voice').value     = 'Marie';
+    const errEl = document.getElementById('modal-assistant-error');
+    errEl.style.display = 'none';
+    errEl.textContent   = '';
+    const btn = document.getElementById('modal-create-btn');
+    btn.disabled    = false;
+    btn.textContent = 'Create Assistant';
+    document.getElementById('modal-new-assistant').classList.remove('hidden');
+    // Focus the name field after the transition settles
+    setTimeout(() => document.getElementById('ma-name').focus(), 50);
+  }
+
+  function closeNewAssistantModal() {
+    document.getElementById('modal-new-assistant').classList.add('hidden');
+  }
+
+  // Close on backdrop click
+  document.getElementById('modal-new-assistant').addEventListener('click', function (e) {
+    if (e.target === this) closeNewAssistantModal();
+  });
+
+  // Close on Escape
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') closeNewAssistantModal();
+  });
+
+  async function handleCreateAssistant() {
+    console.log('[BTN] Create Assistant clicked');
+    const errEl = document.getElementById('modal-assistant-error');
+    const btn   = document.getElementById('modal-create-btn');
+
+    if (!currentUser) {
+      errEl.textContent   = 'You are not logged in. Please refresh the page and log in again.';
+      errEl.style.display = 'block';
+      console.error('[CREATE ASSISTANT] BLOCKED — currentUser is null (not authenticated)');
+      return;
+    }
+
+    const name     = document.getElementById('ma-name').value.trim();
+    const language = document.getElementById('ma-language').value;
+    const voice    = document.getElementById('ma-voice').value;
+
+    console.log('[CREATE ASSISTANT] Form values:', { name, language, voice, user_id: currentUser.id });
+
+    if (!name) {
+      errEl.textContent   = 'Please enter a name for the assistant.';
+      errEl.style.display = 'block';
+      document.getElementById('ma-name').focus();
+      console.warn('[CREATE ASSISTANT] Validation failed — name is empty');
+      return;
+    }
+
+    btn.disabled    = true;
+    btn.textContent = 'Creating…';
+    errEl.style.display = 'none';
+
+    console.log('[CREATE ASSISTANT] Calling db.createAssistant…');
+    const result = await db.createAssistant({ name, language, voice, status: 'offline' });
+
+    console.log('[CREATE ASSISTANT] db response:', result);
+
+    if (!result.success) {
+      console.error('[CREATE ASSISTANT] FAILED:', result.error);
+      errEl.textContent   = result.error || 'Could not create assistant. Please try again.';
+      errEl.style.display = 'block';
+      btn.disabled        = false;
+      btn.textContent     = 'Create Assistant';
+      return;
+    }
+
+    console.log('[CREATE ASSISTANT] SUCCESS — assistant "' + name + '" created', result.data);
+    closeNewAssistantModal();
+
+    // Reload full list from DB so counts and cards are always in sync
+    const freshRes = await db.getAssistants();
+    const list     = freshRes.success ? freshRes.data : [];
+    const activeCount = list.filter(a => a.status === 'active' || a.status === 'online').length;
+
+    renderAssistants(list);
+    document.getElementById('assistants-sub').textContent =
+      `${list.length} assistant${list.length !== 1 ? 's' : ''} · ${activeCount} active`;
+    // Keep home-page metric card in sync
+    if (document.getElementById('metric-assistants')) {
+      document.getElementById('metric-assistants').textContent = list.length;
+      document.getElementById('metric-assistants-sub').textContent = `${activeCount} active`;
+    }
+  }
+
+  // ── Activity feed ─────────────────────────────────────────────────────────────
+  function renderActivity(calls) {
+    const list = document.getElementById('activity-list');
+    if (calls.length === 0) {
+      list.innerHTML = `<div style="padding:24px 20px;text-align:center;color:#9CA3AF;font-size:13px;">No recent activity</div>`;
+      return;
+    }
+    list.innerHTML = calls.map(c => {
+      const caller  = c.caller_name || c.phone_number || 'Unknown';
+      const asst    = c.assistant_name || 'Lana';
+      const dur     = c.duration_seconds ? fmtDur(c.duration_seconds) : '';
+      const timeAgo = relTime(new Date(c.created_at));
+      const missed  = c.status === 'missed' || c.status === 'no-answer';
+      return `
+        <div class="activity-item">
+          <div class="activity-dot ${missed ? 'dot-system' : 'dot-call'}"></div>
+          <div class="activity-body">
+            <div class="activity-text">
+              <strong>${escHtml(asst)}</strong> ${missed ? 'missed call from' : 'completed a call with'} <strong>${escHtml(caller)}</strong>
+            </div>
+            <div class="activity-time">${timeAgo}${dur ? ' · ' + dur : ''}</div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  // ── Calls page (lazy) ─────────────────────────────────────────────────────────
+  const _loaded = { calls: false, contacts: false };
+
+  async function loadCallsPage() {
+    if (_loaded.calls) return;
+    _loaded.calls = true;
+    const list = document.getElementById('calls-list');
+    list.innerHTML = `<div style="padding:24px 20px;text-align:center;color:#9CA3AF;font-size:13px;">Loading…</div>`;
+
+    const callsRes = await db.getCalls(50);
+
+    if (!callsRes.success) {
+      list.innerHTML = `<div style="padding:24px 20px;text-align:center;color:#9CA3AF;font-size:13px;">Could not load calls. Please try again.</div>`;
+      _loaded.calls = false;
+      return;
+    }
+
+    const rows = callsRes.data || [];
+    document.getElementById('calls-sub').textContent =
+      rows.length === 0 ? 'No calls yet'
+        : `${rows.length} call${rows.length !== 1 ? 's' : ''} · most recent first`;
+    renderCalls(rows);
+  }
+
+  function renderCalls(calls) {
+    const list = document.getElementById('calls-list');
+    if (calls.length === 0) {
+      list.innerHTML = `<div style="padding:48px 20px;text-align:center;color:#9CA3AF;font-size:13px;">No calls recorded yet.</div>`;
+      return;
+    }
+    list.innerHTML = calls.map(c => {
+      const caller  = c.caller_name || c.phone_number || 'Unknown';
+      const asst    = c.assistant_name || 'Lana';
+      const dur     = c.duration_seconds ? fmtDur(c.duration_seconds) : '—';
+      const d       = new Date(c.created_at).toLocaleDateString('de-DE', { day: '2-digit', month: 'short', year: 'numeric' });
+      const missed  = c.status === 'missed' || c.status === 'no-answer';
+      const summary = c.summary
+        ? ` · ${escHtml(c.summary.slice(0, 60))}${c.summary.length > 60 ? '…' : ''}` : '';
+      return `
+        <div class="activity-item">
+          <div class="activity-dot ${missed ? 'dot-system' : 'dot-call'}"></div>
+          <div class="activity-body">
+            <div class="activity-text">
+              <strong>${escHtml(asst)}</strong> ${missed ? 'missed call from' : 'call with'} <strong>${escHtml(caller)}</strong><span style="color:#9CA3AF;">${summary}</span>
+            </div>
+            <div class="activity-time">${d} · ${dur}</div>
+          </div>
+        </div>`;
+    }).join('');
+  }
+
+  // ── Contacts page (lazy) ──────────────────────────────────────────────────────
+  async function loadContactsPage() {
+    if (_loaded.contacts) return;
+    _loaded.contacts = true;
+    const list = document.getElementById('contacts-list');
+    list.innerHTML = `<div style="padding:24px 20px;text-align:center;color:#9CA3AF;font-size:13px;">Loading…</div>`;
+
+    const { data, error } = await sb.from('customer_contacts')
+      .select('id, first_name, last_name, company, phone, email, created_at')
+      .eq('user_id', currentUser.id)
+      .order('created_at', { ascending: false })
+      .limit(50);
+
+    if (error) {
+      list.innerHTML = `<div style="padding:24px 20px;text-align:center;color:#9CA3AF;font-size:13px;">Could not load contacts. Please try again.</div>`;
+      _loaded.contacts = false;
+      return;
+    }
+
+    const rows = data || [];
+    document.getElementById('contacts-sub').textContent =
+      rows.length === 0 ? 'No contacts yet' : `${rows.length} contact${rows.length !== 1 ? 's' : ''}`;
+    renderContacts(rows);
+  }
+
+  function renderContacts(contacts) {
+    const list = document.getElementById('contacts-list');
+    if (contacts.length === 0) {
+      list.innerHTML = `<div style="padding:48px 20px;text-align:center;color:#9CA3AF;font-size:13px;">No contacts yet. They are added automatically from incoming calls.</div>`;
+      return;
+    }
+    list.innerHTML = contacts.map(c => {
+      const name = [c.first_name, c.last_name].filter(Boolean).join(' ') || 'Unknown';
+      const d    = new Date(c.created_at).toLocaleDateString('de-DE', { day: '2-digit', month: 'short', year: 'numeric' });
+      return `
+        <div class="invoice-row">
+          <span class="invoice-date" style="width:150px;">${escHtml(name)}</span>
+          <span class="invoice-desc">${escHtml(c.company || c.email || '—')}</span>
+          <span class="invoice-amt" style="width:130px;text-align:right;">${escHtml(c.phone || '—')}</span>
+          <span style="font-size:11px;color:#9CA3AF;margin-left:12px;white-space:nowrap;">${d}</span>
+        </div>`;
+    }).join('');
+  }
+
+  // ── Helpers ──────────────────────────────────────────────────────────────────
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function fmtDur(sec) {
+    const m = Math.floor(sec / 60), s = sec % 60;
+    return `${m}m ${String(s).padStart(2,'0')}s`;
+  }
+  function relTime(date) {
+    const diff = Date.now() - date;
+    const m = Math.floor(diff / 60000);
+    if (m < 1)  return 'just now';
+    if (m < 60) return `${m} minute${m > 1 ? 's' : ''} ago`;
+    const h = Math.floor(m / 60);
+    if (h < 24) return `${h} hour${h > 1 ? 's' : ''} ago`;
+    return `${Math.floor(h / 24)} days ago`;
+  }
+
+  // ── Navigation ────────────────────────────────────────────────────────────────
+  const PAGE_TITLES = {
+    home: 'Home', assistants: 'Assistants', calls: 'Calls',
+    messages: 'Messages', contacts: 'Contacts', integrations: 'Integrations',
+    team: 'Team', billing: 'Billing', packages: 'Packages', settings: 'Settings'
+  };
+
+  document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', () => {
+      const page = item.dataset.page;
+      if (!page) return;
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.getElementById('page-' + page).classList.add('active');
+      item.classList.add('active');
+      document.getElementById('page-title').textContent = PAGE_TITLES[page] || page;
+      closeAssistantSettings();
+      if (page === 'calls'    && currentUser) loadCallsPage();
+      if (page === 'contacts' && currentUser) loadContactsPage();
+    });
+  });
+
+  function handleTestCall(assistantName) {
+    console.log('[BTN] Test Call clicked for:', assistantName);
+    alert('Test Call for "' + assistantName + '" is not yet configured.\nPlease assign a phone number to this assistant first.');
+  }
+
+  function handleAddCredits() {
+    console.log('[BTN] Add Credits clicked — not yet implemented');
+    alert('Add Credits: payment integration not yet connected.');
+  }
+
+  function handleTransactionHistory() {
+    console.log('[BTN] Transaction History clicked — not yet implemented');
+    alert('Transaction History: full history not yet implemented.');
+  }
+
+  function handleAddPaymentMethod() {
+    console.log('[BTN] Add Payment Method clicked — not yet implemented');
+    alert('Add Payment Method: payment integration not yet connected.');
+  }
+
+  function openAssistantSettings(id) { openAssistantSettingsById(id); }
+
+  function closeAssistantSettings() {
+    const panel = document.getElementById('assistant-settings-panel');
+    if (!panel) return;
+    panel.style.display = 'none';
+    document.getElementById('assistants-grid').style.display = 'grid';
+    document.querySelector('#page-assistants .page-header').style.display = 'flex';
+  }
+</script>
+</body>
+</html>

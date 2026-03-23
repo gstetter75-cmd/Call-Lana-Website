@@ -1,0 +1,17 @@
+# Dependencies (dev-only, not needed for deployment)
+node_modules/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Dev tool output
+temporary screenshots/
+
+# Puppeteer cache
+.cache/

@@ -1,0 +1,29 @@
+-- ============================================================
+-- MIGRATION 000 — Auth Metadata Security
+-- RUN BEFORE 001_profiles.sql
+--
+-- ── STATUS: DEPRECATED — no longer applies ──────────────────
+--
+-- This file previously contained a BEFORE UPDATE trigger on
+-- auth.users that stripped the 'role' key from raw_user_meta_data
+-- for non-service-role callers, preventing client-side privilege
+-- escalation via supabase.auth.updateUser({ data: { role: 'superadmin' } }).
+--
+-- That trigger has been removed because:
+--
+--   1. We no longer use DB triggers on auth.users at all.
+--      Supabase restricts access to auth.users from user-defined
+--      functions in ways that cause unpredictable permission errors.
+--
+--   2. is_superadmin() now reads from profiles.role (SECURITY DEFINER),
+--      not from raw_user_meta_data. Even if a user injects
+--      role: 'superadmin' into their own auth metadata, it has
+--      no effect — is_superadmin() ignores that field entirely.
+--
+--   3. profiles.role is protected against client-side escalation by:
+--      a) No INSERT policy allows role != 'customer'
+--      b) protect_profile_role() trigger blocks non-superadmin UPDATE
+--         of the role column (see 001_profiles.sql)
+--
+-- This file is intentionally left as documentation only.
+-- ============================================================

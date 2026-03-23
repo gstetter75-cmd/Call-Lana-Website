@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Registrierung — Call Lana</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: {
+          brand: { 50:'#FAF5FF', 100:'#F3E8FF', 200:'#E9D5FF', 300:'#D8B4FE', 400:'#7C3AED', 500:'#6D28D9', 600:'#5B21B6', 700:'#4C1D95', 800:'#3B0764', 900:'#2E1065' },
+          dark: { 950:'#FFFFFF', 900:'#F9FAFB', 850:'#F5F3FF', 800:'#F3F4F6', 700:'#E5E7EB', 600:'#D1D5DB', 500:'#9CA3AF' },
+          surface: { dark:'#FFFFFF', mid:'#F9FAFB' },
+        },
+        fontFamily: { display: ['"Space Grotesk"', 'system-ui', 'sans-serif'], body: ['"Inter"', 'system-ui', 'sans-serif'] },
+      }}
+    }
+  </script>
+</head>
+<body class="bg-white text-gray-900 antialiased overflow-x-hidden">
+
+  <div id="nav-container"></div>
+
+  <!-- Registration Section -->
+  <section class="bg-section-dark relative pt-28 pb-20 min-h-screen">
+    <div class="noise-overlay"></div>
+    <div class="relative z-10 max-w-6xl mx-auto px-6">
+      <div class="grid lg:grid-cols-2 gap-12 items-start">
+
+        <!-- LEFT: Info Column (hidden on mobile) -->
+        <div class="hidden lg:block pt-8">
+
+          <!-- Logo -->
+          <img src="brand_assets/A_vector-style_digital_logo_for_the_brand_Clana_.png" alt="Call Lana" class="h-14 w-auto mb-8" />
+
+          <!-- Heading -->
+          <h1 class="font-display text-3xl md:text-4xl font-bold tracking-tight mb-4">
+            <span class="lang-de">Dein KI-Assistent wartet schon auf <span class="text-brand-400">dich</span></span>
+            <span class="lang-en hidden">Your AI assistant is <span class="text-brand-400">waiting</span> for you</span>
+          </h1>
+
+          <!-- Description -->
+          <p class="font-body text-lg text-gray-500 leading-relaxed mb-8">
+            <span class="lang-de">In weniger als 15 Minuten ist dein persönlicher KI-Telefonassistent einsatzbereit. Kein technisches Wissen nötig — wir begleiten dich bei jedem Schritt.</span>
+            <span class="lang-en hidden">Your personal AI phone assistant is ready in just 30 minutes. No technical knowledge needed — we guide you every step of the way.</span>
+          </p>
+
+          <!-- Bullet Points -->
+          <ul class="space-y-4">
+            <li class="flex items-start gap-3">
+              <svg class="w-6 h-6 text-brand-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              <span class="font-body text-gray-700">
+                <span class="lang-de">Unter 15 Minuten bis zur ersten KI-Antwort</span>
+                <span class="lang-en hidden">30 minutes to your first AI response</span>
+              </span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-6 h-6 text-brand-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              <span class="font-body text-gray-700">
+                <span class="lang-de">Server in Deutschland — 100 % DSGVO-konform</span>
+                <span class="lang-en hidden">Servers in Germany — 100% GDPR compliant</span>
+              </span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-6 h-6 text-brand-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              <span class="font-body text-gray-700">
+                <span class="lang-de">5.000+ Unternehmen vertrauen Call Lana täglich</span>
+                <span class="lang-en hidden">5,000+ businesses trust Call Lana daily</span>
+              </span>
+            </li>
+            <li class="flex items-start gap-3">
+              <svg class="w-6 h-6 text-brand-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              <span class="font-body text-gray-700">
+                <span class="lang-de">Jederzeit kündbar — kein Risiko</span>
+                <span class="lang-en hidden">Cancel anytime — no risk</span>
+              </span>
+            </li>
+          </ul>
+
+          <!-- Decorative gradient blob -->
+          <div class="mt-16 relative">
+            <div class="absolute -inset-4 bg-gradient-to-br from-brand-400/5 to-transparent rounded-3xl blur-2xl"></div>
+            <div class="relative bg-dark-800/40 border border-dark-700/30 rounded-2xl p-6">
+              <div class="flex items-center gap-3 mb-3">
+                <div class="flex -space-x-2">
+                  <div class="w-8 h-8 rounded-full bg-brand-400/20 border-2 border-dark-800 flex items-center justify-center"><span class="text-xs font-bold text-brand-400">M</span></div>
+                  <div class="w-8 h-8 rounded-full bg-brand-400/20 border-2 border-dark-800 flex items-center justify-center"><span class="text-xs font-bold text-brand-400">S</span></div>
+                  <div class="w-8 h-8 rounded-full bg-brand-400/20 border-2 border-dark-800 flex items-center justify-center"><span class="text-xs font-bold text-brand-400">K</span></div>
+                </div>
+                <div class="flex gap-0.5">
+                  <svg class="w-4 h-4 text-brand-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  <svg class="w-4 h-4 text-brand-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  <svg class="w-4 h-4 text-brand-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  <svg class="w-4 h-4 text-brand-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                  <svg class="w-4 h-4 text-brand-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+                </div>
+              </div>
+              <p class="font-body text-sm text-gray-500 italic leading-relaxed">
+                <span class="lang-de">"Seit wir Call Lana nutzen, verpassen wir keinen Anruf mehr. Die Einrichtung hat keine 15 Minuten gedauert."</span>
+                <span class="lang-en hidden">"Since using Call Lana, we never miss a call. Setup took less than 30 minutes."</span>
+              </p>
+              <p class="font-body text-xs text-gray-500 mt-2">
+                <span class="lang-de">— Marco S., Klempnermeister</span>
+                <span class="lang-en hidden">— Marco S., Master Plumber</span>
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- RIGHT: Registration Form Card -->
+        <div>
+          <div class="bg-dark-800/60 border border-dark-700/50 rounded-2xl p-8">
+
+            <!-- Heading -->
+            <div class="mb-6">
+              <h2 class="font-display text-2xl font-bold tracking-tight mb-2">
+                <span class="lang-de">Account erstellen</span>
+                <span class="lang-en hidden">Create account</span>
+              </h2>
+              <p class="font-body text-sm text-gray-500">
+                <span class="lang-de">Bereits registriert? <a href="login.html" class="text-brand-400 hover:text-brand-300 transition-colors duration-200 font-medium">Jetzt einloggen &rarr;</a></span>
+                <span class="lang-en hidden">Already registered? <a href="login.html" class="text-brand-400 hover:text-brand-300 transition-colors duration-200 font-medium">Log in now &rarr;</a></span>
+              </p>
+            </div>
+
+            <!-- Form -->
+            <form class="space-y-5" id="reg-form" onsubmit="handleRegister(event);">
+
+              <!-- Vorname + Nachname -->
+              <div class="grid grid-cols-2 gap-4">
+                <div>
+                  <label class="block font-body text-sm font-medium text-gray-700 mb-2">
+                    <span class="lang-de">Vorname *</span>
+                    <span class="lang-en hidden">First name *</span>
+                  </label>
+                  <input type="text" id="reg-vorname" required class="form-input" placeholder="Max" />
+                </div>
+                <div>
+                  <label class="block font-body text-sm font-medium text-gray-700 mb-2">
+                    <span class="lang-de">Nachname *</span>
+                    <span class="lang-en hidden">Last name *</span>
+                  </label>
+                  <input type="text" id="reg-nachname" required class="form-input" placeholder="Mustermann" />
+                </div>
+              </div>
+
+              <!-- E-Mail -->
+              <div>
+                <label class="block font-body text-sm font-medium text-gray-700 mb-2">
+                  <span class="lang-de">E-Mail *</span>
+                  <span class="lang-en hidden">Email *</span>
+                </label>
+                <input type="email" id="reg-email" required class="form-input" placeholder="max@unternehmen.de" />
+              </div>
+
+              <!-- Unternehmen -->
+              <div>
+                <label class="block font-body text-sm font-medium text-gray-700 mb-2">
+                  <span class="lang-de">Unternehmen</span>
+                  <span class="lang-en hidden">Company</span>
+                </label>
+                <input type="text" id="reg-company" class="form-input" placeholder="Mustermann GmbH" />
+              </div>
+
+              <!-- Branche -->
+              <div>
+                <label class="block font-body text-sm font-medium text-gray-700 mb-2">
+                  <span class="lang-de">Branche</span>
+                  <span class="lang-en hidden">Industry</span>
+                </label>
+                <select id="reg-branche" class="form-input">
+                  <option value="" disabled selected>Bitte wählen...</option>
+                  <option value="klempner">Klempner</option>
+                  <option value="elektriker">Elektriker</option>
+                  <option value="dachdecker">Dachdecker</option>
+                  <option value="heizung">Heizung</option>
+                  <option value="bau">Bau</option>
+                  <option value="maler">Maler</option>
+                  <option value="sonstiges">Sonstiges</option>
+                </select>
+              </div>
+
+              <!-- Passwort -->
+              <div>
+                <label class="block font-body text-sm font-medium text-gray-700 mb-2">
+                  <span class="lang-de">Passwort * <span class="text-gray-500 font-normal">(min. 8 Zeichen)</span></span>
+                  <span class="lang-en hidden">Password * <span class="text-gray-500 font-normal">(min. 8 characters)</span></span>
+                </label>
+                <input type="password" id="reg-password" required minlength="8" class="form-input" placeholder="Mindestens 8 Zeichen" />
+              </div>
+
+              <!-- Passwort bestätigen -->
+              <div>
+                <label class="block font-body text-sm font-medium text-gray-700 mb-2">
+                  <span class="lang-de">Passwort bestätigen *</span>
+                  <span class="lang-en hidden">Confirm password *</span>
+                </label>
+                <input type="password" id="reg-password2" required minlength="8" class="form-input" placeholder="Passwort wiederholen" />
+                <p id="reg-pw-error" class="text-red-400 text-xs mt-1 hidden">Passwörter stimmen nicht überein.</p>
+              </div>
+
+              <!-- Datenschutz -->
+              <div class="flex items-start gap-3">
+                <input type="checkbox" required id="reg-datenschutz" class="mt-1 w-4 h-4 rounded border-dark-600 bg-dark-800 text-brand-400 focus:ring-brand-400 focus:ring-offset-0 cursor-pointer" />
+                <label for="reg-datenschutz" class="font-body text-sm text-gray-500 leading-relaxed cursor-pointer">
+                  <span class="lang-de">Ich stimme den <a href="agb.html" class="text-brand-400 hover:text-brand-300 underline">AGB</a> und der <a href="datenschutz.html" class="text-brand-400 hover:text-brand-300 underline">Datenschutzerklärung</a> zu. *</span>
+                  <span class="lang-en hidden">I agree to the <a href="agb.html" class="text-brand-400 hover:text-brand-300 underline">Terms</a> and <a href="datenschutz.html" class="text-brand-400 hover:text-brand-300 underline">Privacy Policy</a>. *</span>
+                </label>
+              </div>
+
+              <!-- Error message -->
+              <p id="reg-error" class="hidden text-sm text-red-400 bg-red-400/10 border border-red-400/20 rounded-xl px-4 py-3"></p>
+
+              <!-- Submit -->
+              <button type="submit" class="btn-brand w-full">
+                <span class="lang-de">Account erstellen &rarr;</span>
+                <span class="lang-en hidden">Create account &rarr;</span>
+              </button>
+            </form>
+
+            <!-- Trust note -->
+            <p class="font-body text-xs text-gray-500 text-center mt-6 leading-relaxed">
+              <svg class="w-4 h-4 inline-block text-brand-400 mr-1 -mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+              <span class="lang-de">256-Bit SSL-Verschlüsselung &middot; DSGVO-konform &middot; Server in Deutschland</span>
+              <span class="lang-en hidden">256-Bit SSL encryption &middot; GDPR compliant &middot; Servers in Germany</span>
+            </p>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <div id="footer-container"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="components.js"></script>
+  <script>
+    const { createClient } = supabase;
+    const sb = createClient(
+      'https://dtfbwqborzjjhqwtobhl.supabase.co',
+      'sb_publishable_Dbvx3YEyG9LnrL2moVd0NQ_5VF48jos',
+      { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } }
+    );
+
+    // Redirect if already logged in
+    sb.auth.getSession().then(({ data: { session } }) => {
+      if (session) window.location.href = 'dashboard.html';
+    });
+
+    async function handleRegister(e) {
+      e.preventDefault();
+      const pw  = document.getElementById('reg-password').value;
+      const pw2 = document.getElementById('reg-password2').value;
+      const pwErr = document.getElementById('reg-pw-error');
+      if (pw !== pw2) { pwErr.classList.remove('hidden'); return; }
+      pwErr.classList.add('hidden');
+
+      const firstName = document.getElementById('reg-vorname').value;
+      const lastName  = document.getElementById('reg-nachname').value;
+      const email     = document.getElementById('reg-email').value;
+      const company   = document.getElementById('reg-company').value;
+      const industry  = document.getElementById('reg-branche').value;
+
+      const btn   = document.querySelector('#reg-form button[type="submit"]');
+      const errEl = document.getElementById('reg-error');
+      btn.disabled = true;
+      btn.textContent = '…';
+      errEl.classList.add('hidden');
+
+      const { error } = await sb.auth.signUp({
+        email,
+        password: pw,
+        options: {
+          data: { firstName, lastName, company, industry }
+        }
+      });
+
+      if (error) {
+        const friendlyErrors = {
+          'User already registered': 'Diese E-Mail-Adresse ist bereits registriert. Bitte melde dich an.',
+          'Password should be at least 6 characters': 'Das Passwort muss mindestens 6 Zeichen lang sein.',
+          'Unable to validate email address: invalid format': 'Bitte gib eine gültige E-Mail-Adresse ein.',
+          'Database error saving new user': 'Registrierung wird vorbereitet. Bitte versuche es in einem Moment erneut.',
+          'signup_disabled': 'Die Registrierung ist derzeit deaktiviert.',
+        };
+        errEl.textContent = friendlyErrors[error.message] || error.message;
+        errEl.classList.remove('hidden');
+        btn.disabled = false;
+        btn.innerHTML = '<span class="lang-de">Account erstellen &rarr;</span><span class="lang-en hidden">Create account &rarr;</span>';
+      } else {
+        // Check if a session was created (email confirmation disabled) or if confirmation is needed
+        const { data: { session } } = await sb.auth.getSession();
+        if (session) {
+          // No DB trigger — insert profile row directly before navigating.
+          // ON CONFLICT DO NOTHING equivalent: ignore unique_violation (23505).
+          await sb.from('profiles').insert({
+            id: session.user.id,
+            email: session.user.email,
+            first_name: firstName || null,
+            last_name: lastName  || null,
+            company:    company  || null,
+            industry:   industry || null,
+          }).then(() => {}).catch(() => {});
+          window.location.href = 'dashboard.html';
+        } else {
+          // Email confirmation required — show success message
+          errEl.style.cssText = '';
+          errEl.className = 'text-sm text-green-700 bg-green-50 border border-green-200 rounded-xl px-4 py-3';
+          errEl.textContent = 'Registrierung erfolgreich! Bitte bestätige deine E-Mail-Adresse und melde dich dann an.';
+          errEl.classList.remove('hidden');
+          btn.disabled = false;
+          btn.innerHTML = '<span class="lang-de">Account erstellen &rarr;</span><span class="lang-en hidden">Create account &rarr;</span>';
+        }
+      }
+    }
+  </script>
+</body>
+</html>
