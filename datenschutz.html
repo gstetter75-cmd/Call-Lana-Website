@@ -1,93 +1,307 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Datenschutzerklärung — Call Lana</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
-  <script>
-    tailwind.config = {
-      theme: { extend: {
-        colors: {
-          brand: { 50:'#FAF5FF', 100:'#F3E8FF', 200:'#E9D5FF', 300:'#D8B4FE', 400:'#7C3AED', 500:'#6D28D9', 600:'#5B21B6', 700:'#4C1D95', 800:'#3B0764', 900:'#2E1065' },
-          dark: { 950:'#FFFFFF', 900:'#F9FAFB', 850:'#F5F3FF', 800:'#F3F4F6', 700:'#E5E7EB', 600:'#D1D5DB', 500:'#9CA3AF' },
-          surface: { dark:'#FFFFFF', mid:'#F9FAFB' },
-        },
-        fontFamily: { display: ['"Space Grotesk"', 'system-ui', 'sans-serif'], body: ['"Inter"', 'system-ui', 'sans-serif'] },
-      }}
-    }
-  </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Datenschutzerklärung – Call Lana</title>
+<meta name="description" content="Datenschutzerklärung der Call Lana GmbH – Informationen zum Umgang mit Ihren personenbezogenen Daten.">
+<meta property="og:title" content="Datenschutzerklärung – Call Lana">
+<meta property="og:description" content="Datenschutzerklärung von Call Lana – Informationen zum Umgang mit Ihren Daten.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://call-lana.de/datenschutz">
+<meta property="og:locale" content="de_DE">
+<link rel="canonical" href="https://call-lana.de/datenschutz">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/marketing.css">
+<style>
+  .legal-hero { padding: 120px 6% 48px; text-align: center; }
+  .legal-hero h1 { font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 800; margin-bottom: 8px; }
+  .legal-hero p { color: #64748b; font-size: 0.95rem; }
+  .legal-content { max-width: 800px; margin: 0 auto 80px; padding: 0 6%; }
+  .legal-section { margin-bottom: 40px; }
+  .legal-section h2 { font-size: 1.4rem; font-weight: 700; color: #1e293b; margin-bottom: 12px; }
+  .legal-section h3 { font-size: 1.1rem; font-weight: 600; color: #475569; margin: 24px 0 10px; }
+  .legal-section p { color: #475569; line-height: 1.8; margin-bottom: 12px; }
+  .legal-section a { color: #7c3aed; text-decoration: none; }
+  .legal-section a:hover { text-decoration: underline; }
+  .legal-section ul { list-style: none; padding-left: 0; }
+  .legal-section ul li { padding-left: 20px; position: relative; margin-bottom: 8px; color: #475569; }
+  .legal-section ul li::before { content: '\2192'; position: absolute; left: 0; color: #7c3aed; }
+  .highlight-box { background: #f1f0ff; border: 1px solid #e0dbff; border-radius: 12px; padding: 20px 24px; margin: 24px 0; }
+  .highlight-box h3 { color: #7c3aed; margin-top: 0; font-size: 1.1rem; font-weight: 600; }
+  .highlight-box p { color: #475569; line-height: 1.8; margin-bottom: 0; }
+  .highlight-box a { color: #7c3aed; text-decoration: none; }
+  .highlight-box a:hover { text-decoration: underline; }
+</style>
 </head>
-<body class="bg-white text-gray-900 antialiased overflow-x-hidden">
-  <div id="nav-container"></div>
+<body>
+<a href="#main" class="skip-link">Zum Inhalt springen</a>
 
-  <main class="pt-28 pb-20 bg-section-dark">
-    <div class="max-w-3xl mx-auto px-6">
-      <h1 class="font-display text-4xl font-extrabold text-gray-900 mb-2" style="letter-spacing:-0.03em;">Datenschutzerklärung</h1>
-      <p class="text-gray-500 text-sm mb-10">Stand: März 2026</p>
+<nav id="nav">
+  <a href="index.html" class="logo"><picture><source srcset="logo-nav.webp" type="image/webp"><img src="logo-nav.png" alt="Call Lana" height="40"></picture></a>
+  <ul class="nav-links">
+    <li><a href="funktionen.html">Funktionen</a></li>
+    <li><a href="branchen.html">Branchen</a></li>
+    <li><a href="preise.html">Preise</a></li>
+    <li><a href="kontakt.html">Kontakt</a></li>
+  </ul>
+  <div class="nav-right"><a href="login.html" class="nav-login">Login</a><a href="registrierung.html" class="nav-cta">Kostenlos starten</a></div>
+  <button class="mob-btn" id="mb" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
 
-      <div class="legal-content">
-        <h2>1. Verantwortlicher</h2>
-        <p>
-          Call Lana GmbH<br />
-          Osianderstraße 18, 73525 Schwäbisch Gmünd, Deutschland<br />
-          E-Mail: <a href="mailto:datenschutz@call-lana.de">datenschutz@call-lana.de</a><br />
-          Vertreten durch: Ahmet Asad &amp; Denis Steller
-        </p>
+<section class="legal-hero" id="main">
+  <h1>Datenschutzerklärung</h1>
+  <p>Stand: Februar 2026 · DSGVO-konform</p>
+</section>
 
-        <h2>2. Allgemeines zur Datenverarbeitung</h2>
-        <p>(a) <strong>Umfang der Verarbeitung personenbezogener Daten:</strong> Wir verarbeiten personenbezogene Daten unserer Nutzer grundsätzlich nur, soweit dies zur Bereitstellung einer funktionsfähigen Website sowie unserer Inhalte und Leistungen erforderlich ist.</p>
-        <p>(b) <strong>Rechtsgrundlage für die Verarbeitung:</strong> Art. 6 Abs. 1 lit. a DSGVO (Einwilligung), Art. 6 Abs. 1 lit. b DSGVO (Vertragserfüllung), Art. 6 Abs. 1 lit. f DSGVO (berechtigtes Interesse).</p>
-        <p>(c) <strong>Datenlöschung und Speicherdauer:</strong> Die personenbezogenen Daten der betroffenen Person werden gelöscht oder gesperrt, sobald der Zweck der Speicherung entfällt.</p>
+<div class="legal-content">
+  <div class="highlight-box">
+    <h3>Unsere Datenschutz-Prinzipien</h3>
+    <p>Wir nehmen den Schutz Ihrer persönlichen Daten sehr ernst. Alle Daten werden ausschließlich auf Servern in Deutschland (Hetzner, Nürnberg) verarbeitet. Wir nutzen OpenAI ausschließlich über Microsoft Azure-Server in der EU. Ihre Daten verlassen niemals Europa.</p>
+  </div>
 
-        <h2>3. Bereitstellung der Website und Erstellung von Logfiles</h2>
-        <p>Bei jedem Aufruf unserer Internetseite erfasst unser System automatisiert Daten und Informationen vom Computersystem des aufrufenden Rechners: Browsertyp und -version, Betriebssystem, IP-Adresse, Datum und Uhrzeit der Anfrage, Websites von denen das System des Nutzers auf unsere Internetseite gelangt. Die Daten werden in den Logfiles unseres Systems gespeichert.</p>
-        <p>Die vorübergehende Speicherung der IP-Adresse durch das System ist notwendig, um eine Auslieferung der Website an den Rechner des Nutzers zu ermöglichen. Die Speicherung in Logfiles erfolgt, um die Funktionsfähigkeit der Website sicherzustellen. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO.</p>
+  <div class="legal-section">
+    <h2>1. Verantwortlicher</h2>
+    <p>
+      Verantwortlich für die Datenverarbeitung auf dieser Website ist:<br><br>
+      <strong>Call Lana GmbH</strong><br>
+      Wetzellplatz 2<br>
+      31137 Hildesheim<br>
+      Deutschland<br><br>
+      Geschäftsführer: Gero Stetter<br>
+      E-Mail: <a href="mailto:info@call-lana.de">info@call-lana.de</a><br>
+      Telefon: +49 5121 9343395
+    </p>
+  </div>
 
-        <h2>4. Registrierung und Nutzung des Dienstes</h2>
-        <p>(a) Für die Nutzung unseres Dienstes ist eine Registrierung erforderlich. Bei der Registrierung werden folgende Daten erhoben: Name, E-Mail-Adresse, Unternehmen, Branche, Telefonnummer.</p>
-        <p>(b) Die Verarbeitung der Daten dient der Bereitstellung unseres KI-Telefonassistenz-Dienstes. Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO.</p>
-        <p>(c) Die Daten werden gelöscht, sobald sie für die Erreichung des Zweckes ihrer Erhebung nicht mehr erforderlich sind, spätestens nach Beendigung des Vertragsverhältnisses.</p>
+  <div class="legal-section">
+    <h2>2. Allgemeines zur Datenverarbeitung</h2>
 
-        <h2>5. KI-Verarbeitung und Sprachdaten</h2>
-        <p>(a) Im Rahmen unseres Dienstes werden Telefongespräche durch KI-Systeme verarbeitet. Dabei werden Sprachdaten temporär verarbeitet, um den Dienst zu erbringen.</p>
-        <p>(b) Alle Sprachdaten werden ausschließlich auf Servern in Deutschland verarbeitet und gespeichert.</p>
-        <p>(c) Transkriptionen der Gespräche werden dem Nutzer zur Verfügung gestellt und gemäß den vertraglichen Vereinbarungen aufbewahrt.</p>
-        <p>(d) Rechtsgrundlage: Art. 6 Abs. 1 lit. b DSGVO.</p>
+    <h3>2.1 Umfang der Verarbeitung personenbezogener Daten</h3>
+    <p>
+      Wir verarbeiten personenbezogene Daten unserer Nutzer grundsätzlich nur, soweit dies zur Bereitstellung einer funktionsfähigen Website sowie unserer Inhalte und Leistungen erforderlich ist. Die Verarbeitung personenbezogener Daten unserer Nutzer erfolgt regelmäßig nur nach Einwilligung des Nutzers.
+    </p>
 
-        <h2>6. Analysedienste</h2>
-        <p>Wir nutzen Analysedienste, um die Nutzung unserer Website statistisch auszuwerten. Die erfassten Daten werden nicht dazu verwendet, den Besucher dieser Website persönlich zu identifizieren. Rechtsgrundlage: Art. 6 Abs. 1 lit. f DSGVO.</p>
+    <h3>2.2 Rechtsgrundlage für die Verarbeitung</h3>
+    <p>
+      Soweit wir für Verarbeitungsvorgänge personenbezogener Daten eine Einwilligung der betroffenen Person einholen, dient Art. 6 Abs. 1 lit. a EU-Datenschutzgrundverordnung (DSGVO) als Rechtsgrundlage.
+    </p>
+    <p>
+      Bei der Verarbeitung von personenbezogenen Daten, die zur Erfüllung eines Vertrages erforderlich ist, dient Art. 6 Abs. 1 lit. b DSGVO als Rechtsgrundlage.
+    </p>
+  </div>
 
-        <h2>7. Cookies</h2>
-        <p>Unsere Website verwendet Cookies. Bei Cookies handelt es sich um Textdateien, die im Internetbrowser bzw. vom Internetbrowser auf dem Computersystem des Nutzers gespeichert werden. Technisch notwendige Cookies werden auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO gespeichert. Für alle weiteren Cookies holen wir Ihre Einwilligung gemäß Art. 6 Abs. 1 lit. a DSGVO ein.</p>
+  <div class="legal-section">
+    <h2>3. Bereitstellung der Website und Erstellung von Logfiles</h2>
 
-        <h2>8. Rechte der betroffenen Person</h2>
-        <p>Sie haben folgende Rechte:</p>
-        <ul>
-          <li>Recht auf Auskunft (Art. 15 DSGVO)</li>
-          <li>Recht auf Berichtigung (Art. 16 DSGVO)</li>
-          <li>Recht auf Löschung (Art. 17 DSGVO)</li>
-          <li>Recht auf Einschränkung der Verarbeitung (Art. 18 DSGVO)</li>
-          <li>Recht auf Datenübertragbarkeit (Art. 20 DSGVO)</li>
-          <li>Widerspruchsrecht (Art. 21 DSGVO)</li>
-          <li>Recht auf Widerruf der datenschutzrechtlichen Einwilligungserklärung (Art. 7 Abs. 3 DSGVO)</li>
-          <li>Recht auf Beschwerde bei einer Aufsichtsbehörde (Art. 77 DSGVO)</li>
-        </ul>
+    <h3>3.1 Beschreibung und Umfang der Datenverarbeitung</h3>
+    <p>
+      Bei jedem Aufruf unserer Internetseite erfasst unser System automatisiert Daten und Informationen vom Computersystem des aufrufenden Rechners.
+    </p>
+    <p>Folgende Daten werden hierbei erhoben:</p>
+    <ul>
+      <li>Informationen über den Browsertyp und die verwendete Version</li>
+      <li>Das Betriebssystem des Nutzers</li>
+      <li>Den Internet-Service-Provider des Nutzers</li>
+      <li>Die IP-Adresse des Nutzers</li>
+      <li>Datum und Uhrzeit des Zugriffs</li>
+      <li>Websites, von denen das System des Nutzers auf unsere Internetseite gelangt</li>
+    </ul>
 
-        <h2>9. Datensicherheit</h2>
-        <p>Wir verwenden innerhalb des Website-Besuchs das verbreitete SSL-Verfahren (Secure Socket Layer) in Verbindung mit der jeweils höchsten Verschlüsselungsstufe, die von Ihrem Browser unterstützt wird.</p>
+    <h3>3.2 Rechtsgrundlage</h3>
+    <p>
+      Rechtsgrundlage für die vorübergehende Speicherung der Daten und der Logfiles ist Art. 6 Abs. 1 lit. f DSGVO.
+    </p>
 
-        <h2>10. Aktualität und Änderung dieser Datenschutzerklärung</h2>
-        <p>Diese Datenschutzerklärung ist aktuell gültig und hat den Stand Januar 2025. Durch die Weiterentwicklung unserer Website und Angebote oder aufgrund geänderter gesetzlicher Vorgaben kann es notwendig werden, diese Datenschutzerklärung zu ändern.</p>
-      </div>
+    <h3>3.3 Dauer der Speicherung</h3>
+    <p>
+      Die Daten werden gelöscht, sobald sie für die Erreichung des Zweckes ihrer Erhebung nicht mehr erforderlich sind. Im Falle der Erfassung der Daten zur Bereitstellung der Website ist dies der Fall, wenn die jeweilige Sitzung beendet ist.
+    </p>
+  </div>
+
+  <div class="legal-section">
+    <h2>4. Registrierung und Nutzung des Dienstes</h2>
+
+    <h3>4.1 Beschreibung und Umfang</h3>
+    <p>
+      Auf unserer Internetseite bieten wir Nutzern die Möglichkeit, sich unter Angabe personenbezogener Daten zu registrieren. Die Daten werden dabei in eine Eingabemaske eingegeben und an uns übermittelt und gespeichert.
+    </p>
+    <p>Folgende Daten werden im Rahmen der Registrierung erhoben:</p>
+    <ul>
+      <li>Vorname und Nachname</li>
+      <li>E-Mail-Adresse</li>
+      <li>Unternehmensname (optional)</li>
+      <li>Branche (optional)</li>
+      <li>Telefonnummer (bei Nutzung des Dienstes)</li>
+      <li>Gesprächstranskripte (verschlüsselt gespeichert)</li>
+    </ul>
+
+    <h3>4.2 Rechtsgrundlage</h3>
+    <p>
+      Rechtsgrundlage für die Verarbeitung der Daten ist bei Vorliegen einer Einwilligung des Nutzers Art. 6 Abs. 1 lit. a DSGVO.
+    </p>
+    <p>
+      Dient die Registrierung der Erfüllung eines Vertrages, dessen Vertragspartei der Nutzer ist, so ist zusätzliche Rechtsgrundlage Art. 6 Abs. 1 lit. b DSGVO.
+    </p>
+  </div>
+
+  <div class="legal-section">
+    <h2>5. KI-Verarbeitung und OpenAI</h2>
+
+    <div class="highlight-box">
+      <h3>EU-Datenverarbeitung garantiert</h3>
+      <p>
+        Wir nutzen OpenAI-Technologie ausschließlich über Microsoft Azure-Server in der Europäischen Union. Alle Sprachdaten werden vor der Verarbeitung verschlüsselt. Ihre Telefongespräche verlassen niemals Europa.
+      </p>
     </div>
-  </main>
 
-  <div id="footer-container"></div>
-  <script src="components.js"></script>
+    <h3>5.1 Umfang der Verarbeitung</h3>
+    <p>
+      Zur Bereitstellung unseres KI-Telefonassistenten verarbeiten wir Sprachdaten und Gesprächsinhalte. Diese Verarbeitung erfolgt ausschließlich:
+    </p>
+    <ul>
+      <li>Auf Servern von Hetzner in Nürnberg, Deutschland</li>
+      <li>Über Microsoft Azure EU-Server (Rechenzentren in Amsterdam & Dublin)</li>
+      <li>Mit Ende-zu-Ende-Verschlüsselung während der Übertragung</li>
+      <li>Ohne Datenweitergabe an US-Server</li>
+    </ul>
+
+    <h3>5.2 Ihre Rechte</h3>
+    <p>
+      Sie haben jederzeit das Recht:
+    </p>
+    <ul>
+      <li>Auskunft über Ihre gespeicherten Daten zu verlangen</li>
+      <li>Die Löschung Ihrer Gesprächsdaten zu fordern</li>
+      <li>Ihre Einwilligung zur Datenverarbeitung zu widerrufen</li>
+      <li>Eine Kopie Ihrer Daten in maschinenlesbarem Format zu erhalten (Datenportabilität)</li>
+    </ul>
+  </div>
+
+  <div class="legal-section">
+    <h2>6. Kontaktaufnahme</h2>
+
+    <h3>6.1 Beschreibung und Umfang</h3>
+    <p>
+      Auf unserer Internetseite ist ein Kontaktformular vorhanden, welches für die elektronische Kontaktaufnahme genutzt werden kann. Nimmt ein Nutzer diese Möglichkeit wahr, so werden die in der Eingabemaske eingegeben Daten an uns übermittelt und gespeichert.
+    </p>
+
+    <h3>6.2 Rechtsgrundlage</h3>
+    <p>
+      Rechtsgrundlage für die Verarbeitung der Daten ist bei Vorliegen einer Einwilligung des Nutzers Art. 6 Abs. 1 lit. a DSGVO.
+    </p>
+  </div>
+
+  <div class="legal-section">
+    <h2>7. Cookies</h2>
+
+    <h3>7.1 Beschreibung</h3>
+    <p>
+      Unsere Webseite verwendet Cookies. Bei Cookies handelt es sich um Textdateien, die im Internetbrowser bzw. vom Internetbrowser auf dem Computersystem des Nutzers gespeichert werden.
+    </p>
+    <p>
+      Wir verwenden ausschließlich technisch notwendige Cookies zur Bereitstellung unseres Dienstes. Marketing-Cookies oder Tracking-Cookies von Drittanbietern setzen wir nicht ein.
+    </p>
+
+    <h3>7.2 Rechtsgrundlage</h3>
+    <p>
+      Die Rechtsgrundlage für die Verarbeitung personenbezogener Daten unter Verwendung technisch notwendiger Cookies ist Art. 6 Abs. 1 lit. f DSGVO.
+    </p>
+  </div>
+
+  <div class="legal-section">
+    <h2>8. Ihre Rechte als betroffene Person</h2>
+
+    <p>Werden personenbezogene Daten von Ihnen verarbeitet, sind Sie Betroffener i.S.d. DSGVO und es stehen Ihnen folgende Rechte gegenüber dem Verantwortlichen zu:</p>
+
+    <h3>8.1 Auskunftsrecht</h3>
+    <p>
+      Sie können von dem Verantwortlichen eine Bestätigung darüber verlangen, ob personenbezogene Daten, die Sie betreffen, von uns verarbeitet werden.
+    </p>
+
+    <h3>8.2 Recht auf Berichtigung</h3>
+    <p>
+      Sie haben ein Recht auf Berichtigung und/oder Vervollständigung gegenüber dem Verantwortlichen, sofern die verarbeiteten personenbezogenen Daten, die Sie betreffen, unrichtig oder unvollständig sind.
+    </p>
+
+    <h3>8.3 Recht auf Löschung</h3>
+    <p>
+      Sie können von dem Verantwortlichen verlangen, dass die Sie betreffenden personenbezogenen Daten unverzüglich gelöscht werden.
+    </p>
+
+    <h3>8.4 Recht auf Einschränkung der Verarbeitung</h3>
+    <p>
+      Sie haben das Recht, von dem Verantwortlichen die Einschränkung der Verarbeitung zu verlangen.
+    </p>
+
+    <h3>8.5 Recht auf Datenübertragbarkeit</h3>
+    <p>
+      Sie haben das Recht, die Sie betreffenden personenbezogenen Daten, die Sie dem Verantwortlichen bereitgestellt haben, in einem strukturierten, gängigen und maschinenlesbaren Format zu erhalten.
+    </p>
+
+    <h3>8.6 Widerspruchsrecht</h3>
+    <p>
+      Sie haben das Recht, aus Gründen, die sich aus Ihrer besonderen Situation ergeben, jederzeit gegen die Verarbeitung der Sie betreffenden personenbezogenen Daten, die aufgrund von Art. 6 Abs. 1 lit. e oder f DSGVO erfolgt, Widerspruch einzulegen.
+    </p>
+
+    <h3>8.7 Recht auf Widerruf der datenschutzrechtlichen Einwilligungserklärung</h3>
+    <p>
+      Sie haben das Recht, Ihre datenschutzrechtliche Einwilligungserklärung jederzeit zu widerrufen. Durch den Widerruf der Einwilligung wird die Rechtmäßigkeit der aufgrund der Einwilligung bis zum Widerruf erfolgten Verarbeitung nicht berührt.
+    </p>
+
+    <h3>8.8 Beschwerderecht bei einer Aufsichtsbehörde</h3>
+    <p>
+      Unbeschadet eines anderweitigen verwaltungsrechtlichen oder gerichtlichen Rechtsbehelfs steht Ihnen das Recht auf Beschwerde bei einer Aufsichtsbehörde zu.
+    </p>
+  </div>
+
+  <div class="legal-section">
+    <h2>9. Datensicherheit</h2>
+    <p>
+      Wir verwenden innerhalb des Website-Besuchs das verbreitete SSL-Verfahren (Secure Socket Layer) in Verbindung mit der jeweils höchsten Verschlüsselungsstufe, die von Ihrem Browser unterstützt wird. In der Regel handelt es sich dabei um eine 256-Bit-Verschlüsselung.
+    </p>
+    <p>
+      Alle Gesprächsdaten werden während der Übertragung und Speicherung verschlüsselt. Der Zugriff auf Ihre Daten ist nur autorisierten Mitarbeitern möglich, die einer strengen Vertraulichkeitsverpflichtung unterliegen.
+    </p>
+  </div>
+
+  <div class="legal-section">
+    <h2>10. Aktualität und Änderung dieser Datenschutzerklärung</h2>
+    <p>
+      Diese Datenschutzerklärung ist aktuell gültig und hat den Stand Februar 2026.
+    </p>
+    <p>
+      Durch die Weiterentwicklung unserer Website und Angebote darüber oder aufgrund geänderter gesetzlicher beziehungsweise behördlicher Vorgaben kann es notwendig werden, diese Datenschutzerklärung zu ändern. Die jeweils aktuelle Datenschutzerklärung kann jederzeit auf der Website unter <a href="https://www.call-lana.de/datenschutz">www.call-lana.de/datenschutz</a> von Ihnen abgerufen und ausgedruckt werden.
+    </p>
+  </div>
+
+  <div class="highlight-box">
+    <h3>Fragen zum Datenschutz?</h3>
+    <p>
+      Unser Datenschutzbeauftragter steht Ihnen gerne zur Verfügung:<br>
+      E-Mail: <a href="mailto:info@call-lana.de">info@call-lana.de</a><br>
+      Telefon: +49 5121 9343395
+    </p>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand"><a href="index.html" class="logo"><picture><source srcset="logo-footer.webp" type="image/webp"><img src="logo-footer.png" alt="Call Lana" height="28"></picture></a><p>Der KI-Telefonassistent auf Deutsch. DSGVO-konform, skalierbar, sofort einsatzbereit.</p></div>
+    <div class="footer-col"><h4>Produkt</h4><ul><li><a href="funktionen.html">Funktionen</a></li><li><a href="branchen.html">Branchen</a></li><li><a href="preise.html">Preise</a></li></ul></div>
+    <div class="footer-col"><h4>Rechtliches</h4><ul><li><a href="impressum.html">Impressum</a></li><li><a href="datenschutz.html">Datenschutz</a></li><li><a href="agb.html">AGB</a></li></ul></div>
+    <div class="footer-col"><h4>Konto</h4><ul><li><a href="registrierung.html">Registrieren</a></li><li><a href="login.html">Login</a></li><li><a href="dashboard.html">Dashboard</a></li></ul></div>
+  </div>
+  <div class="footer-bottom"><p class="footer-copy">Copyright 2025 by Call Lana — Alle Rechte vorbehalten</p></div>
+</footer>
+
+<script src="cookie-consent.js"></script>
+<script>
+document.querySelector('.mob-btn').addEventListener('click',()=>document.getElementById('nav').classList.toggle('open'));
+window.addEventListener('scroll',()=>{document.getElementById('nav').classList.toggle('scrolled',window.scrollY>10);},{passive:true});
+</script>
 </body>
 </html>

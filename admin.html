@@ -1,462 +1,591 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Admin — Call Lana</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', sans-serif; background: #FFFFFF; color: #1F2937; height: 100vh; display: flex; overflow: hidden; }
-
-    /* Sidebar */
-    #sidebar {
-      width: 220px; flex-shrink: 0;
-      background: #F9FAFB; border-right: 1px solid #E5E7EB;
-      display: flex; flex-direction: column; height: 100vh; overflow: hidden;
-    }
-    .logo-area { padding: 18px 18px 14px; border-bottom: 1px solid #E5E7EB; flex-shrink: 0; }
-    .logo-area img { height: 34px; width: auto; display: block; }
-    nav { flex: 1; padding: 10px 8px; overflow-y: auto; }
-    .nav-label {
-      font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
-      color: #9CA3AF; text-transform: uppercase;
-      padding: 14px 10px 4px; display: block;
-    }
-    .nav-item {
-      display: flex; align-items: center; gap: 10px;
-      padding: 8px 12px; border-radius: 8px;
-      font-size: 13.5px; font-weight: 500; color: #6B7280;
-      cursor: pointer; user-select: none; text-decoration: none;
-      transition: background 0.13s, color 0.13s;
-    }
-    .nav-item:hover { background: #F3F4F6; color: #111827; }
-    .nav-item.active { background: linear-gradient(135deg, #5B21B6 0%, #7C3AED 100%); color: #fff; box-shadow: 0 2px 10px rgba(124,58,237,0.15); }
-
-    .sidebar-footer { flex-shrink: 0; padding: 12px 8px; border-top: 1px solid #E5E7EB; }
-    .user-chip {
-      display: flex; align-items: center; gap: 10px;
-      padding: 8px 10px; border-radius: 8px; cursor: pointer;
-      transition: background 0.13s;
-    }
-    .user-chip:hover { background: #F3F4F6; }
-    .avatar {
-      width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
-      background: linear-gradient(135deg, #5B21B6, #7C3AED);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: 700; color: #fff;
-    }
-    .user-name { font-size: 13px; font-weight: 600; color: #111827; }
-    .user-role { font-size: 11px; color: #9CA3AF; }
-
-    /* Main */
-    #main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-    #topbar {
-      height: 54px; flex-shrink: 0;
-      background: #F9FAFB; border-bottom: 1px solid #E5E7EB;
-      display: flex; align-items: center; justify-content: space-between; padding: 0 28px;
-    }
-    .page-title { font-family: 'Playfair Display', serif; font-size: 18px; letter-spacing: -0.02em; color: #111827; }
-    .admin-badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      font-size: 11px; font-weight: 600; padding: 3px 10px;
-      background: rgba(124,58,237,0.1); color: #8B5CF6;
-      border: 1px solid rgba(124,58,237,0.2); border-radius: 20px;
-    }
-    #content { flex: 1; overflow-y: auto; padding: 28px; }
-
-    /* Pages */
-    .page { display: none; }
-    .page.active { display: block; }
-
-    /* Metrics */
-    .home-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px; }
-    .metric-card {
-      background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 12px;
-      padding: 20px; position: relative; overflow: hidden;
-    }
-    .metric-card::before {
-      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, #5B21B6, #7C3AED); opacity: 0; transition: opacity 0.2s;
-    }
-    .metric-card:hover::before { opacity: 1; }
-    .metric-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #9CA3AF; margin-bottom: 10px; }
-    .metric-value { font-family: 'Playfair Display', serif; font-size: 28px; color: #111827; line-height: 1; margin-bottom: 8px; }
-    .metric-sub { font-size: 11.5px; color: #9CA3AF; }
-    .metric-icon { position: absolute; bottom: 14px; right: 16px; opacity: 0.08; }
-
-    /* Panel */
-    .panel { background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 12px; overflow: hidden; margin-bottom: 16px; }
-    .panel-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 16px 20px; border-bottom: 1px solid #E5E7EB;
-    }
-    .panel-title { font-size: 13px; font-weight: 600; color: #111827; }
-
-    /* Table */
-    table { width: 100%; border-collapse: collapse; font-size: 13px; }
-    th { padding: 10px 16px; text-align: left; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: #9CA3AF; border-bottom: 1px solid #E5E7EB; }
-    td { padding: 12px 16px; border-bottom: 1px solid #F3F4F6; color: #374151; }
-    tr:last-child td { border-bottom: none; }
-    tr:hover td { background: #F3F4F6; }
-
-    .badge {
-      display: inline-block; padding: 2px 8px; border-radius: 20px; font-size: 11px; font-weight: 500;
-    }
-    .badge-admin { background: rgba(124,58,237,0.1); color: #8B5CF6; }
-    .badge-customer { background: rgba(74,222,128,0.1); color: #4ade80; }
-    .badge-sales { background: rgba(96,165,250,0.1); color: #60a5fa; }
-
-    /* Lower grid */
-    .lower-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Admin – Call Lana</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#7c3aed">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/common.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  .admin-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+  .search-input { background: var(--bg3); border: 1.5px solid var(--border); border-radius: 10px; padding: 10px 14px 10px 36px; color: var(--tx); font-size: 13px; font-family: 'Manrope', sans-serif; outline: none; width: 280px; transition: all .2s; background-image: url("data:image/svg+xml,%3Csvg width='16' height='16' fill='none' stroke='%236b5f8a' xmlns='http://www.w3.org/2000/svg'%3E%3Ccircle cx='7' cy='7' r='5'/%3E%3Cpath d='M11 11l3 3'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: 12px center; }
+  .search-input:focus { border-color: var(--pu); }
+  .role-badge { text-transform: capitalize; }
+  .user-actions { display: flex; gap: 6px; }
+  .user-actions button { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; color: var(--tx3); font-size: 11px; cursor: pointer; transition: all .2s; font-family: 'Manrope', sans-serif; }
+  .user-actions button:hover { border-color: var(--pu); color: var(--pu3); }
+  .system-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 32px; }
+  .system-stat { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px; }
+  .system-stat-label { font-size: 11px; color: var(--tx3); font-weight: 600; text-transform: uppercase; margin-bottom: 4px; }
+  .system-stat-value { font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800; }
+  .tab-bar { display: flex; gap: 4px; margin-bottom: 24px; background: var(--bg2); border-radius: 10px; padding: 4px; overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+  .tab-bar::-webkit-scrollbar { display: none; }
+  .tab-btn { background: none; border: none; padding: 8px 16px; border-radius: 8px; color: var(--tx3); font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Manrope', sans-serif; transition: all .2s; white-space: nowrap; flex-shrink: 0; }
+  .tab-btn.active { background: var(--pu); color: white; }
+  .tab-btn:hover:not(.active) { color: var(--tx2); }
+  @media (max-width: 900px) { .system-stats { grid-template-columns: 1fr; } .search-input { width: 100%; } }
+</style>
 </head>
-<body>
-
-<!-- Sidebar -->
-<aside id="sidebar">
-  <div class="logo-area">
-    <img src="brand_assets/A_vector-style_digital_logo_for_the_brand_Clana_.png" alt="Call Lana" />
-  </div>
-  <nav>
-    <span class="nav-label">Admin</span>
-    <div class="nav-item active" data-page="overview">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-      Overview
-    </div>
-    <div class="nav-item" data-page="users">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
-      Users
-    </div>
-    <div class="nav-item" data-page="assistants">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-      Assistants
-    </div>
-    <div class="nav-item" data-page="calls">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8 19.79 19.79 0 01.08 2.18 2 2 0 012.07 0h3a2 2 0 012 1.72c.13.96.36 1.9.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6z"/></svg>
-      All Calls
-    </div>
-
-    <span class="nav-label" style="margin-top:8px;">Navigation</span>
-    <a href="dashboard.html" class="nav-item">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
-      Back to Dashboard
-    </a>
-  </nav>
-
-  <div class="sidebar-footer">
-    <div class="user-chip" onclick="handleLogout()" title="Abmelden">
-      <div class="avatar" id="user-avatar">?</div>
-      <div>
-        <div class="user-name" id="user-name">…</div>
-        <div class="user-role" style="color:#8B5CF6;">Super Admin</div>
+<body class="auth-pending">
+<div class="app-layout">
+  <div id="sidebar-container"></div>
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="topbar-hamburger"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h14M3 10h14M3 14h14"/></svg></button>
+        <div class="topbar-breadcrumb">Administration <span>/ <span id="breadcrumb-page">Benutzer</span></span></div>
       </div>
     </div>
-  </div>
-</aside>
+    <div class="content">
 
-<!-- Main -->
-<div id="main">
-  <header id="topbar">
-    <span class="page-title" id="page-title">Platform Overview</span>
-    <div class="admin-badge">
-      <svg width="11" height="11" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
-      Admin Panel
-    </div>
-  </header>
-
-  <main id="content">
-
-    <!-- Overview Page -->
-    <div id="page-overview" class="page active">
-      <div style="margin-bottom:22px;">
-        <p style="font-size:12px;color:#9CA3AF;margin-bottom:2px;" id="greeting-date"></p>
-        <h1 style="font-family:'Playfair Display',serif;font-size:22px;color:#111827;letter-spacing:-0.02em;">Platform Overview</h1>
+      <!-- TAB BAR -->
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="overview">Übersicht</button>
+        <button class="tab-btn" data-tab="analytics">Analytics</button>
+        <button class="tab-btn" data-tab="onboarding">Onboarding</button>
+        <button class="tab-btn" data-tab="minutes-alert">Minuten-Alert</button>
+        <button class="tab-btn" data-tab="error-log">Fehler-Log</button>
+        <button class="tab-btn" data-tab="integrations">Integrationen</button>
+        <button class="tab-btn" data-tab="customers">Kunden</button>
+        <button class="tab-btn" data-tab="users">Benutzer</button>
+        <button class="tab-btn" data-tab="orgs">Organisationen</button>
+        <button class="tab-btn" data-tab="system">System</button>
       </div>
 
-      <div class="home-grid">
-        <div class="metric-card">
-          <div class="metric-label">Total Users</div>
-          <div class="metric-value" id="metric-users">—</div>
-          <div class="metric-sub" id="metric-users-sub">loading…</div>
-          <svg class="metric-icon" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">Total Assistants</div>
-          <div class="metric-value" id="metric-assistants">—</div>
-          <div class="metric-sub" id="metric-assistants-sub">loading…</div>
-          <svg class="metric-icon" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">Total Calls</div>
-          <div class="metric-value" id="metric-calls">—</div>
-          <div class="metric-sub">all time</div>
-          <svg class="metric-icon" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8z"/></svg>
-        </div>
-        <div class="metric-card">
-          <div class="metric-label">Total Minutes</div>
-          <div class="metric-value" id="metric-minutes">—</div>
-          <div class="metric-sub">all time</div>
-          <svg class="metric-icon" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        </div>
-      </div>
+      <!-- OVERVIEW TAB (Vogelperspektive) -->
+      <div class="page-section active" id="tab-overview">
+        <h1>Vogelperspektive</h1>
+        <p class="page-desc">Alle Kennzahlen auf einen Blick</p>
 
-      <div class="lower-grid">
-        <!-- Recent users -->
-        <div class="panel">
-          <div class="panel-header">
-            <span class="panel-title">Recent Signups</span>
-            <span style="font-size:12px;color:#9CA3AF;cursor:pointer;" onclick="document.querySelector('[data-page=users]').click()">View all</span>
+        <!-- Quick Actions -->
+        <div id="admin-quick-actions"></div>
+
+        <!-- Revenue KPIs -->
+        <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:24px;">
+          <div class="stat-card" style="border-color:var(--green);border-width:1.5px;">
+            <div class="stat-icon green"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 18L10 4l8 14"/></svg></div>
+            <div class="stat-label">MRR (Monatsumsatz)</div>
+            <div class="stat-value" id="ov-mrr" style="color:var(--green);">0 €</div>
           </div>
-          <table>
-            <thead><tr><th>User</th><th>Company</th><th>Joined</th></tr></thead>
-            <tbody id="recent-users-body">
-              <tr><td colspan="3" style="text-align:center;color:#9CA3AF;">Loading…</td></tr>
+          <div class="stat-card">
+            <div class="stat-icon purple"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10" cy="10" r="8"/></svg></div>
+            <div class="stat-label">Aktive Kunden</div>
+            <div class="stat-value" id="ov-active-customers">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon cyan"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 10l4 4 8-8"/></svg></div>
+            <div class="stat-label">ARR (Jahresumsatz)</div>
+            <div class="stat-value" id="ov-arr">0 €</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon orange"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10" cy="10" r="3"/><path d="M10 2v3M10 15v3M2 10h3M15 10h3"/></svg></div>
+            <div class="stat-label">Ø Umsatz/Kunde</div>
+            <div class="stat-value" id="ov-arpu">0 €</div>
+          </div>
+        </div>
+
+        <!-- Plan Distribution & Sales Performance -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;">
+          <div class="card">
+            <h2 style="margin-bottom:16px;">Umsatz nach Plan</h2>
+            <div id="ov-plan-breakdown" style="display:flex;flex-direction:column;gap:12px;"></div>
+          </div>
+          <div class="card">
+            <h2 style="margin-bottom:16px;">Top Vertriebler</h2>
+            <div id="ov-top-sales" style="display:flex;flex-direction:column;gap:12px;"></div>
+          </div>
+        </div>
+
+        <!-- Churn & MRR Trend -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px;">
+          <div class="card">
+            <h2 style="margin-bottom:16px;">Kunden-Health</h2>
+            <div id="ov-churn-stats" style="display:flex;flex-direction:column;gap:12px;"></div>
+          </div>
+          <div class="card">
+            <h2 style="margin-bottom:16px;">MRR-Entwicklung (6 Monate)</h2>
+            <svg id="ov-mrr-chart" viewBox="0 0 400 120" style="width:100%;height:120px;"></svg>
+            <div id="ov-mrr-growth" style="text-align:center;margin-top:6px;"></div>
+          </div>
+        </div>
+
+        <!-- Recent Customers -->
+        <h2 style="margin-bottom:16px;">Neueste Kunden</h2>
+        <div class="card" style="padding:0;overflow:hidden;">
+          <table class="data-table">
+            <thead>
+              <tr><th>Kunde</th><th>E-Mail</th><th>Plan</th><th>Monatl. Umsatz</th><th>Vertriebler</th><th>Seit</th><th>Aktionen</th></tr>
+            </thead>
+            <tbody id="ov-recent-tbody">
+              <tr><td colspan="7" style="text-align:center;color:var(--tx3);padding:40px;">Laden...</td></tr>
             </tbody>
           </table>
         </div>
 
-        <!-- Recent calls -->
-        <div class="panel">
-          <div class="panel-header">
-            <span class="panel-title">Recent Calls</span>
-            <span style="font-size:12px;color:#9CA3AF;cursor:pointer;" onclick="document.querySelector('[data-page=calls]').click()">View all</span>
+        <!-- KPI Goals + Announcements -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px;">
+          <div class="card" style="padding:16px;" id="admin-goals"></div>
+          <div class="card" style="padding:16px;" id="admin-announcements"></div>
+        </div>
+
+        <!-- Health + Leaderboard -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
+          <div class="card" style="padding:16px;" id="admin-health-overview"></div>
+          <div class="card" style="padding:16px;" id="admin-leaderboard"></div>
+        </div>
+        <div class="card" style="padding:16px;margin-top:16px;" id="admin-journey-funnel"></div>
+      </div>
+
+      <!-- ANALYTICS -->
+      <div class="page-section" id="tab-analytics">
+        <h1>Analytics & Prognosen</h1>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;">
+          <div class="card" style="padding:16px;" id="admin-forecast"></div>
+          <div class="card" style="padding:16px;" id="admin-churn"></div>
+        </div>
+        <div class="card" style="padding:16px;margin-bottom:16px;" id="admin-cohorts"></div>
+        <div class="card" style="padding:16px;margin-bottom:16px;" id="admin-webhooks"></div>
+        <div class="card" style="padding:16px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <div>
+              <h3 style="margin:0;font-size:14px;">Automatische Rechnungen</h3>
+              <p style="margin:4px 0 0;font-size:12px;color:var(--tx3);">Generiere monatliche Rechnungen für alle aktiven Kunden basierend auf deren Plan.</p>
+            </div>
+            <button class="btn btn-sm" onclick="AdminAnalytics.generateMonthlyInvoices()">Rechnungen generieren</button>
           </div>
-          <table>
-            <thead><tr><th>Number</th><th>Duration</th><th>When</th></tr></thead>
-            <tbody id="recent-calls-body">
-              <tr><td colspan="3" style="text-align:center;color:#9CA3AF;">Loading…</td></tr>
+        </div>
+      </div>
+
+      <!-- ONBOARDING QUEUE (Spec §7) -->
+      <div class="page-section" id="tab-onboarding">
+        <h1>Onboarding-Queue</h1>
+        <p class="page-desc">Neue Kunden die noch nicht live geschaltet sind.</p>
+        <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:24px;">
+          <div class="stat-card">
+            <div class="stat-icon orange">🔄</div>
+            <div class="stat-label">Warten auf Setup</div>
+            <div class="stat-value" id="onb-pending">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon cyan">🔧</div>
+            <div class="stat-label">In Einrichtung</div>
+            <div class="stat-value" id="onb-setup">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon green">✅</div>
+            <div class="stat-label">Diese Woche live</div>
+            <div class="stat-value" id="onb-live">0</div>
+          </div>
+        </div>
+        <div class="card" style="padding:0;overflow:hidden;">
+          <div class="data-header" style="padding:16px 20px;border-bottom:1px solid var(--border);">
+            <h2 style="font-size:14px;">Onboarding-Pipeline</h2>
+            <span class="badge" id="onb-total-badge">0 Kunden</span>
+          </div>
+          <table class="data-table">
+            <thead><tr><th>Kunde</th><th>E-Mail</th><th>Plan</th><th>Registriert</th><th>Status</th><th>Nächster Schritt</th><th>Aktionen</th></tr></thead>
+            <tbody id="onb-tbody">
+              <tr><td colspan="7" style="text-align:center;color:var(--tx3);padding:40px;">Laden...</td></tr>
             </tbody>
           </table>
         </div>
       </div>
-    </div>
 
-    <!-- Users Page -->
-    <div id="page-users" class="page">
-      <div style="margin-bottom:22px;">
-        <h1 style="font-family:'Playfair Display',serif;font-size:20px;color:#111827;">All Users</h1>
-        <p style="font-size:12px;color:#9CA3AF;margin-top:2px;" id="users-sub">loading…</p>
+      <!-- MINUTES ALERT (Spec §7) -->
+      <div class="page-section" id="tab-minutes-alert">
+        <h1>Minuten-Alert</h1>
+        <p class="page-desc">Kunden deren Kontingent fast aufgebraucht ist.</p>
+        <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:24px;">
+          <div class="stat-card" style="border-color:var(--red);border-width:1.5px;">
+            <div class="stat-icon" style="background:rgba(248,113,113,.15);color:var(--red);">🔴</div>
+            <div class="stat-label">Kritisch (90%+)</div>
+            <div class="stat-value" id="min-critical" style="color:var(--red);">0</div>
+          </div>
+          <div class="stat-card" style="border-color:var(--orange);border-width:1.5px;">
+            <div class="stat-icon" style="background:rgba(251,146,60,.15);color:var(--orange);">🟠</div>
+            <div class="stat-label">Warnung (80%+)</div>
+            <div class="stat-value" id="min-warning" style="color:var(--orange);">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon green">🟢</div>
+            <div class="stat-label">Normal (&lt;80%)</div>
+            <div class="stat-value" id="min-normal">0</div>
+          </div>
+        </div>
+        <div class="card" style="padding:0;overflow:hidden;">
+          <table class="data-table">
+            <thead><tr><th>Kunde</th><th>Plan</th><th>Verbraucht</th><th>Kontingent</th><th>Nutzung</th><th>Status</th></tr></thead>
+            <tbody id="min-tbody">
+              <tr><td colspan="6" style="text-align:center;color:var(--tx3);padding:40px;">Laden...</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-      <div class="panel">
-        <table>
-          <thead><tr><th>Name</th><th>Email</th><th>Company</th><th>Industry</th><th>Role</th><th>Joined</th></tr></thead>
-          <tbody id="users-body">
-            <tr><td colspan="6" style="text-align:center;color:#9CA3AF;">Loading…</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
 
-    <!-- Assistants Page -->
-    <div id="page-assistants" class="page">
-      <div style="margin-bottom:22px;">
-        <h1 style="font-family:'Playfair Display',serif;font-size:20px;color:#111827;">All Assistants</h1>
-        <p style="font-size:12px;color:#9CA3AF;margin-top:2px;" id="assistants-page-sub">loading…</p>
+      <!-- ERROR LOG (Spec §7) -->
+      <div class="page-section" id="tab-error-log">
+        <h1>Fehler-Log</h1>
+        <p class="page-desc">n8n Error Monitoring — letzte Fehler und Stack Traces.</p>
+        <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:24px;">
+          <div class="stat-card" style="border-color:var(--red);border-width:1.5px;">
+            <div class="stat-icon" style="background:rgba(248,113,113,.15);color:var(--red);">❌</div>
+            <div class="stat-label">Fehler heute</div>
+            <div class="stat-value" id="err-today" style="color:var(--red);">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon orange">⚠️</div>
+            <div class="stat-label">Warnungen</div>
+            <div class="stat-value" id="err-warnings">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon green">✅</div>
+            <div class="stat-label">Gelöst</div>
+            <div class="stat-value" id="err-resolved">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon purple">📊</div>
+            <div class="stat-label">Uptime</div>
+            <div class="stat-value" id="err-uptime">99.9%</div>
+          </div>
+        </div>
+        <div class="card" style="padding:0;overflow:hidden;">
+          <div class="data-header" style="padding:16px 20px;border-bottom:1px solid var(--border);">
+            <h2 style="font-size:14px;">Letzte Fehler</h2>
+            <select class="form-input form-select" id="errSeverityFilter" style="width:auto;padding:6px 28px 6px 10px;font-size:12px;">
+              <option value="">Alle</option>
+              <option value="error">Fehler</option>
+              <option value="warning">Warnung</option>
+              <option value="info">Info</option>
+            </select>
+          </div>
+          <table class="data-table">
+            <thead><tr><th>Zeitpunkt</th><th>Service</th><th>Severity</th><th>Nachricht</th><th>Details</th></tr></thead>
+            <tbody id="err-tbody">
+              <tr><td colspan="5" style="text-align:center;color:var(--tx3);padding:40px;">Laden...</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-      <div class="panel">
-        <table>
-          <thead><tr><th>Name</th><th>Owner</th><th>Voice</th><th>Language</th><th>Status</th><th>Phone</th><th>Created</th></tr></thead>
-          <tbody id="assistants-body">
-            <tr><td colspan="7" style="text-align:center;color:#9CA3AF;">Loading…</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
 
-    <!-- Calls Page -->
-    <div id="page-calls" class="page">
-      <div style="margin-bottom:22px;">
-        <h1 style="font-family:'Playfair Display',serif;font-size:20px;color:#111827;">All Calls</h1>
-        <p style="font-size:12px;color:#9CA3AF;margin-top:2px;" id="calls-page-sub">loading…</p>
+      <!-- CUSTOMERS TAB (Einzelkunden-Zugriff) -->
+      <div class="page-section" id="tab-customers">
+        <div class="admin-header">
+          <h1>Alle Kunden</h1>
+          <div style="display:flex;gap:12px;align-items:center;">
+            <input type="text" class="search-input" id="customer-search" placeholder="Kunden suchen...">
+            <button class="btn btn-sm btn-outline" onclick="exportCustomersCSV()">CSV Export</button>
+          </div>
+        </div>
+        <div class="card" style="padding:0;overflow:hidden;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>E-Mail</th>
+                <th>Unternehmen</th>
+                <th>Plan</th>
+                <th>Monatl. Netto</th>
+                <th>Branche</th>
+                <th>Status</th>
+                <th>Registriert</th>
+                <th>Aktionen</th>
+              </tr>
+            </thead>
+            <tbody id="customers-tbody">
+              <tr><td colspan="9" style="text-align:center;color:var(--tx3);padding:40px;">Laden...</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-      <div class="panel">
-        <table>
-          <thead><tr><th>Number</th><th>Caller</th><th>Assistant</th><th>Duration</th><th>Status</th><th>When</th></tr></thead>
-          <tbody id="calls-body">
-            <tr><td colspan="6" style="text-align:center;color:#9CA3AF;">Loading…</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
 
-  </main>
+      <!-- USERS TAB -->
+      <div class="page-section" id="tab-users">
+        <div class="admin-header">
+          <h1>Benutzer verwalten</h1>
+          <div style="display:flex;gap:12px;align-items:center;">
+            <input type="text" class="search-input" id="user-search" placeholder="Benutzer suchen...">
+            <button class="btn btn-sm btn-outline" onclick="AdminOverview.exportUsersCSV()">📥 CSV</button>
+            <button class="btn btn-sm" id="btn-add-user">+ Benutzer</button>
+          </div>
+        </div>
+        <div class="card" style="padding:0;overflow:hidden;">
+          <table class="data-table" id="users-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>E-Mail</th>
+                <th>Rolle</th>
+                <th>Organisation</th>
+                <th>Status</th>
+                <th>Erstellt</th>
+                <th>Aktionen</th>
+              </tr>
+            </thead>
+            <tbody id="users-tbody">
+              <tr><td colspan="7" style="text-align:center;color:var(--tx3);padding:40px;">Laden...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ORGS TAB -->
+      <div class="page-section" id="tab-orgs">
+        <div class="admin-header">
+          <h1>Organisationen</h1>
+          <button class="btn btn-sm btn-outline" onclick="AdminOverview.exportOrgsCSV()">📥 CSV</button>
+          <button class="btn btn-sm" id="btn-add-org">+ Organisation</button>
+        </div>
+        <div class="card" style="padding:0;overflow:hidden;">
+          <table class="data-table" id="orgs-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Plan</th>
+                <th>Inhaber</th>
+                <th>Mitglieder</th>
+                <th>Status</th>
+                <th>Erstellt</th>
+                <th>Aktionen</th>
+              </tr>
+            </thead>
+            <tbody id="orgs-tbody">
+              <tr><td colspan="7" style="text-align:center;color:var(--tx3);padding:40px;">Laden...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- SYSTEM TAB -->
+      <!-- INTEGRATIONS -->
+      <div class="page-section" id="tab-integrations">
+        <h1>Integrationen</h1>
+        <p class="page-desc">Externe Dienste verbinden und konfigurieren</p>
+        <div style="display:grid;gap:20px;">
+          <div class="card" style="padding:20px;" id="int-stripe"></div>
+          <div class="card" style="padding:20px;" id="int-calendar"></div>
+          <div class="card" style="padding:20px;" id="int-email"></div>
+          <div class="card" style="padding:20px;" id="int-files"></div>
+          <div class="card" style="padding:20px;" id="int-phone"></div>
+        </div>
+      </div>
+
+      <div class="page-section" id="tab-system">
+        <h1>System-Statistiken</h1>
+        <p class="page-desc">Globale Kennzahlen und System-Health</p>
+
+        <!-- Primary KPIs -->
+        <div class="system-stats">
+          <div class="system-stat">
+            <div class="system-stat-label">Benutzer gesamt</div>
+            <div class="system-stat-value" id="sys-total-users">-</div>
+          </div>
+          <div class="system-stat">
+            <div class="system-stat-label">Organisationen</div>
+            <div class="system-stat-value" id="sys-total-orgs">-</div>
+          </div>
+          <div class="system-stat">
+            <div class="system-stat-label">Assistenten</div>
+            <div class="system-stat-value" id="sys-total-assistants">-</div>
+          </div>
+        </div>
+
+        <!-- Secondary KPIs -->
+        <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:24px;">
+          <div class="stat-card">
+            <div class="stat-icon purple"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="9" r="7"/><path d="M9 6v6M6 9h6"/></svg></div>
+            <div class="stat-label">Neue Leads (7 Tage)</div>
+            <div class="stat-value" id="sys-new-leads">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon cyan"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 10l4 4 8-8"/></svg></div>
+            <div class="stat-label">Aktive Leads</div>
+            <div class="stat-value" id="sys-active-leads">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon orange"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="14" height="14" rx="2"/><path d="M5 9l3 3 5-5"/></svg></div>
+            <div class="stat-label">Offene Tasks</div>
+            <div class="stat-value" id="sys-open-tasks">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon green"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 18L10 4l8 14"/></svg></div>
+            <div class="stat-label">Conversion Rate</div>
+            <div class="stat-value" id="sys-conversion">-</div>
+          </div>
+        </div>
+
+        <!-- Role Distribution -->
+        <h2 style="margin-bottom:16px;">Rollenverteilung</h2>
+        <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:24px;">
+          <div class="stat-card">
+            <div class="stat-label">Superadmins</div>
+            <div class="stat-value" id="sys-role-superadmin">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Sales</div>
+            <div class="stat-value" id="sys-role-sales">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Customers</div>
+            <div class="stat-value" id="sys-role-customer">-</div>
+          </div>
+        </div>
+
+        <!-- Plan Distribution -->
+        <h2 style="margin-bottom:16px;">Plan-Verteilung</h2>
+        <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:24px;">
+          <div class="stat-card">
+            <div class="stat-label">Solo</div>
+            <div class="stat-value" id="sys-plan-solo">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Team</div>
+            <div class="stat-value" id="sys-plan-team">-</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Business</div>
+            <div class="stat-value" id="sys-plan-business">-</div>
+          </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <h2 style="margin-bottom:16px;">Letzte Aktivität</h2>
+        <div class="card" style="padding:0;overflow:hidden;">
+          <table class="data-table">
+            <thead>
+              <tr><th>Zeitpunkt</th><th>Benutzer</th><th>Aktion</th><th>Details</th></tr>
+            </thead>
+            <tbody id="sys-activity-tbody">
+              <tr><td colspan="4" style="text-align:center;color:var(--tx3);padding:20px;">Wird geladen...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- System Health -->
+      <div class="card" style="padding:16px;margin-top:20px;" id="admin-system-health"></div>
+
+      <!-- Activity Feed + Audit Log -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px;">
+        <div class="card" style="padding:16px;" id="admin-activity-feed"></div>
+        <div class="card" style="padding:16px;" id="admin-audit-log"></div>
+      </div>
+
+    </div>
+  </div>
 </div>
 
-<script>
-  const { createClient } = supabase;
-  const sb = createClient(
-    'https://dtfbwqborzjjhqwtobhl.supabase.co',
-    'sb_publishable_Dbvx3YEyG9LnrL2moVd0NQ_5VF48jos'
-  );
+<!-- Edit User Role Modal -->
+<div class="modal-overlay" id="modal-edit-role">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">Rolle bearbeiten</h3>
+      <button class="modal-close" onclick="closeModal('modal-edit-role')">&times;</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Benutzer</label>
+      <input type="text" class="form-input" id="edit-role-user" disabled>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Rolle</label>
+      <select class="form-input form-select" id="edit-role-select">
+        <option value="customer">Customer</option>
+        <option value="sales">Sales</option>
+        <option value="superadmin">Superadmin</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Organisation</label>
+      <select class="form-input form-select" id="edit-role-org">
+        <option value="">Keine</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-edit-role')">Abbrechen</button>
+      <button class="btn" id="btn-save-role">Speichern</button>
+    </div>
+  </div>
+</div>
 
-  // Auth guard — only superadmin
-  (async () => {
-    const { data: { session } } = await sb.auth.getSession();
-    if (!session) { window.location.href = 'login.html'; return; }
+<!-- Customer Detail Modal -->
+<div class="modal-overlay" id="modal-customer-detail">
+  <div class="modal" style="max-width:600px;">
+    <div class="modal-header">
+      <h3 class="modal-title">Kundendetails</h3>
+      <button class="modal-close" onclick="closeModal('modal-customer-detail')">&times;</button>
+    </div>
+    <div id="customer-detail-content">
+      <div style="text-align:center;color:var(--tx3);padding:40px;">Laden...</div>
+    </div>
+  </div>
+</div>
 
-    const { data: profile } = await sb.from('profiles').select('*').eq('id', session.user.id).single();
-    if (!profile || profile.role !== 'superadmin') {
-      window.location.href = 'dashboard.html';
-      return;
-    }
+<!-- Add Org Modal -->
+<div class="modal-overlay" id="modal-add-org">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">Organisation erstellen</h3>
+      <button class="modal-close" onclick="closeModal('modal-add-org')">&times;</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Name</label>
+      <input type="text" class="form-input" id="org-name" placeholder="Firmenname">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Plan</label>
+      <select class="form-input form-select" id="org-plan">
+        <option value="solo">Solo (1 User)</option>
+        <option value="team">Team (5 User)</option>
+        <option value="business">Business (unbegrenzt)</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-add-org')">Abbrechen</button>
+      <button class="btn" id="btn-create-org">Erstellen</button>
+    </div>
+  </div>
+</div>
 
-    const firstName = profile.first_name || session.user.email.split('@')[0];
-    const initials  = (firstName[0] + (profile.last_name?.[0] || '')).toUpperCase();
-    document.getElementById('user-avatar').textContent = initials;
-    document.getElementById('user-name').textContent   = firstName + (profile.last_name ? ' ' + profile.last_name : '');
-
-    const now = new Date();
-    document.getElementById('greeting-date').textContent = now.toLocaleDateString('en-DE', {
-      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-    });
-
-    loadOverview();
-    loadUsers();
-    loadAssistants();
-    loadCalls();
-  })();
-
-  sb.auth.onAuthStateChange((event) => {
-    if (event === 'SIGNED_OUT') window.location.href = 'login.html';
-  });
-
-  async function handleLogout() { await sb.auth.signOut(); }
-
-  // Navigation
-  const PAGE_TITLES = { overview: 'Platform Overview', users: 'Users', assistants: 'Assistants', calls: 'All Calls' };
-  document.querySelectorAll('.nav-item[data-page]').forEach(item => {
-    item.addEventListener('click', () => {
-      const page = item.dataset.page;
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      document.getElementById('page-' + page).classList.add('active');
-      item.classList.add('active');
-      document.getElementById('page-title').textContent = PAGE_TITLES[page] || page;
-    });
-  });
-
-  // ── Load data ────────────────────────────────────────────────────────────────
-  async function loadOverview() {
-    const [usersRes, assistantsRes, callsRes] = await Promise.all([
-      sb.from('profiles').select('id, created_at', { count: 'exact' }),
-      sb.from('assistants').select('id, status', { count: 'exact' }),
-      sb.from('calls').select('id, duration_seconds', { count: 'exact' }),
-    ]);
-
-    const users      = usersRes.data || [];
-    const assistants = assistantsRes.data || [];
-    const calls      = callsRes.data || [];
-    const totalSec   = calls.reduce((s, c) => s + (c.duration_seconds || 0), 0);
-    const activeAsst = assistants.filter(a => a.status === 'active' || a.status === 'online').length;
-
-    document.getElementById('metric-users').textContent      = users.length.toLocaleString();
-    document.getElementById('metric-users-sub').textContent  = 'registered accounts';
-    document.getElementById('metric-assistants').textContent = assistants.length.toLocaleString();
-    document.getElementById('metric-assistants-sub').textContent = `${activeAsst} active`;
-    document.getElementById('metric-calls').textContent      = calls.length.toLocaleString();
-    document.getElementById('metric-minutes').textContent    = Math.round(totalSec / 60).toLocaleString();
-
-    // Recent users
-    const { data: recentUsers } = await sb.from('profiles')
-      .select('first_name, last_name, email, company, created_at')
-      .order('created_at', { ascending: false }).limit(6);
-
-    document.getElementById('recent-users-body').innerHTML = (recentUsers || []).map(u => `
-      <tr>
-        <td>${escHtml((u.first_name || '') + ' ' + (u.last_name || '') || u.email || '—')}</td>
-        <td style="color:#9CA3AF">${escHtml(u.company || '—')}</td>
-        <td style="color:#9CA3AF">${fmtDate(u.created_at)}</td>
-      </tr>`).join('') || '<tr><td colspan="3" style="text-align:center;color:#9CA3AF;">No users</td></tr>';
-
-    // Recent calls
-    const { data: recentCalls } = await sb.from('calls')
-      .select('phone_number, duration_seconds, status, created_at')
-      .order('created_at', { ascending: false }).limit(6);
-
-    document.getElementById('recent-calls-body').innerHTML = (recentCalls || []).map(c => `
-      <tr>
-        <td>${escHtml(c.phone_number || '—')}</td>
-        <td style="color:#9CA3AF">${c.duration_seconds ? fmtDur(c.duration_seconds) : '—'}</td>
-        <td style="color:#9CA3AF">${relTime(new Date(c.created_at))}</td>
-      </tr>`).join('') || '<tr><td colspan="3" style="text-align:center;color:#9CA3AF;">No calls</td></tr>';
-  }
-
-  async function loadUsers() {
-    const { data: users } = await sb.from('profiles')
-      .select('id, first_name, last_name, email, company, industry, role, created_at')
-      .order('created_at', { ascending: false });
-
-    document.getElementById('users-sub').textContent = `${(users || []).length} total users`;
-    document.getElementById('users-body').innerHTML = (users || []).map(u => `
-      <tr>
-        <td>${escHtml((u.first_name || '') + ' ' + (u.last_name || ''))}</td>
-        <td style="color:#9CA3AF">${escHtml(u.email || '—')}</td>
-        <td style="color:#9CA3AF">${escHtml(u.company || '—')}</td>
-        <td style="color:#9CA3AF">${escHtml(u.industry || '—')}</td>
-        <td><span class="badge badge-${u.role || 'customer'}">${u.role || 'customer'}</span></td>
-        <td style="color:#9CA3AF">${fmtDate(u.created_at)}</td>
-      </tr>`).join('') || '<tr><td colspan="6" style="text-align:center;color:#9CA3AF;">No users</td></tr>';
-  }
-
-  async function loadAssistants() {
-    const { data: assistants } = await sb.from('assistants')
-      .select('id, name, voice, language, status, phone_number, created_at, user_id')
-      .order('created_at', { ascending: false });
-
-    document.getElementById('assistants-page-sub').textContent = `${(assistants || []).length} total assistants`;
-    const isActive = a => a.status === 'active' || a.status === 'online';
-    document.getElementById('assistants-body').innerHTML = (assistants || []).map(a => `
-      <tr>
-        <td>${escHtml(a.name || '—')}</td>
-        <td style="color:#9CA3AF;font-size:11px;">${escHtml(a.user_id?.slice(0,8) || '—')}…</td>
-        <td style="color:#9CA3AF">${escHtml(a.voice || '—')}</td>
-        <td style="color:#9CA3AF">${escHtml(a.language || '—')}</td>
-        <td><span class="badge ${isActive(a) ? 'badge-customer' : ''}" style="${!isActive(a) ? 'color:#9CA3AF;background:rgba(156,163,175,0.1)' : ''}">${a.status || 'offline'}</span></td>
-        <td style="color:#9CA3AF">${escHtml(a.phone_number || '—')}</td>
-        <td style="color:#9CA3AF">${fmtDate(a.created_at)}</td>
-      </tr>`).join('') || '<tr><td colspan="7" style="text-align:center;color:#9CA3AF;">No assistants</td></tr>';
-  }
-
-  async function loadCalls() {
-    const { data: calls } = await sb.from('calls')
-      .select('phone_number, caller_name, assistant_name, duration_seconds, status, created_at')
-      .order('created_at', { ascending: false }).limit(100);
-
-    document.getElementById('calls-page-sub').textContent = `${(calls || []).length} recent calls (last 100)`;
-    document.getElementById('calls-body').innerHTML = (calls || []).map(c => `
-      <tr>
-        <td>${escHtml(c.phone_number || '—')}</td>
-        <td style="color:#9CA3AF">${escHtml(c.caller_name || '—')}</td>
-        <td style="color:#9CA3AF">${escHtml(c.assistant_name || '—')}</td>
-        <td style="color:#9CA3AF">${c.duration_seconds ? fmtDur(c.duration_seconds) : '—'}</td>
-        <td><span class="badge ${c.status === 'completed' ? 'badge-customer' : c.status === 'missed' ? 'badge-admin' : 'badge-sales'}">${escHtml(c.status || '—')}</span></td>
-        <td style="color:#9CA3AF">${relTime(new Date(c.created_at))}</td>
-      </tr>`).join('') || '<tr><td colspan="6" style="text-align:center;color:#9CA3AF;">No calls</td></tr>';
-  }
-
-  // Helpers
-  function escHtml(s) {
-    return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-  function fmtDur(sec) {
-    const m = Math.floor(sec / 60), s = sec % 60;
-    return `${m}m ${String(s).padStart(2,'0')}s`;
-  }
-  function relTime(date) {
-    const diff = Date.now() - date;
-    const m = Math.floor(diff / 60000);
-    if (m < 1) return 'just now';
-    if (m < 60) return `${m}m ago`;
-    const h = Math.floor(m / 60);
-    if (h < 24) return `${h}h ago`;
-    return `${Math.floor(h/24)}d ago`;
-  }
-  function fmtDate(iso) {
-    return new Date(iso).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit', year: 'numeric' });
-  }
-</script>
+<script src="js/impersonation.js"></script>
+<script src="js/modal.js"></script>
+<script src="js/error-handler.js"></script>
+<script>ErrorHandler.init();</script>
+<script src="js/logger.js"></script>
+<script src="js/supabase-init.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/db/calls.js"></script>
+<script src="js/db/assistants.js"></script>
+<script src="js/db/profiles.js"></script>
+<script src="js/db/leads.js"></script>
+<script src="js/db/messaging.js"></script>
+<script src="js/db/customers.js"></script>
+<script src="js/db/tools.js"></script>
+<script src="js/db.js"></script>
+<script src="js/auth-guard.js"></script>
+<script src="js/pricing-data.js"></script>
+<script src="js/config.js"></script>
+<script src="js/dashboard-components.js"></script>
+<script src="js/admin-analytics.js"></script>
+<script src="js/admin-overview.js"></script>
+<script src="js/admin-audit.js"></script>
+<script src="js/admin-pdf-export.js"></script>
+<script src="js/admin-health.js"></script>
+<script src="js/admin-extra.js"></script>
+<script src="js/admin-bulk.js"></script>
+<script src="js/integrations-hub.js"></script>
+<script src="js/global-search.js"></script>
+<script src="js/keyboard-shortcuts.js"></script>
+<script src="js/admin.js"></script>
+<script src="js/theme-toggle.js"></script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});</script>
+<script src="js/idle-timeout.js"></script>
+<script src="cookie-consent.js"></script>
 </body>
 </html>

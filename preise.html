@@ -3,13 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Preise — Call Lana</title>
-  <meta name="description" content="Call Lana Preise: Transparent, fair und skalierbar. Ab 99€/Monat." />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <title>Preise &amp; Pakete — Call Lana KI-Telefonassistent für Handwerker</title>
+  <meta name="description" content="KI-Telefonassistent für Handwerksbetriebe: Starter ab 149 €/Monat, Professional ab 299 €/Monat. Keine Einrichtungsgebühr, 30 Tage Geld-zurück-Garantie." />
+  <link rel="canonical" href="https://call-lana.de/preise.html" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="css/design.css" />
   <script>
     tailwind.config = {
       theme: { extend: {
@@ -23,6 +25,8 @@
     }
   </script>
   <style>
+    /* FAQ icon rotation — replaces non-functional peer-checked:rotate-45 Tailwind class */
+    .faq-item input[type="checkbox"]:checked ~ label svg { transform: rotate(45deg); }
     /* Custom slider styling */
     input[type="range"].calc-slider {
       -webkit-appearance: none;
@@ -127,8 +131,8 @@
         <span class="lang-en hidden"><span class="text-brand-400">Simple pricing.</span> No surprises.</span>
       </h1>
       <p class="font-body text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-4">
-        <span class="lang-de">Starte ab 99&thinsp;&euro;/Monat und wachse mit Call Lana. Monatlich k&uuml;ndbar &ndash; optional mit Jahresrabatt.</span>
-        <span class="lang-en hidden">Start from 99&thinsp;&euro;/month and grow with Call Lana. Cancel monthly &ndash; optional annual discount.</span>
+        <span class="lang-de">Starte ab 149&thinsp;&euro;/Monat und wachse mit Call Lana. Monatlich k&uuml;ndbar &ndash; optional mit Jahresrabatt.</span>
+        <span class="lang-en hidden">Start from 149&thinsp;&euro;/month and grow with Call Lana. Cancel monthly &ndash; optional annual discount.</span>
       </p>
       <p class="font-body text-sm text-gray-500 mb-8">
         <span class="lang-de">30 Tage Geld-zur&uuml;ck-Garantie &middot; Einrichtung in weniger als 15 Minuten</span>
@@ -167,22 +171,24 @@
         <div id="cardLite" class="feature-card flex flex-col plan-recommended" style="background:#F9FAFB; border:1px solid rgba(0,0,0,0.06); border-radius:1.5rem; overflow:hidden;">
           <div class="p-8 border-b border-gray-200">
             <div class="inline-block bg-dark-800 rounded-full px-3 py-1 text-xs font-medium text-gray-500 mb-4 font-body">Starter</div>
-            <h3 class="font-display text-xl font-bold mb-2 text-gray-900">Call Lana Light</h3>
+            <h3 class="font-display text-xl font-bold mb-2 text-gray-900">Call Lana Starter</h3>
             <p class="text-gray-500 text-sm font-body mb-6" style="line-height:1.7;">
               <span class="lang-de">Perfekt f&uuml;r kleine Handwerksbetriebe, die mit KI-Anrufbearbeitung starten wollen.</span>
               <span class="lang-en hidden">Perfect for small craft businesses starting with AI call handling.</span>
             </p>
             <div class="flex items-end gap-2">
-              <span class="font-display text-4xl font-bold text-gray-900 price-current" data-monthly="99" data-yearly="85">99 &euro;</span>
+              <span class="font-display text-4xl font-bold text-gray-900 price-current" data-monthly="149" data-yearly="129">149 &euro;</span>
               <span class="text-gray-500 font-body text-sm mb-1" data-period>/Monat</span>
             </div>
             <div class="price-old-wrapper mt-1 h-5">
               <span class="price-old text-gray-400 font-body text-sm line-through opacity-0 transition-opacity duration-200"></span>
             </div>
+            <p class="text-gray-400 font-body text-xs mt-2 lang-de">Zusatzminuten: 0,39 &euro;/Min.</p>
+            <p class="text-gray-400 font-body text-xs mt-2 lang-en hidden">Overage: &euro;0.39/min</p>
           </div>
           <div class="p-8 flex flex-col flex-1">
             <ul class="space-y-3 font-body text-sm text-gray-600 mb-8 flex-1">
-              <li class="flex items-start gap-3"><svg class="w-4 h-4 text-brand-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><span class="lang-de">340 Inklusivminuten</span><span class="lang-en hidden">340 included minutes</span></li>
+              <li class="flex items-start gap-3"><svg class="w-4 h-4 text-brand-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><span class="lang-de">300 Inklusivminuten</span><span class="lang-en hidden">300 included minutes</span></li>
               <li class="flex items-start gap-3"><svg class="w-4 h-4 text-brand-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><span class="lang-de">Terminbuchung</span><span class="lang-en hidden">Appointment booking</span></li>
               <li class="flex items-start gap-3"><svg class="w-4 h-4 text-brand-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><span class="lang-de">Anrufzusammenfassung per E-Mail</span><span class="lang-en hidden">Call summary by email</span></li>
               <li class="flex items-start gap-3"><svg class="w-4 h-4 text-brand-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><span class="lang-de">Eigene Telefonnummer</span><span class="lang-en hidden">Own phone number</span></li>
@@ -211,7 +217,7 @@
                 <span class="lang-en hidden">Recommended</span>
               </div>
             </div>
-            <h3 class="font-display text-xl font-bold mb-2">Call Lana Pro</h3>
+            <h3 class="font-display text-xl font-bold mb-2">Call Lana Professional</h3>
             <p class="text-sm font-body mb-6 text-gray-500" style="line-height:1.7;">
               <span class="lang-de">Volle KI-Rezeptionistin mit gro&szlig;z&uuml;gigem Minutenkontingent f&uuml;r wachsende Betriebe.</span>
               <span class="lang-en hidden">Full AI receptionist with generous minutes for growing businesses.</span>
@@ -223,10 +229,12 @@
             <div class="price-old-wrapper mt-1 h-5">
               <span class="price-old text-gray-400 font-body text-sm line-through opacity-0 transition-opacity duration-200"></span>
             </div>
+            <p class="text-gray-400 font-body text-xs mt-2 lang-de">Zusatzminuten: 0,39 &euro;/Min.</p>
+            <p class="text-gray-400 font-body text-xs mt-2 lang-en hidden">Overage: &euro;0.39/min</p>
           </div>
           <div class="p-8 flex flex-col flex-1">
             <ul class="space-y-3 font-body text-sm text-gray-600 mb-8 flex-1">
-              <li class="flex items-start gap-3"><svg class="w-4 h-4 text-brand-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><span class="lang-de">560 Inklusivminuten</span><span class="lang-en hidden">560 included minutes</span></li>
+              <li class="flex items-start gap-3"><svg class="w-4 h-4 text-brand-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><span class="lang-de">800 Inklusivminuten</span><span class="lang-en hidden">800 included minutes</span></li>
               <li class="flex items-start gap-3"><svg class="w-4 h-4 text-brand-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><span class="lang-de">Terminbuchung + Kalender-Sync</span><span class="lang-en hidden">Booking + Calendar sync</span></li>
               <li class="flex items-start gap-3"><svg class="w-4 h-4 text-brand-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><span class="lang-de">Echtzeit-Anrufweiterleitung</span><span class="lang-en hidden">Real-time call routing</span></li>
               <li class="flex items-start gap-3"><svg class="w-4 h-4 text-brand-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><span class="lang-de">SMS + E-Mail-Zusammenfassungen</span><span class="lang-en hidden">SMS + Email summaries</span></li>
@@ -256,19 +264,18 @@
                 <span class="lang-en hidden">Recommended</span>
               </div>
             </div>
-            <h3 class="font-display text-xl font-bold mb-2 text-gray-900">
-              <span class="lang-de">Enterprise</span>
-              <span class="lang-en hidden">Enterprise</span>
-            </h3>
+            <h3 class="font-display text-xl font-bold mb-2 text-gray-900">Enterprise</h3>
             <p class="text-gray-500 text-sm font-body mb-6" style="line-height:1.7;">
               <span class="lang-de">Ma&szlig;geschneidert f&uuml;r Betriebe mit hohem Anrufvolumen, mehreren Standorten oder speziellen Anforderungen.</span>
               <span class="lang-en hidden">Tailored for businesses with high call volume, multiple locations, or special requirements.</span>
             </p>
-            <div class="flex items-end gap-1.5">
+            <div class="flex items-end gap-2">
               <span class="font-display text-3xl font-bold text-gray-900 lang-de">Auf Anfrage</span>
               <span class="font-display text-3xl font-bold text-gray-900 lang-en hidden">On request</span>
             </div>
-            <div class="price-old-wrapper mt-1 h-5"></div>
+            <div class="price-old-wrapper mt-1 h-5">
+              <span class="price-old text-gray-400 font-body text-sm line-through opacity-0 transition-opacity duration-200"></span>
+            </div>
           </div>
           <div class="p-8 flex flex-col flex-1">
             <ul class="space-y-3 font-body text-sm text-gray-600 mb-8 flex-1">
@@ -278,7 +285,7 @@
               <li class="flex items-start gap-3"><svg class="w-4 h-4 text-brand-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><span class="lang-de">Pers&ouml;nlicher Ansprechpartner</span><span class="lang-en hidden">Dedicated account manager</span></li>
               <li class="flex items-start gap-3"><svg class="w-4 h-4 text-brand-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><span class="lang-de">API + White Label Option</span><span class="lang-en hidden">API + White label option</span></li>
             </ul>
-            <a href="demo.html" class="btn-outline w-full text-center block py-3 px-6">
+            <a href="kontakt.html" class="btn-outline w-full text-center block py-3 px-6">
               <span class="lang-de">Demo buchen</span>
               <span class="lang-en hidden">Book a demo</span>
             </a>
@@ -323,10 +330,10 @@
                   <span class="lang-en hidden">Calls per day</span>
                 </label>
                 <div class="bg-brand-400/10 rounded-lg px-3 py-1 min-w-[4rem] text-center">
-                  <span id="callsValue" class="font-display font-bold text-brand-400 text-lg counter-value inline-block">30</span>
+                  <span id="callsValue" class="font-display font-bold text-brand-400 text-lg counter-value inline-block">10</span>
                 </div>
               </div>
-              <input type="range" id="callsPerDay" class="calc-slider" min="0" max="200" value="30" step="5" />
+              <input type="range" id="callsPerDay" class="calc-slider" min="0" max="200" value="10" step="5" />
               <div class="flex justify-between text-xs text-gray-400 font-body mt-1.5">
                 <span>0</span>
                 <span>100</span>
@@ -342,10 +349,10 @@
                   <span class="lang-en hidden">Avg. call duration (min.)</span>
                 </label>
                 <div class="bg-brand-400/10 rounded-lg px-3 py-1 min-w-[4rem] text-center">
-                  <span id="durationValue" class="font-display font-bold text-brand-400 text-lg counter-value inline-block">4</span>
+                  <span id="durationValue" class="font-display font-bold text-brand-400 text-lg counter-value inline-block">3</span>
                 </div>
               </div>
-              <input type="range" id="callDuration" class="calc-slider" min="1" max="15" value="4" step="1" />
+              <input type="range" id="callDuration" class="calc-slider" min="1" max="15" value="3" step="1" />
               <div class="flex justify-between text-xs text-gray-400 font-body mt-1.5">
                 <span>1</span>
                 <span>8</span>
@@ -366,7 +373,7 @@
               <span class="lang-de">Mitarbeiterkosten</span>
               <span class="lang-en hidden">Employee cost</span>
             </p>
-            <p id="employeeCost" class="font-display text-2xl md:text-3xl font-bold text-gray-900 counter-value inline-block">5.775 &euro;</p>
+            <p id="employeeCost" class="font-display text-2xl md:text-3xl font-bold text-gray-900 counter-value inline-block">1.320 &euro;</p>
             <p class="text-xs text-gray-400 font-body mt-1">
               <span class="lang-de">pro Monat</span>
               <span class="lang-en hidden">per month</span>
@@ -379,7 +386,7 @@
               <svg class="w-5 h-5 text-brand-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
             </div>
             <p class="text-xs text-gray-400 font-body uppercase tracking-wider mb-1.5">Call Lana</p>
-            <p id="colanaCost" class="font-display text-2xl md:text-3xl font-bold text-brand-400 counter-value inline-block">145 &euro;</p>
+            <p id="colanaCost" class="font-display text-2xl md:text-3xl font-bold text-brand-400 counter-value inline-block">299 &euro;</p>
             <p class="text-xs text-gray-400 font-body mt-1">
               <span class="lang-de">pro Monat</span>
               <span class="lang-en hidden">per month</span>
@@ -395,7 +402,7 @@
               <span class="lang-de">Du sparst</span>
               <span class="lang-en hidden">You save</span>
             </p>
-            <p id="savingsAmount" class="font-display text-2xl md:text-3xl font-bold text-brand-400 counter-value inline-block">5.630 &euro;</p>
+            <p id="savingsAmount" class="font-display text-2xl md:text-3xl font-bold text-brand-400 counter-value inline-block">1.021 &euro;</p>
             <p class="text-xs text-gray-500 font-body mt-1">
               <span class="lang-de">pro Monat</span>
               <span class="lang-en hidden">per month</span>
@@ -411,11 +418,11 @@
               <span class="lang-de">Empfohlener Plan: </span>
               <span class="lang-en hidden">Recommended plan: </span>
             </span>
-            <span id="recommendedPlan" class="font-semibold text-brand-400">Call Lana Pro</span>
+            <span id="recommendedPlan" class="font-semibold text-brand-400">Call Lana Professional</span>
           </div>
         </div>
 
-        <p class="text-gray-400 text-xs text-center mt-4 font-body" style="line-height:1.6;">Berechnung basiert auf 22 Arbeitstagen pro Monat und durchschnittlichen Mitarbeiterkosten von 35&thinsp;€ pro Stunde.</p>
+        <p class="text-gray-400 text-xs text-center mt-4 font-body" style="line-height:1.6;">Berechnung basiert auf 22 Arbeitstagen pro Monat und Gesamtmitarbeiterkosten von 120&thinsp;€ pro Stunde (inkl. Lohnnebenkosten, Sozialabgaben und anteiligem Overhead).</p>
 
         <!-- Trust / ROI Quote -->
         <div class="mt-10 mb-10">
@@ -449,7 +456,7 @@
         <div class="text-center">
           <p class="text-gray-500 text-sm mb-4 lang-de">Noch Fragen? Sprich mit einem Call Lana Experten.</p>
           <p class="text-gray-500 text-sm mb-4 lang-en hidden">Questions? Talk to a Call Lana expert.</p>
-          <a href="demo.html" class="btn-brand inline-block px-8 py-4 rounded-xl text-base font-bold">
+          <a href="kontakt.html" class="btn-brand inline-block px-8 py-4 rounded-xl text-base font-bold">
             <span class="lang-de">Jetzt Demo buchen</span>
             <span class="lang-en hidden">Book a demo</span>
           </a>
@@ -476,19 +483,19 @@
           <thead>
             <tr class="border-b border-gray-200">
               <th class="text-left py-4 px-4 text-gray-500 font-medium w-1/3">Feature</th>
-              <th class="text-center py-4 px-4 text-gray-900 font-semibold">Lite</th>
+              <th class="text-center py-4 px-4 text-gray-900 font-semibold">Starter</th>
               <th class="text-center py-4 px-4 text-brand-400 font-semibold relative">
                 <span class="absolute inset-0 bg-brand-400/5 rounded-t-lg"></span>
-                <span class="relative">Pro</span>
+                <span class="relative">Professional</span>
               </th>
-              <th class="text-center py-4 px-4 text-gray-900 font-semibold">Enterprise</th>
+              <th class="text-center py-4 px-4 text-gray-900 font-semibold">Business</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-white/5">
             <tr>
               <td class="py-3.5 px-4 text-gray-600"><span class="lang-de">Inklusivminuten</span><span class="lang-en hidden">Included minutes</span></td>
-              <td class="py-3.5 px-4 text-center text-gray-700">340</td>
-              <td class="py-3.5 px-4 text-center text-gray-700 bg-brand-400/5">560</td>
+              <td class="py-3.5 px-4 text-center text-gray-700">300</td>
+              <td class="py-3.5 px-4 text-center text-gray-700 bg-brand-400/5">800</td>
               <td class="py-3.5 px-4 text-center text-gray-700"><span class="lang-de">Individuell</span><span class="lang-en hidden">Custom</span></td>
             </tr>
             <tr>
@@ -661,6 +668,73 @@
             </p>
           </div>
         </div>
+        <div class="faq-item">
+          <input type="checkbox" id="faq-p6" class="peer sr-only" />
+          <label for="faq-p6" class="faq-question font-body font-medium text-gray-900 cursor-pointer flex items-center justify-between p-5 rounded-xl bg-dark-800/50 border border-gray-200 hover:border-gray-300 transition-colors duration-200">
+            <span>
+              <span class="lang-de">Kann ich jederzeit k&uuml;ndigen?</span>
+              <span class="lang-en hidden">Can I cancel anytime?</span>
+            </span>
+            <svg class="w-5 h-5 text-gray-400 shrink-0 ml-4 transition-transform duration-200 peer-checked:rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+          </label>
+          <div class="faq-answer max-h-0 overflow-hidden peer-checked:max-h-96 transition-all duration-300 ease-in-out">
+            <p class="p-5 pt-2 text-gray-500 font-body text-sm leading-relaxed">
+              <span class="lang-de">Ja. Monatliche Abonnements k&ouml;nnen mit 14 Tagen Frist zum Monatsende gek&uuml;ndigt werden. J&auml;hrliche Abonnements k&ouml;nnen mit einem Monat Frist zum Laufzeitende gek&uuml;ndigt werden. Die K&uuml;ndigung ist per E-Mail an info@call-lana.de oder direkt im Dashboard m&ouml;glich.</span>
+              <span class="lang-en hidden">Yes. Monthly subscriptions can be cancelled with 14 days notice before month-end. Annual subscriptions can be cancelled with one month notice before term-end. Cancel via email to info@call-lana.de or directly in the dashboard.</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <input type="checkbox" id="faq-p7" class="peer sr-only" />
+          <label for="faq-p7" class="faq-question font-body font-medium text-gray-900 cursor-pointer flex items-center justify-between p-5 rounded-xl bg-dark-800/50 border border-gray-200 hover:border-gray-300 transition-colors duration-200">
+            <span>
+              <span class="lang-de">Was passiert mit meinen Daten nach K&uuml;ndigung?</span>
+              <span class="lang-en hidden">What happens to my data after cancellation?</span>
+            </span>
+            <svg class="w-5 h-5 text-gray-400 shrink-0 ml-4 transition-transform duration-200 peer-checked:rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+          </label>
+          <div class="faq-answer max-h-0 overflow-hidden peer-checked:max-h-96 transition-all duration-300 ease-in-out">
+            <p class="p-5 pt-2 text-gray-500 font-body text-sm leading-relaxed">
+              <span class="lang-de">Nach Vertragsende hast du 30 Tage Zeit, deine Daten zu exportieren. Danach werden alle personenbezogenen Daten, Transkripte und Einstellungen unwiderruflich gel&ouml;scht. Rechnungsdaten werden gem&auml;&szlig; gesetzlicher Aufbewahrungsfristen aufbewahrt.</span>
+              <span class="lang-en hidden">After contract ends, you have 30 days to export your data. After that, all personal data, transcripts and settings are permanently deleted. Billing data is retained per legal requirements.</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <input type="checkbox" id="faq-p8" class="peer sr-only" />
+          <label for="faq-p8" class="faq-question font-body font-medium text-gray-900 cursor-pointer flex items-center justify-between p-5 rounded-xl bg-dark-800/50 border border-gray-200 hover:border-gray-300 transition-colors duration-200">
+            <span>
+              <span class="lang-de">Kann ich meinen Tarif jederzeit wechseln?</span>
+              <span class="lang-en hidden">Can I switch plans anytime?</span>
+            </span>
+            <svg class="w-5 h-5 text-gray-400 shrink-0 ml-4 transition-transform duration-200 peer-checked:rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+          </label>
+          <div class="faq-answer max-h-0 overflow-hidden peer-checked:max-h-96 transition-all duration-300 ease-in-out">
+            <p class="p-5 pt-2 text-gray-500 font-body text-sm leading-relaxed">
+              <span class="lang-de">Ja. Du kannst jederzeit auf einen h&ouml;heren Tarif upgraden &mdash; die Differenz wird anteilig berechnet. Ein Downgrade ist zum Ende der aktuellen Abrechnungsperiode m&ouml;glich.</span>
+              <span class="lang-en hidden">Yes. You can upgrade anytime &mdash; the difference is prorated. Downgrades take effect at the end of the current billing period.</span>
+            </p>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <input type="checkbox" id="faq-p9" class="peer sr-only" />
+          <label for="faq-p9" class="faq-question font-body font-medium text-gray-900 cursor-pointer flex items-center justify-between p-5 rounded-xl bg-dark-800/50 border border-gray-200 hover:border-gray-300 transition-colors duration-200">
+            <span>
+              <span class="lang-de">Welche Zahlungsmethoden akzeptiert ihr?</span>
+              <span class="lang-en hidden">What payment methods do you accept?</span>
+            </span>
+            <svg class="w-5 h-5 text-gray-400 shrink-0 ml-4 transition-transform duration-200 peer-checked:rotate-45" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" /></svg>
+          </label>
+          <div class="faq-answer max-h-0 overflow-hidden peer-checked:max-h-96 transition-all duration-300 ease-in-out">
+            <p class="p-5 pt-2 text-gray-500 font-body text-sm leading-relaxed">
+              <span class="lang-de">Wir akzeptieren SEPA-Lastschrift und alle g&auml;ngigen Kreditkarten (Visa, Mastercard, Amex). Die Zahlungsabwicklung erfolgt sicher &uuml;ber Stripe &mdash; deine Zahlungsdaten werden verschl&uuml;sselt &uuml;bertragen und nie auf unseren Servern gespeichert.</span>
+              <span class="lang-en hidden">We accept SEPA direct debit and all major credit cards (Visa, Mastercard, Amex). Payments are processed securely via Stripe &mdash; your payment data is encrypted and never stored on our servers.</span>
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   </section>
@@ -670,15 +744,15 @@
     <div class="noise-overlay"></div>
     <div class="relative z-10 max-w-3xl mx-auto px-6 text-center">
       <h2 class="font-display text-3xl md:text-5xl font-extrabold mb-6 text-gray-900" style="letter-spacing:-0.03em;">
-        <span class="lang-de">Starte jetzt &mdash; ab 99&thinsp;&euro;/Monat</span>
-        <span class="lang-en hidden">Get started now &mdash; from 99&thinsp;&euro;/month</span>
+        <span class="lang-de">Starte jetzt &mdash; ab 149&thinsp;&euro;/Monat</span>
+        <span class="lang-en hidden">Get started now &mdash; from 149&thinsp;&euro;/month</span>
       </h2>
       <p class="text-gray-500 font-body text-lg mb-10 max-w-xl mx-auto">
         <span class="lang-de">30 Tage Geld-zur&uuml;ck-Garantie. Monatlich k&uuml;ndbar &ndash; optional mit Jahresrabatt. Einrichtung in weniger als 15 Minuten.</span>
         <span class="lang-en hidden">30-day money-back guarantee. Cancel monthly &ndash; optional annual discount. Setup in under 15 minutes.</span>
       </p>
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
-        <a href="demo.html" class="btn-brand inline-block text-lg px-10 py-4">
+        <a href="kontakt.html" class="btn-brand inline-block text-lg px-10 py-4">
           <span class="lang-de">Jetzt Demo buchen</span>
           <span class="lang-en hidden">Book a demo</span>
         </a>
@@ -692,7 +766,9 @@
 
   <div id="footer-container"></div>
 
-  <script src="components.js"></script>
+  <script src="warp-bg.js"></script>
+  <script src="js/components.js"></script>
+  <script src="js/pricing-data.js"></script>
   <script>
     // ── Savings Calculator ──
     const callsSlider = document.getElementById('callsPerDay');
@@ -710,12 +786,12 @@
     const cardIndividual = document.getElementById('cardIndividual');
 
     const WORK_DAYS = 22;
-    const HOURLY_RATE = 35; // EUR per hour for employee
-    const COLANA_RATE = 0.39; // EUR per minute for Colana
-    const LITE_BASE = 99;
-    const PRO_BASE = 299;
-    const LITE_MINUTES = 340;
-    const PRO_MINUTES = 560;
+    const HOURLY_RATE = 120; // EUR per hour fully loaded employee cost (salary + social contributions + overhead)
+    const COLANA_RATE = typeof PRICING !== 'undefined' ? PRICING.plans.starter.overage : 0.39;
+    const LITE_BASE = typeof PRICING !== 'undefined' ? PRICING.plans.starter.monthly : 149;
+    const PRO_BASE = typeof PRICING !== 'undefined' ? PRICING.plans.professional.monthly : 299;
+    const LITE_MINUTES = typeof PRICING !== 'undefined' ? PRICING.plans.starter.minutes : 300;
+    const PRO_MINUTES = typeof PRICING !== 'undefined' ? PRICING.plans.professional.minutes : 800;
 
     function formatEur(num) {
       return num.toLocaleString('de-DE', { maximumFractionDigits: 0 }) + ' \u20AC';
@@ -779,7 +855,7 @@
       bump(savingsEl);
 
       // Update recommendation
-      var planLabels = { lite: 'Call Lana Light', pro: 'Call Lana Pro', individual: 'Enterprise' };
+      var planLabels = { lite: 'Call Lana Starter', pro: 'Call Lana Professional', individual: 'Enterprise' };
       recommendedPlanEl.textContent = planLabels[recPlan];
 
       // Show/hide recommendation badges on cards
@@ -845,13 +921,14 @@
       });
     }
   </script>
-  <script src="warp-bg.js"></script>
 
   <!-- ========== FLOATING BOOKING BUTTON ========== -->
-  <a href="demo.html" id="floating-cta" class="fixed bottom-6 right-6 z-50 inline-flex items-center gap-2 bg-brand-400 text-white px-5 py-3.5 rounded-xl font-display text-sm font-bold no-underline" style="box-shadow: 0 4px 14px rgba(124,58,237,0.35), 0 1px 3px rgba(0,0,0,0.1); transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease;" onmouseenter="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(124,58,237,0.4), 0 2px 6px rgba(0,0,0,0.1)';" onmouseleave="this.style.transform='';this.style.boxShadow='0 4px 14px rgba(124,58,237,0.35), 0 1px 3px rgba(0,0,0,0.1)';" onfocus="this.style.outline='2px solid rgba(124,58,237,0.5)';this.style.outlineOffset='2px';" onblur="this.style.outline='none';">
+  <a href="kontakt.html" id="floating-cta" class="fixed bottom-6 right-6 z-50 inline-flex items-center gap-2 bg-brand-400 text-white px-5 py-3.5 rounded-xl font-display text-sm font-bold no-underline" style="box-shadow: 0 4px 14px rgba(124,58,237,0.35), 0 1px 3px rgba(0,0,0,0.1); transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease;" onmouseenter="this.style.transform='translateY(-2px)';this.style.boxShadow='0 6px 20px rgba(124,58,237,0.4), 0 2px 6px rgba(0,0,0,0.1)';" onmouseleave="this.style.transform='';this.style.boxShadow='0 4px 14px rgba(124,58,237,0.35), 0 1px 3px rgba(0,0,0,0.1)';" onfocus="this.style.outline='2px solid rgba(124,58,237,0.5)';this.style.outlineOffset='2px';" onblur="this.style.outline='none';">
     <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
     <span class="lang-de">Expertengespräch buchen</span>
     <span class="lang-en hidden">Book expert call</span>
   </a>
+<script src="i18n.js"></script>
+<script src="cookie-consent.js"></script>
 </body>
 </html>

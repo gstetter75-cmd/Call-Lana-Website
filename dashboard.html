@@ -1,1596 +1,1219 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CLana Dashboard</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            brand: {
-              dark:  '#5B21B6',
-              mid:   '#6D28D9',
-              gold:  '#7C3AED',
-              lime:  '#8B5CF6',
-            },
-            surface: {
-              base:     '#FFFFFF',
-              elevated: '#F9FAFB',
-              float:    '#F3F4F6',
-              border:   '#E5E7EB',
-            }
-          },
-          fontFamily: {
-            display: ['"Playfair Display"', 'serif'],
-            body:    ['"Inter"', 'sans-serif'],
-          },
-        }
-      }
-    }
-  </script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="logger.js"></script>
-  <script src="supabase-init.js"></script>
-  <script src="auth.js"></script>
-  <script src="db.js"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet" />
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Inter', sans-serif; background: #FFFFFF; color: #1F2937; height: 100vh; display: flex; overflow: hidden; }
-
-    /* ── Sidebar ── */
-    #sidebar {
-      width: 220px; flex-shrink: 0;
-      background: #F9FAFB;
-      border-right: 1px solid #E5E7EB;
-      display: flex; flex-direction: column;
-      height: 100vh; overflow: hidden;
-    }
-
-    .logo-area {
-      padding: 18px 18px 14px;
-      border-bottom: 1px solid #E5E7EB;
-      flex-shrink: 0;
-    }
-    .logo-area img { height: 34px; width: auto; display: block; }
-
-    nav { flex: 1; padding: 10px 8px; overflow-y: auto; }
-
-    .nav-label {
-      font-size: 10px; font-weight: 600; letter-spacing: 0.1em;
-      color: #9CA3AF; text-transform: uppercase;
-      padding: 14px 10px 4px; display: block;
-    }
-
-    .nav-item {
-      display: flex; align-items: center; gap: 10px;
-      padding: 8px 12px; border-radius: 8px;
-      font-size: 13.5px; font-weight: 500; color: #6B7280;
-      cursor: pointer; transition: background 0.13s, color 0.13s;
-      user-select: none;
-    }
-    .nav-item:hover { background: #F3F4F6; color: #1F2937; }
-    .nav-item.active {
-      background: linear-gradient(135deg, #5B21B6 0%, #8B5CF6 100%);
-      color: #fff;
-      box-shadow: 0 2px 10px rgba(124,58,237,0.15);
-    }
-    .nav-item svg { flex-shrink: 0; }
-
-    .sidebar-footer {
-      flex-shrink: 0;
-      padding: 12px 8px;
-      border-top: 1px solid #E5E7EB;
-    }
-    .user-chip {
-      display: flex; align-items: center; gap: 10px;
-      padding: 8px 10px; border-radius: 8px; cursor: pointer;
-      transition: background 0.13s;
-    }
-    .user-chip:hover { background: #F3F4F6; }
-    .avatar {
-      width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
-      background: linear-gradient(135deg, #5B21B6, #8B5CF6);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: 700; color: #fff;
-    }
-    .user-name { font-size: 13px; font-weight: 600; color: #1F2937; }
-    .user-role { font-size: 11px; color: #9CA3AF; }
-
-    /* ── Main ── */
-    #main { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-
-    #topbar {
-      height: 54px; flex-shrink: 0;
-      background: #F9FAFB;
-      border-bottom: 1px solid #E5E7EB;
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 0 28px;
-    }
-    .page-title { font-family: 'Playfair Display', serif; font-size: 18px; letter-spacing: -0.02em; color: #1F2937; }
-
-    .topbar-actions { display: flex; gap: 8px; }
-    .icon-btn {
-      width: 32px; height: 32px; border-radius: 8px;
-      background: #F3F4F6; border: 1px solid #E5E7EB;
-      display: flex; align-items: center; justify-content: center;
-      cursor: pointer; color: #9CA3AF;
-      transition: color 0.13s, background 0.13s;
-    }
-    .icon-btn:hover { color: #1F2937; background: #E5E7EB; }
-
-    #content { flex: 1; overflow-y: auto; padding: 28px; }
-
-    /* ── Pages ── */
-    .page { display: none; }
-    .page.active { display: block; }
-
-    .placeholder-shell {
-      background: #F9FAFB;
-      border: 1px solid #E5E7EB;
-      border-radius: 14px;
-      padding: 64px 32px;
-      text-align: center;
-      color: #9CA3AF;
-    }
-    .placeholder-shell .ph-icon { margin: 0 auto 18px; display: block; opacity: 0.35; }
-    .placeholder-shell h2 {
-      font-family: 'Playfair Display', serif;
-      font-size: 20px; color: #6B7280; margin-bottom: 6px;
-    }
-    .placeholder-shell p { font-size: 13px; color: #9CA3AF; }
-
-    /* ── Home page ── */
-    .home-grid {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 16px;
-      margin-bottom: 24px;
-    }
-    .metric-card {
-      background: #F9FAFB;
-      border: 1px solid #E5E7EB;
-      border-radius: 12px;
-      padding: 20px;
-      position: relative;
-      overflow: hidden;
-    }
-    .metric-card::before {
-      content: '';
-      position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, #5B21B6, #8B5CF6);
-      opacity: 0;
-      transition: opacity 0.2s;
-    }
-    .metric-card:hover::before { opacity: 1; }
-    .metric-label {
-      font-size: 11px; font-weight: 600; text-transform: uppercase;
-      letter-spacing: 0.08em; color: #9CA3AF; margin-bottom: 10px;
-    }
-    .metric-value {
-      font-family: 'Playfair Display', serif;
-      font-size: 28px; color: #1F2937; line-height: 1;
-      margin-bottom: 8px;
-    }
-    .metric-delta {
-      display: inline-flex; align-items: center; gap: 4px;
-      font-size: 11.5px; font-weight: 500; padding: 2px 7px;
-      border-radius: 20px;
-    }
-    .delta-up   { background: rgba(74,222,128,0.1); color: #4ade80; }
-    .delta-down { background: rgba(248,113,113,0.1); color: #f87171; }
-    .metric-icon {
-      position: absolute; bottom: 14px; right: 16px;
-      opacity: 0.08;
-    }
-
-    .home-lower { display: grid; grid-template-columns: 1fr 320px; gap: 16px; }
-
-    .panel {
-      background: #F9FAFB;
-      border: 1px solid #E5E7EB;
-      border-radius: 12px;
-      overflow: hidden;
-    }
-    .panel-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 16px 20px;
-      border-bottom: 1px solid #E5E7EB;
-    }
-    .panel-title {
-      font-size: 13px; font-weight: 600; color: #1F2937;
-    }
-    .panel-link {
-      font-size: 12px; color: #6D28D9; cursor: pointer;
-      transition: color 0.13s;
-    }
-    .panel-link:hover { color: #8B5CF6; }
-
-    /* Activity feed */
-    .activity-list { padding: 4px 0; }
-    .activity-item {
-      display: flex; align-items: flex-start; gap: 12px;
-      padding: 12px 20px;
-      border-bottom: 1px solid #F3F4F6;
-      transition: background 0.13s;
-    }
-    .activity-item:last-child { border-bottom: none; }
-    .activity-item:hover { background: #F3F4F6; }
-    .activity-dot {
-      width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
-      margin-top: 5px;
-    }
-    .dot-call    { background: #8B5CF6; box-shadow: 0 0 6px rgba(139,92,246,0.4); }
-    .dot-message { background: #60a5fa; box-shadow: 0 0 6px rgba(96,165,250,0.4); }
-    .dot-contact { background: #a78bfa; box-shadow: 0 0 6px rgba(167,139,250,0.4); }
-    .dot-system  { background: #52525B; }
-    .activity-body { flex: 1; min-width: 0; }
-    .activity-text { font-size: 13px; color: #4B5563; line-height: 1.4; }
-    .activity-text strong { color: #1F2937; font-weight: 600; }
-    .activity-time { font-size: 11px; color: #9CA3AF; margin-top: 2px; }
-
-    /* Quick stats panel */
-    .stat-row {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 13px 20px;
-      border-bottom: 1px solid #F3F4F6;
-    }
-    .stat-row:last-child { border-bottom: none; }
-    .stat-name { font-size: 13px; color: #6B7280; }
-    .stat-bar-wrap {
-      flex: 1; margin: 0 14px;
-      height: 4px; background: #E5E7EB; border-radius: 4px; overflow: hidden;
-    }
-    .stat-bar { height: 100%; border-radius: 4px; background: linear-gradient(90deg, #5B21B6, #8B5CF6); }
-    .stat-val { font-size: 13px; font-weight: 600; color: #1F2937; min-width: 36px; text-align: right; }
-
-    /* ── Assistants page ── */
-    .page-header {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 22px;
-    }
-    .page-heading {
-      font-family: 'Playfair Display', serif;
-      font-size: 20px; color: #1F2937; letter-spacing: -0.02em;
-    }
-    .page-sub { font-size: 12px; color: #9CA3AF; margin-top: 2px; }
-
-    .btn-primary {
-      display: inline-flex; align-items: center; gap: 7px;
-      padding: 8px 16px; border-radius: 8px; border: none; cursor: pointer;
-      font-size: 13px; font-weight: 600; font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #5B21B6, #8B5CF6);
-      color: #fff;
-      box-shadow: 0 2px 12px rgba(124,58,237,0.2);
-      transition: opacity 0.15s, transform 0.15s;
-    }
-    .btn-primary:hover  { opacity: 0.88; transform: translateY(-1px); }
-    .btn-primary:active { opacity: 1;    transform: translateY(0); }
-
-    .assistants-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 16px;
-      margin-bottom: 28px;
-    }
-
-    .assistant-card {
-      background: #F9FAFB;
-      border: 1px solid #E5E7EB;
-      border-radius: 12px;
-      overflow: hidden;
-      transition: border-color 0.15s, box-shadow 0.15s;
-      cursor: pointer;
-    }
-    .assistant-card:hover {
-      border-color: #7C3AED;
-      box-shadow: 0 4px 20px rgba(124,58,237,0.15);
-    }
-    .assistant-card-top {
-      padding: 18px 18px 14px;
-      display: flex; align-items: flex-start; gap: 14px;
-    }
-    .assistant-avatar {
-      width: 42px; height: 42px; border-radius: 10px; flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 18px; font-weight: 700;
-    }
-    .av-gold   { background: linear-gradient(135deg, #5B21B6, #8B5CF6); color: #fff; }
-    .av-blue   { background: linear-gradient(135deg, #1e3a8a, #3b82f6); color: #fff; }
-    .av-purple { background: linear-gradient(135deg, #4c1d95, #a78bfa); color: #fff; }
-
-    .assistant-meta { flex: 1; min-width: 0; }
-    .assistant-name { font-size: 14px; font-weight: 600; color: #1F2937; margin-bottom: 3px; }
-    .assistant-role { font-size: 12px; color: #9CA3AF; }
-
-    .status-badge {
-      display: inline-flex; align-items: center; gap: 5px;
-      font-size: 11px; font-weight: 500; padding: 2px 8px;
-      border-radius: 20px; flex-shrink: 0;
-    }
-    .status-active   { background: rgba(74,222,128,0.1); color: #4ade80; }
-    .status-inactive { background: rgba(156,163,175,0.2); color: #9CA3AF; }
-    .status-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
-
-    .assistant-card-stats {
-      display: grid; grid-template-columns: repeat(3,1fr);
-      border-top: 1px solid #E5E7EB;
-    }
-    .astat {
-      padding: 10px 14px;
-      border-right: 1px solid #E5E7EB;
-      text-align: center;
-    }
-    .astat:last-child { border-right: none; }
-    .astat-val  { font-size: 14px; font-weight: 600; color: #1F2937; }
-    .astat-lbl  { font-size: 10px; color: #9CA3AF; text-transform: uppercase; letter-spacing: 0.06em; margin-top: 1px; }
-
-    .assistant-card-footer {
-      padding: 10px 18px;
-      border-top: 1px solid #E5E7EB;
-      display: flex; gap: 8px;
-    }
-    .btn-ghost {
-      flex: 1; padding: 6px 0; border-radius: 7px; border: 1px solid #E5E7EB;
-      background: transparent; font-size: 12px; font-weight: 500;
-      color: #6B7280; cursor: pointer; font-family: 'Inter', sans-serif;
-      transition: background 0.13s, color 0.13s, border-color 0.13s;
-      text-align: center;
-    }
-    .btn-ghost:hover { background: #F3F4F6; color: #1F2937; border-color: #D1D5DB; }
-    .btn-ghost.danger:hover { background: rgba(248,113,113,0.08); color: #f87171; border-color: rgba(248,113,113,0.3); }
-
-    /* Settings panel */
-    .settings-panel {
-      background: #F9FAFB;
-      border: 1px solid #E5E7EB;
-      border-radius: 12px;
-      overflow: hidden;
-    }
-    .settings-section { padding: 18px 20px; border-bottom: 1px solid #E5E7EB; }
-    .settings-section:last-child { border-bottom: none; }
-    .settings-section-title {
-      font-size: 11px; font-weight: 600; text-transform: uppercase;
-      letter-spacing: 0.08em; color: #9CA3AF; margin-bottom: 14px;
-    }
-    .settings-row {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 7px 0;
-    }
-    .settings-label { font-size: 13px; color: #6B7280; }
-    .settings-value { font-size: 13px; color: #1F2937; font-weight: 500; }
-    .toggle {
-      width: 36px; height: 20px; border-radius: 10px; cursor: pointer;
-      position: relative; flex-shrink: 0;
-      transition: background 0.2s;
-    }
-    .toggle.on  { background: linear-gradient(90deg, #5B21B6, #8B5CF6); }
-    .toggle.off { background: #E5E7EB; }
-    .toggle::after {
-      content: ''; position: absolute;
-      width: 14px; height: 14px; border-radius: 50%; background: #fff;
-      top: 3px; transition: left 0.2s;
-    }
-    .toggle.on::after  { left: 19px; }
-    .toggle.off::after { left: 3px; }
-
-    /* ── Billing page ── */
-    .billing-grid {
-      display: grid;
-      grid-template-columns: 1fr 340px;
-      gap: 16px;
-      align-items: start;
-    }
-    .billing-left { display: flex; flex-direction: column; gap: 16px; }
-    .billing-right { display: flex; flex-direction: column; gap: 16px; }
-
-    .credit-card {
-      background: linear-gradient(135deg, #EDE9FE 0%, #DDD6FE 50%, #C4B5FD 100%);
-      border: 1px solid #C4B5FD;
-      border-radius: 14px;
-      padding: 24px;
-      position: relative;
-      overflow: hidden;
-    }
-    .credit-card::before {
-      content: '';
-      position: absolute; top: -40px; right: -40px;
-      width: 180px; height: 180px; border-radius: 50%;
-      background: radial-gradient(circle, rgba(139,92,246,0.12) 0%, transparent 70%);
-    }
-    .credit-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: #6B7280; margin-bottom: 6px; }
-    .credit-balance { font-family: 'Playfair Display', serif; font-size: 38px; color: #1F2937; line-height: 1; margin-bottom: 4px; }
-    .credit-balance span { font-size: 20px; color: #6D28D9; margin-right: 4px; }
-    .credit-sub { font-size: 12px; color: #6B7280; margin-bottom: 20px; }
-
-    .credit-actions { display: flex; gap: 10px; }
-    .btn-outline {
-      padding: 7px 16px; border-radius: 8px;
-      border: 1px solid #C4B5FD; background: rgba(124,58,237,0.1);
-      font-size: 12px; font-weight: 600; color: #7C3AED;
-      cursor: pointer; font-family: 'Inter', sans-serif;
-      transition: background 0.13s, border-color 0.13s;
-    }
-    .btn-outline:hover { background: rgba(124,58,237,0.2); border-color: #7C3AED; }
-
-    .usage-section { background: #F9FAFB; border: 1px solid #E5E7EB; border-radius: 12px; overflow: hidden; }
-
-    .usage-bar-row { padding: 14px 20px; border-bottom: 1px solid #F3F4F6; }
-    .usage-bar-row:last-child { border-bottom: none; }
-    .usage-bar-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
-    .usage-bar-name { font-size: 13px; color: #6B7280; }
-    .usage-bar-vals { font-size: 12px; color: #9CA3AF; }
-    .usage-bar-vals strong { color: #1F2937; font-weight: 600; }
-    .usage-track { height: 6px; background: #E5E7EB; border-radius: 6px; overflow: hidden; }
-    .usage-fill  { height: 100%; border-radius: 6px; background: linear-gradient(90deg, #5B21B6, #8B5CF6); }
-    .usage-fill.warn { background: linear-gradient(90deg, #92400e, #f59e0b); }
-
-    .limit-row {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 13px 20px; border-bottom: 1px solid #F3F4F6;
-    }
-    .limit-row:last-child { border-bottom: none; }
-    .limit-left { flex: 1; }
-    .limit-name { font-size: 13px; color: #1F2937; font-weight: 500; }
-    .limit-desc { font-size: 11px; color: #9CA3AF; margin-top: 2px; }
-    .limit-val  { font-size: 13px; font-weight: 600; color: #1F2937; margin-right: 16px; }
-
-    /* Payment methods */
-    .pm-item {
-      display: flex; align-items: center; gap: 14px;
-      padding: 14px 20px; border-bottom: 1px solid #F3F4F6;
-    }
-    .pm-item:last-child { border-bottom: none; }
-    .pm-icon {
-      width: 40px; height: 26px; border-radius: 5px;
-      background: #F3F4F6; border: 1px solid #E5E7EB;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0; font-size: 10px; font-weight: 700; color: #9CA3AF;
-    }
-    .pm-info { flex: 1; }
-    .pm-name { font-size: 13px; color: #1F2937; font-weight: 500; }
-    .pm-detail { font-size: 11px; color: #9CA3AF; margin-top: 1px; }
-    .pm-default {
-      font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 20px;
-      background: rgba(124,58,237,0.1); color: #7C3AED;
-    }
-    .pm-remove {
-      font-size: 12px; color: #9CA3AF; cursor: pointer; padding: 4px 8px;
-      border-radius: 6px; transition: color 0.13s, background 0.13s;
-      background: none; border: none; font-family: 'Inter', sans-serif;
-    }
-    .pm-remove:hover { color: #f87171; background: rgba(248,113,113,0.08); }
-
-    .invoice-row {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 12px 20px; border-bottom: 1px solid #F3F4F6;
-      font-size: 13px;
-    }
-    .invoice-row:last-child { border-bottom: none; }
-    .invoice-date { color: #9CA3AF; width: 90px; }
-    .invoice-desc { flex: 1; color: #6B7280; }
-    .invoice-amt  { font-weight: 600; color: #1F2937; width: 70px; text-align: right; }
-    .invoice-dl   { color: #6D28D9; cursor: pointer; font-size: 11px; margin-left: 12px; }
-    .invoice-dl:hover { color: #8B5CF6; }
-
-    /* ── New Assistant Modal ── */
-    .modal-overlay {
-      position: fixed; inset: 0; z-index: 200;
-      background: rgba(17,24,39,0.4);
-      display: flex; align-items: center; justify-content: center; padding: 24px;
-    }
-    .modal-overlay.hidden { display: none; }
-    .modal-box {
-      background: #fff; border: 1px solid #E5E7EB; border-radius: 14px;
-      width: 100%; max-width: 420px; overflow: hidden;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.12);
-    }
-    .modal-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 16px 20px; border-bottom: 1px solid #E5E7EB;
-    }
-    .modal-title { font-family: 'Playfair Display', serif; font-size: 17px; color: #1F2937; }
-    .modal-close {
-      width: 28px; height: 28px; border-radius: 7px; border: 1px solid #E5E7EB;
-      background: #F3F4F6; cursor: pointer; display: flex; align-items: center;
-      justify-content: center; color: #9CA3AF; font-size: 18px; line-height: 1;
-      transition: background 0.13s, color 0.13s; font-family: 'Inter', sans-serif;
-    }
-    .modal-close:hover { background: #E5E7EB; color: #1F2937; }
-    .modal-body { padding: 20px; }
-    .form-group { margin-bottom: 16px; }
-    .form-group:last-child { margin-bottom: 0; }
-    .form-label {
-      display: block; font-size: 11px; font-weight: 600; color: #6B7280;
-      text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 6px;
-    }
-    .form-control {
-      width: 100%; padding: 9px 12px; border-radius: 8px;
-      border: 1px solid #E5E7EB; background: #F9FAFB;
-      font-size: 13px; color: #1F2937; font-family: 'Inter', sans-serif;
-      outline: none; transition: border-color 0.15s, background 0.15s;
-      -webkit-appearance: none; appearance: none;
-    }
-    .form-control:focus { border-color: #7C3AED; background: #fff; }
-    .modal-error {
-      font-size: 12px; color: #f87171;
-      background: rgba(248,113,113,0.08); border: 1px solid rgba(248,113,113,0.2);
-      border-radius: 8px; padding: 9px 12px; margin-bottom: 14px; display: none;
-    }
-    .modal-footer {
-      padding: 14px 20px; border-top: 1px solid #E5E7EB;
-      display: flex; gap: 8px; justify-content: flex-end;
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Dashboard – Call Lana</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#7c3aed">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/common.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="css/dashboard.css">
+<style>
+body{display:flex;overflow:hidden;}
+</style>
 </head>
-<body>
+<body class="auth-pending">
+<!-- ===== TEMPORARY DEBUG MARKER — REMOVE AFTER VERIFICATION ===== -->
+<div id="debug-marker" style="position:fixed;top:0;left:0;right:0;z-index:99999;background:#FF0000;color:#FFFFFF;font-family:monospace;font-size:15px;font-weight:bold;text-align:center;padding:8px 20px;letter-spacing:0.05em;box-shadow:0 4px 20px rgba(0,0,0,0.5);">
+  ⚠️ LOCAL TEST BUILD — dashboard.html AKTIV — 2026-04-02 ⚠️
+</div>
+<!-- ===== END DEBUG MARKER ===== -->
+<a href="#main" class="skip-link">Zum Inhalt springen</a>
 
-<!-- ── Sidebar ── -->
-<aside id="sidebar">
-  <div class="logo-area">
-    <img src="brand_assets/A_vector-style_digital_logo_for_the_brand_Clana_.png" alt="Call Lana" />
-  </div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-  <nav>
-    <!-- Workspace -->
-    <span class="nav-label">Workspace</span>
-    <div class="nav-item active" data-page="home">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 9.5L12 3l9 6.5V20a1 1 0 01-1 1H4a1 1 0 01-1-1V9.5z"/><path d="M9 21V12h6v9"/></svg>
-      Home
-    </div>
-    <div class="nav-item" data-page="assistants">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-      Assistants
-    </div>
+<div id="sidebar-container"></div>
 
-    <!-- Communication -->
-    <span class="nav-label">Communication</span>
-    <div class="nav-item" data-page="calls">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8 19.79 19.79 0 01.08 2.18 2 2 0 012.07 0h3a2 2 0 012 1.72c.13.96.36 1.9.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.91.34 1.85.57 2.81.7A2 2 0 0122 14.92v2z"/></svg>
-      Calls
-    </div>
-    <div class="nav-item" data-page="messages">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-      Messages
-    </div>
-    <div class="nav-item" data-page="contacts">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
-      Contacts
-    </div>
-
-    <!-- Configuration -->
-    <span class="nav-label">Configuration</span>
-    <div class="nav-item" data-page="integrations">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="7" width="7" height="7" rx="1"/><rect x="15" y="7" width="7" height="7" rx="1"/><path d="M9 10.5h6M12 7V4M12 20v-3"/></svg>
-      Integrations
-    </div>
-    <div class="nav-item" data-page="team">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
-      Team
-    </div>
-
-    <!-- Account -->
-    <span class="nav-label">Account</span>
-    <div class="nav-item" data-page="billing">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-      Billing
-    </div>
-    <div class="nav-item" data-page="packages">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-      Packages
-    </div>
-    <div class="nav-item" data-page="settings">
-      <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-      Settings
-    </div>
-  </nav>
-
-  <div class="sidebar-footer">
-    <div class="user-chip" onclick="handleLogout()" title="Abmelden">
-      <div class="avatar" id="user-avatar">?</div>
-      <div>
-        <div class="user-name" id="user-name">…</div>
-        <div class="user-role" id="user-role">…</div>
-      </div>
+<div class="main" id="main">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="topbar-hamburger" id="hamburgerBtn" aria-label="Menü">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+      <div class="topbar-breadcrumb">Call Lana / <span id="breadcrumb">Home</span></div>
     </div>
   </div>
-</aside>
 
-<!-- ── Main ── -->
-<div id="main">
-  <header id="topbar">
-    <span class="page-title" id="page-title">Home</span>
-    <div class="topbar-actions">
-      <div class="icon-btn" title="Notifications">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>
+  <div class="content">
+    <!-- ===================== HOME ===================== -->
+    <div id="page-home" class="page-section active">
+      <!-- Usage Alert -->
+      <div id="usage-alert"></div>
+
+      <!-- Onboarding Checklist -->
+      <div id="onboarding-section" style="display:none;"></div>
+
+      <h1>Dashboard</h1>
+      <p class="page-desc">Willkommen zurück! Hier ist deine Übersicht.</p>
+
+      <!-- EMERGENCY BANNER (realtime) -->
+      <div id="emergency-banner"></div>
+
+      <!-- METRIC CARDS ROW -->
+      <div class="stats-grid" id="metric-cards">
+        <div class="stat-card">
+          <div class="stat-icon purple">📞</div>
+          <div class="stat-label">Anrufe heute</div>
+          <div class="stat-value" id="metricCallsToday">0</div>
+          <div class="stat-sub" id="metricCallsTrend"></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon cyan">📅</div>
+          <div class="stat-label">Buchungsrate</div>
+          <div class="stat-value" id="metricBookingRate">0%</div>
+          <div class="stat-sub" id="metricBookingTrend"></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon orange">⏱</div>
+          <div class="stat-label">Minuten heute</div>
+          <div class="stat-value" id="metricMinutes">0</div>
+          <div class="stat-sub" id="metricMinutesTrend"></div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon green">😊</div>
+          <div class="stat-label">Sentiment Score</div>
+          <div class="stat-value" id="metricSentiment">–</div>
+          <div class="stat-sub" id="metricSentimentTrend"></div>
+        </div>
       </div>
-      <div class="icon-btn" title="Help">
-        <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+
+      <!-- TOP ROW: Chart + Donut -->
+      <div class="home-top">
+        <!-- Line Chart -->
+        <div class="home-chart-card">
+          <div class="home-chart-header">
+            <h2>Anrufverlauf</h2>
+            <select class="month-select" id="monthSelect"></select>
+          </div>
+          <svg class="chart-svg" id="callChart" viewBox="0 0 600 140" preserveAspectRatio="none"></svg>
+        </div>
+        <!-- Balance Donut -->
+        <div class="balance-donut-card">
+          <div class="donut-label">Guthaben</div>
+          <div class="donut-wrap">
+            <svg viewBox="0 0 100 100" id="donutSvg">
+              <circle cx="50" cy="50" r="40" fill="none" stroke="rgba(124,58,237,.12)" stroke-width="10"/>
+              <circle cx="50" cy="50" r="40" fill="none" stroke="var(--pu3)" stroke-width="10" stroke-dasharray="251.3" stroke-dashoffset="251.3" stroke-linecap="round" transform="rotate(-90 50 50)" id="donutArc"/>
+            </svg>
+            <div class="donut-center" id="donutCenter">0 €</div>
+          </div>
+          <button class="btn-balance" onclick="showToast('Zahlungsanbindung wird bald verfügbar sein.')">Guthaben kaufen</button>
+        </div>
+      </div>
+
+      <!-- MIDDLE ROW: Last 5 Calls + Today's Appointments + Top Leads -->
+      <div class="home-widgets-grid">
+        <!-- Last 5 Calls -->
+        <div class="card" style="padding:16px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <h3 style="margin:0;font-size:14px;">Letzte Anrufe</h3>
+            <a href="#transactions" onclick="navigateToPage('transactions')" style="font-size:11px;color:var(--pu);text-decoration:none;font-weight:600;">Alle →</a>
+          </div>
+          <div id="widget-recent-calls">
+            <div style="color:var(--tx3);font-size:13px;text-align:center;padding:20px;">Lade…</div>
+          </div>
+        </div>
+        <!-- Today's Appointments -->
+        <div class="card" style="padding:16px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <h3 style="margin:0;font-size:14px;">Termine heute</h3>
+            <span style="font-size:11px;color:var(--tx3);font-weight:600;" id="widget-appointments-count">0</span>
+          </div>
+          <div id="widget-appointments">
+            <div style="color:var(--tx3);font-size:13px;text-align:center;padding:20px;">Keine Termine heute</div>
+          </div>
+        </div>
+        <!-- Top Leads -->
+        <div class="card" style="padding:16px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <h3 style="margin:0;font-size:14px;">Top Leads</h3>
+            <span class="badge badge-purple" style="font-size:10px;">Lead Score</span>
+          </div>
+          <div id="widget-top-leads">
+            <div style="color:var(--tx3);font-size:13px;text-align:center;padding:20px;">Lade…</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BOTTOM ROW: Assistants + Performance + Heatmap -->
+      <div class="home-bottom" style="margin-top:20px;">
+        <h2>Assistenten</h2>
+        <div class="assistants-grid" id="homeAssistants">
+          <div class="loading-state"><div class="spinner"></div><p>Lade Assistenten…</p></div>
+        </div>
+
+        <!-- Assistant Performance + Call Heatmap -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:20px;">
+          <div class="card" id="assistant-performance" style="padding:16px;"></div>
+          <div class="card" id="call-heatmap" style="padding:16px;"></div>
+        </div>
       </div>
     </div>
-  </header>
 
-  <main id="content">
-
-    <div id="page-home" class="page active">
-
-      <!-- Greeting -->
-      <div style="margin-bottom:22px;">
-        <p style="font-size:12px;color:#9CA3AF;margin-bottom:2px;" id="greeting-date"></p>
-        <h1 style="font-family:'Playfair Display',serif;font-size:22px;color:#1F2937;letter-spacing:-0.02em;" id="greeting-text">…</h1>
+    <!-- ===================== ASSISTANTS ===================== -->
+    <div id="page-assistants" class="page-section">
+      <div class="page-title-row">
+        <h1>Assistenten</h1>
+        <button class="btn-primary" id="btnNewAssistant" style="font-size:13px;padding:10px 20px;">+ Neuer Assistent</button>
       </div>
+      <p class="page-desc">Verwalte deine KI-Assistenten.</p>
 
-      <!-- Metric cards -->
-      <div class="home-grid">
-
-        <div class="metric-card">
-          <div class="metric-label">Total Calls</div>
-          <div class="metric-value" id="metric-calls">—</div>
-          <span class="metric-delta delta-up" id="metric-calls-sub" style="opacity:0.5">loading…</span>
-          <svg class="metric-icon" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 10.8 19.79 19.79 0 01.08 2.18 2 2 0 012.07 0h3a2 2 0 012 1.72c.13.96.36 1.9.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6z"/></svg>
+      <div class="data-section">
+        <div id="assistantsListBody">
+          <div class="loading-state"><div class="spinner"></div><p>Assistenten werden geladen…</p></div>
         </div>
-
-        <div class="metric-card">
-          <div class="metric-label">Avg. Call Duration</div>
-          <div class="metric-value" id="metric-duration">—</div>
-          <span class="metric-delta delta-up" style="opacity:0.5">this month</span>
-          <svg class="metric-icon" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-        </div>
-
-        <div class="metric-card">
-          <div class="metric-label">Messages Sent</div>
-          <div class="metric-value" id="metric-messages">—</div>
-          <span class="metric-delta delta-up" style="opacity:0.5">total</span>
-          <svg class="metric-icon" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-        </div>
-
-        <div class="metric-card">
-          <div class="metric-label">Active Assistants</div>
-          <div class="metric-value" id="metric-assistants">—</div>
-          <span class="metric-delta delta-up" style="opacity:0.5" id="metric-assistants-sub">loading…</span>
-          <svg class="metric-icon" width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-        </div>
-
-      </div>
-
-      <!-- Lower: activity + quick stats -->
-      <div class="home-lower">
-
-        <!-- Recent Activity -->
-        <div class="panel">
-          <div class="panel-header">
-            <span class="panel-title">Recent Activity</span>
-            <span class="panel-link" onclick="document.querySelector('[data-page=calls]').click()">View all</span>
-          </div>
-          <div class="activity-list" id="activity-list">
-            <!-- Rendered dynamically by JS -->
-          </div>
-        </div>
-
-        <!-- Quick Stats -->
-        <div class="panel">
-          <div class="panel-header">
-            <span class="panel-title">This Week</span>
-          </div>
-          <div id="weekly-stats-container"></div>
-        </div>
-
       </div>
     </div>
 
-    <div id="page-assistants" class="page">
+    <!-- ===================== ASSISTANT EDIT ===================== -->
+    <div id="page-assistant-edit" class="page-section">
+      <div class="page-title-row">
+        <button class="btn-secondary" style="padding:8px 14px;font-size:12px;" onclick="navigateToPage('assistants')">← Zurück</button>
+        <h1 id="editTitle">Assistent bearbeiten</h1>
+      </div>
+      <p class="page-desc" id="editDesc">Konfiguriere deinen Assistenten.</p>
 
-      <div class="page-header">
-        <div>
-          <div class="page-heading">Assistants</div>
-          <div class="page-sub" id="assistants-sub">…</div>
-        </div>
-        <button class="btn-primary" onclick="openNewAssistantModal()">
-          <svg width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          New Assistant
-        </button>
+      <!-- TABS -->
+      <div class="editor-tabs">
+        <button class="editor-tab active" data-tab="tab-behavior">Verhalten</button>
+        <button class="editor-tab" data-tab="tab-technical">Technisches</button>
+        <button class="editor-tab" data-tab="tab-tools">Tools</button>
+        <button class="editor-tab" data-tab="tab-postprocess">Nachverarbeitung</button>
+        <button class="editor-tab" data-tab="tab-outbound">Outbound</button>
       </div>
 
-      <!-- Assistant cards -->
-      <div class="assistants-grid" id="assistants-grid">
-
-        <!-- Cards rendered dynamically by JS -->
-
-      </div>
-
-      <!-- Assistant Settings Panel (shown on Settings click) -->
-      <div id="assistant-settings-panel" style="display:none;">
-        <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px;">
-          <button onclick="closeAssistantSettings()" style="background:#F3F4F6;border:1px solid #E5E7EB;border-radius:7px;padding:5px 10px;color:#6B7280;font-size:12px;cursor:pointer;font-family:'Inter',sans-serif;">← Back</button>
-          <span id="settings-panel-title" style="font-size:14px;font-weight:600;color:#1F2937;"></span>
+      <!-- TAB: Verhalten -->
+      <div class="editor-panel active" id="tab-behavior">
+        <div class="form-group">
+          <label class="form-label">Name</label>
+          <input type="text" class="form-input" id="edName" placeholder="z.B. Lana Empfang">
         </div>
-
-        <div class="settings-panel">
-
-          <div class="settings-section">
-            <div class="settings-section-title">General</div>
-            <div class="settings-row">
-              <span class="settings-label">Assistant name</span>
-              <span class="settings-value" id="sp-name">—</span>
-            </div>
-            <div class="settings-row">
-              <span class="settings-label">Language</span>
-              <span class="settings-value" id="sp-lang">—</span>
-            </div>
-            <div class="settings-row">
-              <span class="settings-label">Direction</span>
-              <span class="settings-value" id="sp-dir">—</span>
-            </div>
-            <div class="settings-row">
-              <span class="settings-label">Voice model</span>
-              <span class="settings-value">ElevenLabs · Multilingual v2</span>
-            </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Stimme</label>
+            <select class="form-select" id="edVoice">
+              <option value="Marie">Marie</option>
+              <option value="Hans">Hans</option>
+              <option value="Lena">Lena</option>
+              <option value="Stefan">Stefan</option>
+              <option value="Anna">Anna</option>
+            </select>
           </div>
-
-          <div class="settings-section">
-            <div class="settings-section-title">Behaviour</div>
-            <div class="settings-row">
-              <span class="settings-label">Interrupt on silence</span>
-              <div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div>
-            </div>
-            <div class="settings-row">
-              <span class="settings-label">Record calls</span>
-              <div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div>
-            </div>
-            <div class="settings-row">
-              <span class="settings-label">Send post-call SMS</span>
-              <div class="toggle off" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div>
-            </div>
-            <div class="settings-row">
-              <span class="settings-label">Escalate to human</span>
-              <div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div>
-            </div>
+          <div class="form-group">
+            <label class="form-label">Sprache</label>
+            <select class="form-select" id="edLang">
+              <option value="de">Deutsch</option>
+              <option value="en">Englisch</option>
+              <option value="fr">Französisch</option>
+              <option value="es">Spanisch</option>
+              <option value="it">Italienisch</option>
+            </select>
           </div>
-
-          <div class="settings-section">
-            <div class="settings-section-title">Phone</div>
-            <div class="settings-row">
-              <span class="settings-label">Assigned number</span>
-              <span class="settings-value">+49 800 123 4567</span>
-            </div>
-            <div class="settings-row">
-              <span class="settings-label">Max concurrent calls</span>
-              <span class="settings-value">5</span>
-            </div>
-            <div class="settings-row">
-              <span class="settings-label">Timeout (no answer)</span>
-              <span class="settings-value">30s</span>
-            </div>
-          </div>
-
+        </div>
+        <div class="form-group">
+          <label class="form-label">Startnachricht</label>
+          <textarea class="form-textarea" id="edGreeting" placeholder="Hallo, hier ist Lana von [Firma]. Wie kann ich Ihnen helfen?"></textarea>
+          <div class="form-hint">Diese Nachricht wird beim Gesprächsbeginn abgespielt.</div>
         </div>
       </div>
 
+      <!-- TAB: Technisches -->
+      <div class="editor-panel" id="tab-technical">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Modell</label>
+            <select class="form-select" id="edModel">
+              <option value="gpt-4">GPT-4</option>
+              <option value="gpt-4o">GPT-4o</option>
+              <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+              <option value="claude-sonnet">Claude Sonnet</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Temperatur</label>
+            <input type="number" class="form-input" id="edTemp" min="0" max="2" step="0.1" value="0.7">
+            <div class="form-hint">0 = präzise, 1 = kreativ, 2 = sehr kreativ</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Max. Gesprächsdauer (Sekunden)</label>
+          <input type="number" class="form-input" id="edMaxDuration" min="30" max="3600" step="30" value="300">
+          <div class="form-hint">Maximale Dauer eines Gesprächs in Sekunden.</div>
+        </div>
+      </div>
+
+      <!-- TAB: Tools -->
+      <div class="editor-panel" id="tab-tools">
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-title">Kalender-Integration</div>
+            <div class="toggle-desc">Termine direkt im Gespräch buchen und prüfen.</div>
+          </div>
+          <label class="toggle"><input type="checkbox" id="edToolCalendar"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-title">CRM-Anbindung</div>
+            <div class="toggle-desc">Kontaktdaten automatisch im CRM anlegen.</div>
+          </div>
+          <label class="toggle"><input type="checkbox" id="edToolCRM"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-title">E-Mail versenden</div>
+            <div class="toggle-desc">Bestätigungen und Zusammenfassungen per E-Mail senden.</div>
+          </div>
+          <label class="toggle"><input type="checkbox" id="edToolEmail"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-title">Wissensdatenbank</div>
+            <div class="toggle-desc">Auf hochgeladene Dokumente und FAQs zugreifen.</div>
+          </div>
+          <label class="toggle"><input type="checkbox" id="edToolKB"><span class="toggle-slider"></span></label>
+        </div>
+      </div>
+
+      <!-- TAB: Nachverarbeitung -->
+      <div class="editor-panel" id="tab-postprocess">
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-title">Zusammenfassung erstellen</div>
+            <div class="toggle-desc">Nach jedem Gespräch automatisch eine Zusammenfassung generieren.</div>
+          </div>
+          <label class="toggle"><input type="checkbox" id="edPostSummary"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-title">Transkript per E-Mail</div>
+            <div class="toggle-desc">Das vollständige Gesprächs-Transkript per E-Mail erhalten.</div>
+          </div>
+          <label class="toggle"><input type="checkbox" id="edPostTranscript"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-title">Sentiment-Analyse</div>
+            <div class="toggle-desc">Stimmung des Anrufers automatisch analysieren.</div>
+          </div>
+          <label class="toggle"><input type="checkbox" id="edPostSentiment"><span class="toggle-slider"></span></label>
+        </div>
+      </div>
+
+      <!-- TAB: Outbound -->
+      <div class="editor-panel" id="tab-outbound">
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-title">Outbound-Anrufe aktivieren</div>
+            <div class="toggle-desc">Dieser Assistent kann aktiv ausgehende Anrufe tätigen.</div>
+          </div>
+          <label class="toggle"><input type="checkbox" id="edOutboundEnabled"><span class="toggle-slider"></span></label>
+        </div>
+        <div class="form-group" style="margin-top:16px;">
+          <label class="form-label">Max. gleichzeitige Anrufe</label>
+          <input type="number" class="form-input" id="edOutboundMax" min="1" max="10" value="1">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Anrufzeiten</label>
+          <div class="form-row">
+            <input type="time" class="form-input" id="edOutboundFrom" value="09:00">
+            <input type="time" class="form-input" id="edOutboundTo" value="18:00">
+          </div>
+          <div class="form-hint">Zeitraum, in dem Outbound-Anrufe getätigt werden dürfen.</div>
+        </div>
+      </div>
+
+      <!-- SAVE BUTTON -->
+      <div style="margin-top:28px;display:flex;gap:12px;">
+        <button class="btn-primary" id="btnSaveAssistant">Speichern</button>
+        <button class="btn-secondary" onclick="navigateToPage('assistants')">Abbrechen</button>
+      </div>
     </div>
 
-    <!-- ── New Assistant Modal ─────────────────────────────────────────────── -->
-    <div id="modal-new-assistant" class="modal-overlay hidden">
-      <div class="modal-box">
+    <!-- ===================== KNOWLEDGE BASE ===================== -->
+    <div id="page-knowledge" class="page-section">
+      <h1>Wissensdatenbank</h1>
+      <p class="page-desc">Dokumente und Informationen für deine Assistenten.</p>
+
+      <div class="kb-toolbar">
+        <input type="text" class="search-input" id="kbSearch" placeholder="Dokumente durchsuchen…">
+        <button class="btn-primary" style="font-size:13px;padding:10px 20px;white-space:nowrap;" id="btnUploadDoc">+ Hochladen</button>
+      </div>
+
+      <div class="data-section">
+        <div class="data-header">
+          <h2>Dokumente</h2>
+          <span class="badge" id="kbCount">0 Dokumente</span>
+        </div>
+        <div id="kbListBody">
+          <div class="empty-state">
+            <div class="icon">📚</div>
+            <h3>Keine Dokumente</h3>
+            <p>Lade Dokumente hoch, damit deine Assistenten darauf zugreifen können.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== PHONES ===================== -->
+    <div id="page-phones" class="page-section">
+      <div class="page-title-row">
+        <h1>Telefonnummern</h1>
+      </div>
+      <p class="page-desc">Damit Lana Anrufe entgegennehmen kann, benötigst du eine zugewiesene Rufnummer.</p>
+
+      <!-- Setup Guide -->
+      <div class="data-section" style="margin-bottom:16px;">
+        <div class="data-header"><h2>Rufnummer einrichten</h2></div>
+        <div style="padding:20px 24px;">
+          <!-- Option 1 -->
+          <div style="display:flex;gap:16px;align-items:flex-start;padding:16px 0;border-bottom:1px solid var(--border);">
+            <div style="flex-shrink:0;width:40px;height:40px;border-radius:12px;background:rgba(124,58,237,.1);display:flex;align-items:center;justify-content:center;font-size:20px;">✨</div>
+            <div style="flex:1;">
+              <div style="font-weight:700;font-size:14px;margin-bottom:4px;">Neue Nummer beantragen</div>
+              <p style="font-size:13px;color:var(--tx3);margin:0 0 10px;">Wir richten dir eine eigene Rufnummer ein — du musst nichts weiterleiten.</p>
+              <a href="mailto:support@calllana.de?subject=Neue%20Rufnummer%20beantragen&body=Hallo%2C%20ich%20m%C3%B6chte%20eine%20neue%20Rufnummer%20f%C3%BCr%20meinen%20Call%20Lana%20Account%20beantragen." class="btn-primary" style="display:inline-block;font-size:13px;padding:9px 18px;text-decoration:none;">Nummer beantragen</a>
+            </div>
+          </div>
+          <!-- Option 2 -->
+          <div style="display:flex;gap:16px;align-items:flex-start;padding:16px 0;border-bottom:1px solid var(--border);">
+            <div style="flex-shrink:0;width:40px;height:40px;border-radius:12px;background:rgba(124,58,237,.1);display:flex;align-items:center;justify-content:center;font-size:20px;">↩️</div>
+            <div style="flex:1;">
+              <div style="font-weight:700;font-size:14px;margin-bottom:4px;">Bestehende Nummer weiterleiten</div>
+              <p style="font-size:13px;color:var(--tx3);margin:0 0 6px;">Du behältst deine bisherige Nummer. Richte eine bedingte Weiterleitung ein:</p>
+              <ol style="font-size:12px;color:var(--tx3);margin:0 0 10px;padding-left:18px;line-height:1.8;">
+                <li>Bei Nichtannahme (z.B. nach 15 Sek.) → an Lana-Nummer weiterleiten</li>
+                <li>Bei Besetzt → an Lana-Nummer weiterleiten</li>
+                <li>Lana-Nummer bekommst du per E-Mail nach deiner Anfrage</li>
+              </ol>
+              <a href="mailto:support@calllana.de?subject=Weiterleitung%20einrichten&body=Hallo%2C%20ich%20m%C3%B6chte%20meine%20bestehende%20Nummer%20zu%20Call%20Lana%20weiterleiten." class="btn-secondary" style="display:inline-block;font-size:13px;padding:9px 18px;text-decoration:none;">Support kontaktieren</a>
+            </div>
+          </div>
+          <!-- Option 3 -->
+          <div style="display:flex;gap:16px;align-items:flex-start;padding:16px 0;">
+            <div style="flex-shrink:0;width:40px;height:40px;border-radius:12px;background:rgba(124,58,237,.1);display:flex;align-items:center;justify-content:center;font-size:20px;">💬</div>
+            <div style="flex:1;">
+              <div style="font-weight:700;font-size:14px;margin-bottom:4px;">Fragen? Wir helfen dir.</div>
+              <p style="font-size:13px;color:var(--tx3);margin:0 0 10px;">Unsicher welche Option passt? Schreib uns kurz — wir melden uns innerhalb von 24 Stunden.</p>
+              <a href="mailto:support@calllana.de" class="btn-secondary" style="display:inline-block;font-size:13px;padding:9px 18px;text-decoration:none;">support@calllana.de</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Assigned numbers list (populated by JS when numbers exist) -->
+      <div class="data-section" id="phonesAssignedSection" style="display:none;">
+        <div class="data-header">
+          <h2>Zugewiesene Nummern</h2>
+          <span class="badge" id="phonesCount">0 Nummern</span>
+        </div>
+        <div id="phonesListBody"></div>
+      </div>
+    </div>
+
+    <!-- ===================== TRANSACTIONS / ANRUFVERLAUF ===================== -->
+    <div id="page-transactions" class="page-section">
+      <div id="transcript-search-section"></div>
+      <div class="page-title-row">
+        <h1>Anrufverlauf</h1>
+        <button class="btn-secondary" style="font-size:12px;padding:8px 16px;" onclick="CallsPage.exportCSV()">📥 CSV Export</button>
+      </div>
+      <p class="page-desc">Alle Anrufe auf einen Blick.</p>
+
+      <div class="data-section">
+        <div class="data-header">
+          <h2>Anrufverlauf</h2>
+          <span class="badge" id="allCallsCount">0 Anrufe</span>
+        </div>
+        <!-- Filter Bar -->
+        <div class="calls-filter-bar">
+          <input type="text" id="callSearchInput" class="form-input" placeholder="Name oder Nummer suchen…" style="flex:1;min-width:160px;padding:8px 12px;font-size:12px;">
+          <select id="callStatusFilter" class="form-input form-select" style="width:auto;padding:8px 32px 8px 12px;font-size:12px;">
+            <option value="">Alle Status</option>
+            <option value="completed">Abgeschlossen</option>
+            <option value="missed">Verpasst</option>
+            <option value="voicemail">Mailbox</option>
+            <option value="active">Aktiv</option>
+          </select>
+          <select id="callOutcomeFilter" class="form-input form-select" style="width:auto;padding:8px 32px 8px 12px;font-size:12px;">
+            <option value="">Alle Ergebnisse</option>
+            <option value="termin">Termin</option>
+            <option value="notfall">Notfall</option>
+            <option value="frage">Frage</option>
+            <option value="abbruch">Abbruch</option>
+          </select>
+          <input type="date" id="callDateFrom" class="form-input" style="width:auto;padding:8px 12px;font-size:12px;" title="Von Datum">
+          <input type="date" id="callDateTo" class="form-input" style="width:auto;padding:8px 12px;font-size:12px;" title="Bis Datum">
+        </div>
+        <div id="allCallsBody">
+          <div class="loading-state"><div class="spinner"></div><p>Anrufe werden geladen…</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== APPOINTMENTS ===================== -->
+    <div id="page-appointments" class="page-section">
+      <div class="page-title-row">
+        <h1>Termine</h1>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <div class="editor-tabs" style="margin-bottom:0;">
+            <button class="editor-tab active" onclick="AppointmentsPage.setView('week')">Woche</button>
+            <button class="editor-tab" onclick="AppointmentsPage.setView('list')">Liste</button>
+          </div>
+        </div>
+      </div>
+      <p class="page-desc">Deine gebuchten Termine im Überblick.</p>
+
+      <!-- Week Navigation -->
+      <div id="appt-week-nav" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+        <button class="btn-secondary" style="padding:6px 12px;font-size:12px;" onclick="AppointmentsPage.prevWeek()">← Vorherige</button>
+        <span style="font-size:14px;font-weight:700;" id="appt-week-label">Woche</span>
+        <button class="btn-secondary" style="padding:6px 12px;font-size:12px;" onclick="AppointmentsPage.nextWeek()">Nächste →</button>
+      </div>
+
+      <!-- Week View -->
+      <div id="appt-week-view" class="card" style="padding:0;overflow:hidden;">
+        <div class="loading-state"><div class="spinner"></div><p>Termine werden geladen…</p></div>
+      </div>
+
+      <!-- List View (hidden by default) -->
+      <div id="appt-list-view" style="display:none;">
+        <div class="data-section">
+          <div class="data-header">
+            <h2>Alle Termine</h2>
+            <span class="badge" id="apptListCount">0 Termine</span>
+          </div>
+          <div id="appt-list-body">
+            <div class="loading-state"><div class="spinner"></div><p>Termine werden geladen…</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== ANALYTICS ===================== -->
+    <div id="page-analytics" class="page-section">
+      <h1>Analytics</h1>
+      <p class="page-desc">Datenbasierte Einblicke in deine Anruf-Performance.</p>
+
+      <!-- Row 1: Calls/Day + Outcome Mix -->
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:16px;" class="analytics-row-1">
+        <div class="card" style="padding:20px;">
+          <h3 style="font-size:14px;margin-bottom:12px;">Anrufe pro Tag</h3>
+          <div id="chart-calls-per-day" style="height:180px;"></div>
+        </div>
+        <div class="card" style="padding:20px;">
+          <h3 style="font-size:14px;margin-bottom:12px;">Ergebnis-Mix</h3>
+          <div id="chart-outcome-mix" style="height:180px;display:flex;align-items:center;justify-content:center;"></div>
+        </div>
+      </div>
+
+      <!-- Row 2: Booking Rate Trend + Top Call Hours -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;" class="analytics-row-2">
+        <div class="card" style="padding:20px;">
+          <h3 style="font-size:14px;margin-bottom:12px;">Buchungsrate Trend</h3>
+          <div id="chart-booking-trend" style="height:180px;"></div>
+        </div>
+        <div class="card" style="padding:20px;">
+          <h3 style="font-size:14px;margin-bottom:12px;">Top Anrufzeiten</h3>
+          <div id="chart-call-hours" style="height:180px;"></div>
+        </div>
+      </div>
+
+      <!-- Row 3: Sentiment Trend + Minutes Gauge -->
+      <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;" class="analytics-row-3">
+        <div class="card" style="padding:20px;">
+          <h3 style="font-size:14px;margin-bottom:12px;">Sentiment Trend</h3>
+          <div id="chart-sentiment-trend" style="height:180px;"></div>
+        </div>
+        <div class="card" style="padding:20px;">
+          <h3 style="font-size:14px;margin-bottom:12px;">Minutenverbrauch</h3>
+          <div id="chart-minutes-gauge" style="height:180px;display:flex;align-items:center;justify-content:center;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== BILLING ===================== -->
+    <div id="page-billing" class="page-section">
+      <h1>Guthaben & Verbrauch</h1>
+      <p class="page-desc">Verwalte dein Guthaben, überwache deinen Verbrauch und konfiguriere automatische Aufladungen.</p>
+
+      <!-- Top Row: Balance + Plan Usage + Spending -->
+      <div class="billing-top-row">
+        <!-- Balance Card -->
+        <div class="balance-card" style="margin-bottom:0;">
+          <div class="balance-label">Aktuelles Guthaben</div>
+          <div class="balance-value-big" id="balanceValue">–</div>
+          <div class="balance-sub" id="balanceSub">Lade…</div>
+          <button class="btn-primary" style="margin-top:16px;opacity:.6;cursor:not-allowed;" disabled title="Zahlungsanbindung wird eingerichtet">Guthaben aufladen</button>
+          <p style="font-size:11px;color:var(--tx3);margin-top:8px;">Zahlungsabwicklung wird eingerichtet — in Kürze verfügbar.</p>
+        </div>
+
+        <!-- Plan Minutes Usage -->
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;">
+          <div class="balance-label">Tarifminuten</div>
+          <div style="font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;margin:8px 0 4px;">
+            <span id="minutesUsed">0</span><span style="font-size:1rem;color:var(--tx3);font-weight:600;"> / <span id="minutesIncluded">0</span> Min.</span>
+          </div>
+          <div style="background:var(--bg3);border-radius:8px;height:10px;margin:12px 0 8px;overflow:hidden;">
+            <div id="minutesBar" style="height:100%;border-radius:8px;background:linear-gradient(90deg,var(--pu),var(--cyan));width:0%;transition:width .5s;"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx3);">
+            <span id="minutesPercent">0% verbraucht</span>
+            <span id="minutesRemaining">0 Min. übrig</span>
+          </div>
+          <div id="overageInfo" style="display:none;margin-top:12px;padding:10px 12px;background:rgba(251,146,60,.1);border:1px solid rgba(251,146,60,.25);border-radius:8px;font-size:12px;color:var(--orange);">
+            <strong id="overageMinutes">0</strong> Überschreitungsminuten · <strong id="overageCost">0,00 €</strong> vom Guthaben
+          </div>
+        </div>
+
+        <!-- Monthly Spending -->
+        <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;">
+          <div class="balance-label">Ausgaben diesen Monat</div>
+          <div style="font-family:'Syne',sans-serif;font-size:1.8rem;font-weight:800;margin:8px 0 4px;" id="monthlySpending">0,00 €</div>
+          <div style="font-size:12px;color:var(--tx3);margin-bottom:12px;">
+            Limit: <strong id="hardCapDisplay">300,00 €</strong>
+          </div>
+          <div style="background:var(--bg3);border-radius:8px;height:10px;margin-bottom:8px;overflow:hidden;">
+            <div id="spendingBar" style="height:100%;border-radius:8px;background:linear-gradient(90deg,var(--green),var(--orange));width:0%;transition:width .5s;"></div>
+          </div>
+          <div style="font-size:11px;color:var(--tx3);" id="spendingPercent">0% vom Limit</div>
+        </div>
+      </div>
+
+      <!-- Auto-Reload & Hard Cap Settings -->
+      <div class="billing-settings-row">
+        <!-- Auto-Reload -->
+        <div class="data-section">
+          <div class="data-header">
+            <h2>Auto-Aufladung</h2>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+              <input type="checkbox" id="autoReloadToggle" style="width:16px;height:16px;accent-color:var(--pu);cursor:pointer;" onchange="saveAutoReloadSettings()">
+              <span style="font-size:12px;font-weight:600;color:var(--tx3);">Aktiviert</span>
+            </label>
+          </div>
+          <div style="padding:20px;" id="autoReloadSettings">
+            <p style="font-size:13px;color:var(--tx2);margin-bottom:16px;">Guthaben wird automatisch aufgeladen, wenn es unter den Schwellwert fällt.</p>
+            <div class="form-row">
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">Schwellwert</label>
+                <select class="form-select" id="autoReloadThreshold" onchange="saveAutoReloadSettings()">
+                  <option value="200">2,00 €</option>
+                  <option value="500" selected>5,00 €</option>
+                  <option value="1000">10,00 €</option>
+                  <option value="2000">20,00 €</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label class="form-label">Aufladebetrag</label>
+                <select class="form-select" id="autoReloadAmount" onchange="saveAutoReloadSettings()">
+                  <option value="2000">20,00 €</option>
+                  <option value="5000" selected>50,00 €</option>
+                  <option value="10000">100,00 €</option>
+                  <option value="20000">200,00 €</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Hard Cap -->
+        <div class="data-section">
+          <div class="data-header">
+            <h2>Ausgabenlimit</h2>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+              <input type="checkbox" id="hardCapToggle" checked style="width:16px;height:16px;accent-color:var(--pu);cursor:pointer;" onchange="saveHardCapSettings()">
+              <span style="font-size:12px;font-weight:600;color:var(--tx3);">Aktiviert</span>
+            </label>
+          </div>
+          <div style="padding:20px;">
+            <p style="font-size:13px;color:var(--tx2);margin-bottom:16px;">Monatliches Ausgabenlimit (inkl. Tarifgebühr). Bei Erreichen wird der Dienst pausiert.</p>
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label">Maximalbetrag pro Monat</label>
+              <select class="form-select" id="hardCapAmount" onchange="saveHardCapSettings()">
+                <option value="10000">100,00 €</option>
+                <option value="15000">150,00 €</option>
+                <option value="20000">200,00 €</option>
+                <option value="30000" selected>300,00 €</option>
+                <option value="50000">500,00 €</option>
+                <option value="100000">1.000,00 €</option>
+              </select>
+            </div>
+            <div class="info-box" style="margin-top:12px;">
+              Bei Erreichen des Limits wird der KI-Assistent pausiert und du wirst per E-Mail benachrichtigt.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Usage Details -->
+      <div class="data-section" style="margin-bottom:20px;">
+        <div class="data-header">
+          <h2>Nutzung diesen Monat</h2>
+        </div>
+        <div style="padding:20px;">
+          <div class="usage-stats-row">
+            <div><div class="stat-label">Anrufe</div><div class="usage-val" id="usageCalls">–</div></div>
+            <div><div class="stat-label">Minuten gesamt</div><div class="usage-val" id="usageMinutes">–</div></div>
+            <div><div class="stat-label">Tarifkosten</div><div class="usage-val" id="usagePlanCost">–</div></div>
+            <div><div class="stat-label">Überschreitung</div><div class="usage-val" id="usageOverageCost">–</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Transaction History -->
+      <div class="data-section">
+        <div class="data-header">
+          <h2>Transaktionen</h2>
+          <span class="badge" id="txCount">0</span>
+        </div>
+        <div id="txBody">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Datum</th><th>Typ</th><th>Beschreibung</th><th>Betrag</th><th>Guthaben</th></tr></thead>
+              <tbody id="txTableBody">
+                <tr><td colspan="5" style="text-align:center;color:var(--tx3);padding:30px;">Keine Transaktionen vorhanden</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- Invoices / Rechnungen -->
+      <div class="data-section" style="margin-top:24px;">
+        <div class="data-header">
+          <h2>Rechnungen</h2>
+          <span class="badge" id="invoiceCount">0</span>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:36px;text-align:center;"><input type="checkbox" id="selectAllInvoices" onchange="toggleAllInvoices(this)" title="Alle auswählen" style="cursor:pointer;width:16px;height:16px;accent-color:var(--pu);"></th>
+                <th>Rechnungsnr.</th>
+                <th>Datum</th>
+                <th>Zeitraum</th>
+                <th>Betrag</th>
+                <th>Status</th>
+                <th>Aktionen</th>
+              </tr>
+            </thead>
+            <tbody id="invoiceTableBody">
+              <tr><td colspan="7" style="text-align:center;color:var(--tx3);padding:30px;">Keine Rechnungen vorhanden</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Top-up Modal -->
+    <div class="modal-overlay" id="topupModal" style="display:none;">
+      <div class="modal" style="max-width:440px;">
         <div class="modal-header">
-          <span class="modal-title">New Assistant</span>
-          <button class="modal-close" onclick="closeNewAssistantModal()">&#x2715;</button>
+          <h2>Guthaben aufladen</h2>
+          <button class="modal-close" onclick="closeTopupModal()">&times;</button>
         </div>
         <div class="modal-body">
-          <p id="modal-assistant-error" class="modal-error"></p>
-          <div class="form-group">
-            <label class="form-label">Name</label>
-            <input type="text" id="ma-name" class="form-control" placeholder="e.g. Lana" maxlength="60" />
-          </div>
-          <div class="form-group">
-            <label class="form-label">Language</label>
-            <select id="ma-language" class="form-control">
-              <option value="de">Deutsch</option>
-              <option value="en">English</option>
-              <option value="fr">Français</option>
-              <option value="es">Español</option>
-              <option value="it">Italiano</option>
-              <option value="nl">Nederlands</option>
-              <option value="pl">Polski</option>
-              <option value="pt">Português</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Voice</label>
-            <select id="ma-voice" class="form-control">
-              <option value="Marie">Marie (female, neutral)</option>
-              <option value="Emma">Emma (female, warm)</option>
-              <option value="Laura">Laura (female, professional)</option>
-              <option value="Max">Max (male, friendly)</option>
-              <option value="David">David (male, authoritative)</option>
-            </select>
+          <div style="text-align:center;padding:24px 16px;">
+            <div style="font-size:40px;margin-bottom:16px;">🔧</div>
+            <h3 style="margin:0 0 8px;font-size:16px;font-weight:700;">Zahlungsabwicklung wird eingerichtet</h3>
+            <p style="font-size:13px;color:var(--tx3);margin:0 0 20px;line-height:1.6;">Die Anbindung an den Zahlungsanbieter ist in Arbeit.<br>Du wirst benachrichtigt, sobald Aufladungen verfügbar sind.</p>
+            <a href="mailto:support@calllana.de?subject=Guthaben%20aufladen" style="display:inline-block;font-size:13px;padding:10px 20px;background:var(--pu);color:#fff;border-radius:10px;text-decoration:none;font-weight:600;">Vorab anfragen</a>
           </div>
         </div>
         <div class="modal-footer">
-          <button class="btn-ghost" style="flex:none;padding:7px 16px;" onclick="closeNewAssistantModal()">Cancel</button>
-          <button class="btn-primary" id="modal-create-btn" onclick="handleCreateAssistant()">Create Assistant</button>
+          <button class="btn-secondary" onclick="closeTopupModal()">Schließen</button>
         </div>
       </div>
     </div>
 
-    <div id="page-calls" class="page">
-      <div class="page-header">
-        <div>
-          <div class="page-heading">Calls</div>
-          <div class="page-sub" id="calls-sub">Loading…</div>
+    <!-- ===================== PAYMENT METHODS ===================== -->
+    <div id="page-payment" class="page-section">
+      <h1>Zahlungsmethoden</h1>
+      <p class="page-desc">Hinterlege eine primäre und eine Ersatz-Zahlungsmethode. Falls die erste fehlschlägt, wird automatisch die zweite verwendet.</p>
+
+      <!-- Primary Payment Method -->
+      <div class="data-section" style="margin-bottom:20px;">
+        <div class="data-header">
+          <h2>Primäre Zahlungsmethode</h2>
+          <span class="badge" id="pm1Badge">Nicht hinterlegt</span>
         </div>
-      </div>
-      <div class="panel">
-        <div class="panel-header">
-          <span class="panel-title">Call History</span>
-        </div>
-        <div id="calls-list" class="activity-list"></div>
-      </div>
-    </div>
-
-    <div id="page-messages" class="page">
-      <div class="placeholder-shell">
-        <svg class="ph-icon" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
-        <h2>Messages</h2>
-        <p>SMS and messaging history</p>
-      </div>
-    </div>
-
-    <div id="page-contacts" class="page">
-      <div class="page-header">
-        <div>
-          <div class="page-heading">Contacts</div>
-          <div class="page-sub" id="contacts-sub">Loading…</div>
-        </div>
-      </div>
-      <div class="panel">
-        <div class="panel-header">
-          <span class="panel-title">Contact List</span>
-        </div>
-        <div id="contacts-list"></div>
-      </div>
-    </div>
-
-    <div id="page-integrations" class="page">
-      <div class="placeholder-shell">
-        <svg class="ph-icon" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><rect x="2" y="7" width="7" height="7" rx="1"/><rect x="15" y="7" width="7" height="7" rx="1"/><path d="M9 10.5h6M12 7V4M12 20v-3"/></svg>
-        <h2>Integrations</h2>
-        <p>Connect third-party services and APIs</p>
-      </div>
-    </div>
-
-    <div id="page-team" class="page">
-      <div class="placeholder-shell">
-        <svg class="ph-icon" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg>
-        <h2>Team</h2>
-        <p>Invite and manage team members</p>
-      </div>
-    </div>
-
-    <div id="page-billing" class="page">
-
-      <div class="page-header">
-        <div>
-          <div class="page-heading">Billing</div>
-          <div class="page-sub">Manage credits, usage, and payment methods</div>
-        </div>
-      </div>
-
-      <div class="billing-grid">
-
-        <!-- Left column -->
-        <div class="billing-left">
-
-          <!-- Credit balance -->
-          <div class="credit-card">
-            <div class="credit-label">Current Balance</div>
-            <div class="credit-balance" id="billing-balance"><span>€</span>—</div>
-            <div class="credit-sub" id="billing-plan-sub">Loading…</div>
-            <div class="credit-actions">
-              <button class="btn-primary" style="font-size:12px;padding:7px 14px;" onclick="handleAddCredits()">+ Add Credits</button>
-              <button class="btn-outline" onclick="handleTransactionHistory()">Transaction History</button>
-            </div>
+        <div id="pm1Body" style="padding:20px;">
+          <div id="pm1Empty" class="empty-state" style="padding:30px 20px;">
+            <div class="icon">💳</div>
+            <h3>Keine primäre Zahlungsmethode</h3>
+            <p>Hinterlege eine Zahlungsmethode, um Call Lana nutzen zu können.</p>
+            <button class="btn-primary" style="margin-top:16px;font-size:13px;padding:10px 20px;" onclick="openPaymentModal(1)">+ Zahlungsmethode hinzufügen</button>
           </div>
-
-          <!-- Monthly usage -->
-          <div class="usage-section">
-            <div class="panel-header">
-              <span class="panel-title">Monthly Usage</span>
-              <span style="font-size:12px;color:#9CA3AF;" id="billing-month-label">…</span>
-            </div>
-            <div class="usage-bar-row">
-              <div class="usage-bar-header">
-                <span class="usage-bar-name">Call minutes</span>
-                <span class="usage-bar-vals" id="billing-minutes-label"><strong>—</strong></span>
+          <div id="pm1Card" style="display:none;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div>
+                <div style="font-size:11px;color:var(--tx3);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">
+                  <span id="pm1Type">–</span> · <span id="pm1Status" class="status-badge active">Aktiv</span>
+                </div>
+                <div style="font-size:1.1rem;font-weight:700;" id="pm1Info">–</div>
+                <div style="font-size:12px;color:var(--tx3);margin-top:4px;" id="pm1Detail">–</div>
               </div>
-              <div class="usage-track"><div class="usage-fill" id="billing-minutes-bar" style="width:0%"></div></div>
-            </div>
-          </div>
-
-          <!-- Spending limit & auto top-up -->
-          <div class="usage-section">
-            <div class="panel-header">
-              <span class="panel-title">Limits & Auto Top-Up</span>
-            </div>
-            <div class="limit-row">
-              <div class="limit-left">
-                <div class="limit-name">Monthly spending limit</div>
-                <div class="limit-desc">Pause usage when limit is reached</div>
+              <div style="display:flex;gap:8px;">
+                <button class="btn-secondary" style="font-size:12px;padding:8px 14px;" onclick="openPaymentModal(1)">Ändern</button>
+                <button class="btn-danger" style="font-size:12px;padding:8px 14px;" onclick="removePaymentMethod(1)">Entfernen</button>
               </div>
-              <span class="limit-val">€ 150</span>
-              <button class="btn-ghost" style="flex:none;padding:5px 12px;font-size:12px;">Edit</button>
-            </div>
-            <div class="limit-row">
-              <div class="limit-left">
-                <div class="limit-name">Auto top-up</div>
-                <div class="limit-desc">Add €25 when balance drops below €10</div>
-              </div>
-              <div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div>
-            </div>
-            <div class="limit-row">
-              <div class="limit-left">
-                <div class="limit-name">Low balance alert</div>
-                <div class="limit-desc">Email when balance is below €5</div>
-              </div>
-              <div class="toggle on" onclick="this.classList.toggle('on');this.classList.toggle('off')"></div>
             </div>
           </div>
-
-        </div>
-
-        <!-- Right column -->
-        <div class="billing-right">
-
-          <!-- Payment methods -->
-          <div class="panel">
-            <div class="panel-header">
-              <span class="panel-title">Payment Methods</span>
-              <span class="panel-link" onclick="handleAddPaymentMethod()">+ Add</span>
-            </div>
-            <div id="billing-payment-list"></div>
-          </div>
-
-          <!-- Recent invoices -->
-          <div class="panel">
-            <div class="panel-header">
-              <span class="panel-title">Recent Invoices</span>
-              <span class="panel-link">All invoices</span>
-            </div>
-            <div id="billing-tx-list"></div>
-          </div>
-
         </div>
       </div>
-    </div>
 
-    <div id="page-packages" class="page">
-      <div class="placeholder-shell">
-        <svg class="ph-icon" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-        <h2>Packages</h2>
-        <p>Subscription plans and add-ons</p>
+      <!-- Fallback Payment Method -->
+      <div class="data-section" style="margin-bottom:20px;">
+        <div class="data-header">
+          <h2>Ersatz-Zahlungsmethode</h2>
+          <span class="badge" id="pm2Badge">Optional</span>
+        </div>
+        <div id="pm2Body" style="padding:20px;">
+          <div id="pm2Empty" class="empty-state" style="padding:30px 20px;">
+            <div class="icon">🔄</div>
+            <h3>Keine Ersatz-Zahlungsmethode</h3>
+            <p>Falls die primäre Zahlungsmethode fehlschlägt, wird die Ersatz-Methode belastet.</p>
+            <button class="btn-secondary" style="margin-top:16px;font-size:13px;padding:10px 20px;" onclick="openPaymentModal(2)">+ Ersatz hinzufügen</button>
+          </div>
+          <div id="pm2Card" style="display:none;">
+            <div style="display:flex;align-items:center;justify-content:space-between;">
+              <div>
+                <div style="font-size:11px;color:var(--tx3);font-weight:600;text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px;">
+                  <span id="pm2Type">–</span> · <span id="pm2Status" class="status-badge active">Aktiv</span>
+                </div>
+                <div style="font-size:1.1rem;font-weight:700;" id="pm2Info">–</div>
+                <div style="font-size:12px;color:var(--tx3);margin-top:4px;" id="pm2Detail">–</div>
+              </div>
+              <div style="display:flex;gap:8px;">
+                <button class="btn-secondary" style="font-size:12px;padding:8px 14px;" onclick="openPaymentModal(2)">Ändern</button>
+                <button class="btn-danger" style="font-size:12px;padding:8px 14px;" onclick="removePaymentMethod(2)">Entfernen</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="info-box">
+        <strong>Hinweis:</strong> SEPA-Lastschriftmandate können bis zu 8 Wochen nach Abbuchung widerrufen werden.
+        Deine Bankdaten werden verschlüsselt gespeichert und nie an Dritte weitergegeben.
       </div>
     </div>
 
-    <div id="page-settings" class="page">
-      <div class="placeholder-shell">
-        <svg class="ph-icon" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
-        <h2>Settings</h2>
-        <p>Account preferences and configuration</p>
-      </div>
-    </div>
-
-  </main>
-</div>
-
-<script>
-  // ── Backend ─────────────────────────────────────────────────────────────────
-  // supabaseClient, auth, db are loaded from the external backend files
-  const sb   = supabaseClient;       // from supabase-init.js
-  const auth = window.clanaAuth;     // from auth.js
-  const db   = window.clanaDB;       // from db.js
-
-  // ── Auth guard ───────────────────────────────────────────────────────────────
-  let currentUser   = null;
-  let currentProfile = null;
-
-  (async () => {
-    const session = await auth.getSession();
-
-    if (!session) {
-      window.location.href = 'login.html';
-      return;
-    }
-
-    currentUser = session.user;
-    await loadDashboard();
-  })();
-
-  // Continuously watch for sign-out events (tab close/reopen, token revocation)
-  sb.auth.onAuthStateChange((event, session) => {
-    if (event === 'SIGNED_OUT') {
-      window.location.href = 'login.html';
-    }
-  });
-
-  async function handleLogout() {
-    await auth.signOut();
-    window.location.href = 'login.html';
-  }
-
-  // ── Greeting ─────────────────────────────────────────────────────────────────
-  function setGreeting(firstName) {
-    const now = new Date();
-    const h = now.getHours();
-    const greeting = h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
-    document.getElementById('greeting-text').textContent = greeting + ', ' + (firstName || 'there');
-    document.getElementById('greeting-date').textContent = now.toLocaleDateString('en-DE', {
-      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
-    });
-  }
-
-  // ── Load dashboard ────────────────────────────────────────────────────────────
-  async function loadDashboard() {
-    const uid     = currentUser.id;
-    const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
-
-    // Profile
-    const { data: profile } = await sb.from('profiles').select('*').eq('id', uid).single();
-    // Fallback: email-confirmation flow means profile wasn't created at signup.
-    // Upsert a minimal row so subsequent loads find it.
-    if (!profile) {
-      const meta = currentUser.user_metadata || {};
-      await sb.from('profiles').upsert({
-        id:         uid,
-        email:      currentUser.email,
-        first_name: meta.firstName || null,
-        last_name:  meta.lastName  || null,
-        company:    meta.company   || null,
-        industry:   meta.industry  || null,
-      }, { onConflict: 'id' });
-    }
-    currentProfile = profile;
-
-    const firstName = profile?.first_name || currentUser.email.split('@')[0];
-    const lastName  = profile?.last_name  || '';
-    const initials  = (firstName[0] + (lastName[0] || '')).toUpperCase();
-    const roleLabel = profile?.role === 'superadmin' ? 'Super Admin'
-                    : profile?.role === 'sales'      ? 'Sales' : 'Owner';
-
-    document.getElementById('user-avatar').textContent = initials;
-    document.getElementById('user-name').textContent   = firstName + (lastName ? ' ' + lastName : '');
-    document.getElementById('user-role').textContent   = roleLabel;
-
-    if (profile?.role === 'superadmin') {
-      const adminLink = document.createElement('a');
-      adminLink.href = 'admin.html';
-      adminLink.className = 'nav-item';
-      adminLink.style.color = '#7C3AED';
-      adminLink.innerHTML = `<svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg> Admin`;
-      document.querySelector('nav').appendChild(adminLink);
-    }
-
-    setGreeting(firstName);
-
-    // Parallel home-page queries
-    const [callsRes, assistantsRes, recentCallsRes, weekCallsRes, subRes, ctcCountRes] = await Promise.all([
-      sb.from('calls').select('id, duration_seconds, created_at').eq('user_id', uid),
-      sb.from('assistants').select('id, name, voice, language, status, phone_number, created_at').eq('user_id', uid),
-      sb.from('calls')
-        .select('id, phone_number, caller_name, duration_seconds, status, created_at, assistant_name')
-        .eq('user_id', uid).order('created_at', { ascending: false }).limit(8),
-      sb.from('calls').select('id, duration_seconds').eq('user_id', uid).gte('created_at', weekAgo),
-      sb.from('subscriptions').select('*').eq('user_id', uid).maybeSingle(),
-      sb.from('customer_contacts').select('*', { count: 'exact', head: true }).eq('user_id', uid),
-    ]);
-
-    const calls          = callsRes.data     || [];
-    const assistants     = assistantsRes.data || [];
-    const weekCalls      = weekCallsRes.data  || [];
-    const sub            = subRes.data;
-    const totalCalls     = calls.length;
-    const contactsCount  = ctcCountRes.count  || 0;
-    const activeCount    = assistants.filter(a => a.status === 'active' || a.status === 'online').length;
-
-    // Metric cards
-    document.getElementById('metric-calls').textContent = totalCalls.toLocaleString();
-    document.getElementById('metric-calls-sub').textContent = totalCalls === 0 ? 'No calls yet' : 'total calls';
-    document.getElementById('metric-calls-sub').style.opacity = '1';
-
-    if (totalCalls > 0) {
-      const avgSec = Math.round(calls.reduce((s, c) => s + (c.duration_seconds || 0), 0) / totalCalls);
-      document.getElementById('metric-duration').textContent = fmtDur(avgSec);
-    } else {
-      document.getElementById('metric-duration').textContent = '—';
-    }
-
-    // "Messages Sent" card shows total contacts (SMS tracking not yet available)
-    document.getElementById('metric-messages').textContent = contactsCount.toLocaleString();
-
-    document.getElementById('metric-assistants').textContent = assistants.length;
-    document.getElementById('metric-assistants-sub').textContent = `${activeCount} active`;
-    document.getElementById('metric-assistants-sub').style.opacity = '1';
-    document.getElementById('assistants-sub').textContent =
-      `${assistants.length} assistant${assistants.length !== 1 ? 's' : ''} · ${activeCount} active`;
-
-    renderAssistants(assistants);
-    renderActivity(recentCallsRes.data || []);
-    renderWeeklyStats(weekCalls, assistants, contactsCount);
-    renderBilling(sub);
-  }
-
-  // ── Weekly stats ─────────────────────────────────────────────────────────────
-  function renderWeeklyStats(weekCalls, assistants, contactsTotal) {
-    const container = document.getElementById('weekly-stats-container');
-    if (!container) return;
-    const weekMin   = Math.round(weekCalls.reduce((s, c) => s + (c.duration_seconds || 0), 0) / 60);
-    const activeAst = assistants.filter(a => a.status === 'active' || a.status === 'online').length;
-
-    const stats = [
-      { name: 'Calls this week',    val: weekCalls.length.toString(),              pct: weekCalls.length > 0 ? 100 : 0 },
-      { name: 'Minutes used',       val: weekMin + 'm',                            pct: Math.min(100, (weekMin / 60) * 100) },
-      { name: 'Assistants active',  val: `${activeAst} / ${assistants.length}`,   pct: assistants.length ? Math.round((activeAst / assistants.length) * 100) : 0 },
-      { name: 'Total contacts',     val: contactsTotal.toString(),                 pct: contactsTotal > 0 ? 100 : 0 },
-    ];
-
-    container.innerHTML = stats.map(s => `
-      <div class="stat-row">
-        <span class="stat-name">${s.name}</span>
-        <div class="stat-bar-wrap"><div class="stat-bar" style="width:${s.pct}%"></div></div>
-        <span class="stat-val">${s.val}</span>
-      </div>`).join('');
-  }
-
-  // ── Billing ───────────────────────────────────────────────────────────────────
-  function renderBilling(sub) {
-    const now = new Date();
-    const el  = document.getElementById('billing-month-label');
-    if (el) el.textContent = now.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-
-    if (!sub) {
-      document.getElementById('billing-balance').innerHTML = '<span>€</span>0.00';
-      document.getElementById('billing-plan-sub').textContent = 'No active subscription';
-      document.getElementById('billing-minutes-label').innerHTML = '<strong>0</strong> / — min';
-      document.getElementById('billing-minutes-bar').style.width = '0%';
-      document.getElementById('billing-tx-list').innerHTML =
-        `<div style="padding:24px 20px;text-align:center;color:#9CA3AF;font-size:13px;">No transactions yet</div>`;
-      document.getElementById('billing-payment-list').innerHTML =
-        `<div style="padding:24px 20px;text-align:center;color:#9CA3AF;font-size:13px;">No payment methods added</div>`;
-      return;
-    }
-
-    const balance  = ((sub.balance_cents || 0) / 100).toFixed(2);
-    const usedMin  = Math.round(Number(sub.used_minutes) || 0);
-    const inclMin  = sub.included_minutes || 60;
-    const pct      = inclMin > 0 ? Math.min(100, Math.round((usedMin / inclMin) * 100)) : 0;
-    const planNames = { trial: 'Trial', solo: 'Solo', team: 'Team', business: 'Business' };
-    const periodEnd = sub.current_period_end
-      ? new Date(sub.current_period_end).toLocaleDateString('de-DE') : '—';
-
-    document.getElementById('billing-balance').innerHTML = `<span>€</span>${balance}`;
-    document.getElementById('billing-plan-sub').textContent =
-      `${planNames[sub.plan] || sub.plan} · Renews ${periodEnd}`;
-    document.getElementById('billing-minutes-label').innerHTML =
-      `<strong>${usedMin}</strong> / ${inclMin} min`;
-    const bar = document.getElementById('billing-minutes-bar');
-    bar.style.width = pct + '%';
-    if (pct >= 85) bar.classList.add('warn'); else bar.classList.remove('warn');
-
-    // Transactions
-    sb.from('billing_transactions').select('*')
-      .eq('user_id', currentUser.id)
-      .order('created_at', { ascending: false }).limit(5)
-      .then(({ data }) => {
-        const list = document.getElementById('billing-tx-list');
-        if (!data || !data.length) {
-          list.innerHTML = `<div style="padding:24px 20px;text-align:center;color:#9CA3AF;font-size:13px;">No transactions yet</div>`;
-          return;
-        }
-        list.innerHTML = data.map(tx => {
-          const d   = new Date(tx.created_at).toLocaleDateString('de-DE', { month: 'short', year: 'numeric' });
-          const amt = ((Math.abs(tx.amount_cents) || 0) / 100).toFixed(2);
-          return `<div class="invoice-row">
-            <span class="invoice-date">${d}</span>
-            <span class="invoice-desc">${escHtml(tx.description || tx.type || '—')}</span>
-            <span class="invoice-amt">€ ${amt}</span>
-          </div>`;
-        }).join('');
-      });
-
-    // Payment methods
-    sb.from('payment_methods').select('*')
-      .eq('user_id', currentUser.id)
-      .then(({ data }) => {
-        const list = document.getElementById('billing-payment-list');
-        if (!data || !data.length) {
-          list.innerHTML = `<div style="padding:24px 20px;text-align:center;color:#9CA3AF;font-size:13px;">No payment methods added</div>`;
-          return;
-        }
-        list.innerHTML = data.map(pm => {
-          const isDefault = pm.priority === 1;
-          const typeLabel = pm.type === 'sepa'        ? 'SEPA'
-                          : pm.type === 'credit_card' ? (pm.card_brand || 'CARD').toUpperCase().slice(0, 4)
-                          : 'PP';
-          const name = pm.type === 'sepa'   ? `SEPA •••• ${(pm.iban || '').slice(-4)}`
-                     : pm.type === 'paypal' ? `PayPal (${escHtml(pm.paypal_email || '—')})`
-                     : `${escHtml(pm.card_brand || 'Card')} •••• ${pm.card_last4 || '????'}`;
-          const detail = pm.type === 'credit_card' ? `Expires ${pm.card_expiry || '—'}`
-                       : pm.type === 'sepa'         ? escHtml(pm.account_holder || '') : '';
-          return `<div class="pm-item">
-            <div class="pm-icon">${escHtml(typeLabel)}</div>
-            <div class="pm-info">
-              <div class="pm-name">${name}</div>
-              ${detail ? `<div class="pm-detail">${detail}</div>` : ''}
-            </div>
-            ${isDefault ? '<span class="pm-default">Default</span>' : ''}
-          </div>`;
-        }).join('');
-      });
-  }
-
-  // ── Assistants ────────────────────────────────────────────────────────────────
-  let _assistants = [];
-  const AV_COLORS = ['av-gold', 'av-blue', 'av-purple'];
-
-  function renderAssistants(assistants) {
-    _assistants = assistants;
-    const grid = document.getElementById('assistants-grid');
-    if (assistants.length === 0) {
-      grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:48px;color:#9CA3AF;">
-        <p style="font-size:14px;">No assistants yet. Click <strong style="color:#7C3AED">New Assistant</strong> to create one.</p>
-      </div>`;
-      return;
-    }
-    grid.innerHTML = assistants.map((a, i) => {
-      const isActive = a.status === 'active' || a.status === 'online';
-      const avClass  = AV_COLORS[i % AV_COLORS.length];
-      const initial  = (a.name || '?')[0].toUpperCase();
-      const role     = [a.language, a.voice].filter(Boolean).join(' · ');
-      return `
-        <div class="assistant-card">
-          <div class="assistant-card-top">
-            <div class="assistant-avatar ${avClass}">${initial}</div>
-            <div class="assistant-meta">
-              <div class="assistant-name">${escHtml(a.name)}</div>
-              <div class="assistant-role">${escHtml(role || 'Voice')}</div>
-            </div>
-            <span class="status-badge ${isActive ? 'status-active' : 'status-inactive'}">
-              <span class="status-dot"></span>${isActive ? 'Active' : 'Inactive'}
-            </span>
-          </div>
-          <div class="assistant-card-stats">
-            <div class="astat"><div class="astat-val">—</div><div class="astat-lbl">Calls</div></div>
-            <div class="astat"><div class="astat-val">—</div><div class="astat-lbl">Avg. dur.</div></div>
-            <div class="astat"><div class="astat-val">${escHtml(a.phone_number || '—')}</div><div class="astat-lbl">Number</div></div>
-          </div>
-          <div class="assistant-card-footer">
-            <button class="btn-ghost" onclick="openAssistantSettingsById('${a.id}')">Settings</button>
-            <button class="btn-ghost" onclick="handleTestCall('${escHtml(a.name)}')">Test Call</button>
-            <button class="btn-ghost ${isActive ? 'danger' : ''}"
-              style="${isActive ? '' : 'color:#4ade80;border-color:rgba(74,222,128,0.2);'}"
-              onclick="toggleAssistant('${a.id}', ${isActive})">
-              ${isActive ? 'Pause' : 'Activate'}
+    <!-- Payment Method Modal -->
+    <div class="modal-overlay" id="paymentModal" style="display:none;">
+      <div class="modal" style="max-width:520px;">
+        <div class="modal-header">
+          <h2 id="pmModalTitle">Zahlungsmethode hinzufügen</h2>
+          <button class="modal-close" onclick="closePaymentModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+          <!-- Payment Type Selector -->
+          <div style="display:flex;gap:10px;margin-bottom:24px;">
+            <button class="pm-type-btn active" data-type="sepa" onclick="selectPaymentType('sepa')">
+              <span>🏦</span> SEPA-Lastschrift
+            </button>
+            <button class="pm-type-btn" data-type="credit_card" onclick="selectPaymentType('credit_card')">
+              <span>💳</span> Kreditkarte
+            </button>
+            <button class="pm-type-btn" data-type="paypal" disabled style="opacity:0.4;cursor:not-allowed;" title="Demnächst verfügbar">
+              <span>🅿️</span> PayPal <span style="font-size:9px;color:var(--tx3);">(bald)</span>
             </button>
           </div>
-        </div>`;
-    }).join('');
-  }
 
-  async function toggleAssistant(id, isCurrentlyActive) {
-    console.log('[BTN] Toggle Assistant clicked — id:', id, '| currently active:', isCurrentlyActive);
-    if (!currentUser) {
-      console.error('[TOGGLE ASSISTANT] BLOCKED — Not authenticated');
-      return;
-    }
-    const newStatus = isCurrentlyActive ? 'offline' : 'active';
-    const updateRes = await db.updateAssistant(id, { status: newStatus });
-    if (!updateRes.success) {
-      console.error('[TOGGLE ASSISTANT] Update error:', updateRes.error);
-      return;
-    }
-    const listRes = await db.getAssistants();
-    if (!listRes.success) { console.error('[TOGGLE ASSISTANT] Fetch error:', listRes.error); return; }
-    renderAssistants(listRes.data);
-  }
-
-  function openAssistantSettingsById(id) {
-    console.log('[BTN] Settings clicked — assistant id:', id);
-    const assistant = _assistants.find(a => a.id === id);
-    if (!assistant) { console.error('[SETTINGS] No assistant found for id:', id); return; }
-    document.getElementById('assistant-settings-panel').style.display = 'block';
-    document.getElementById('assistants-grid').style.display = 'none';
-    document.querySelector('#page-assistants .page-header').style.display = 'none';
-    document.getElementById('settings-panel-title').textContent = assistant.name + ' — Settings';
-    document.getElementById('sp-name').textContent = assistant.name;
-    document.getElementById('sp-lang').textContent = assistant.language || '—';
-    document.getElementById('sp-dir').textContent  = assistant.outbound?.enabled ? 'Outbound' : 'Inbound';
-  }
-
-  // ── New Assistant Modal ───────────────────────────────────────────────────────
-  function openNewAssistantModal() {
-    console.log('[BTN] New Assistant clicked — opening modal');
-    document.getElementById('ma-name').value      = '';
-    document.getElementById('ma-language').value  = 'de';
-    document.getElementById('ma-voice').value     = 'Marie';
-    const errEl = document.getElementById('modal-assistant-error');
-    errEl.style.display = 'none';
-    errEl.textContent   = '';
-    const btn = document.getElementById('modal-create-btn');
-    btn.disabled    = false;
-    btn.textContent = 'Create Assistant';
-    document.getElementById('modal-new-assistant').classList.remove('hidden');
-    // Focus the name field after the transition settles
-    setTimeout(() => document.getElementById('ma-name').focus(), 50);
-  }
-
-  function closeNewAssistantModal() {
-    document.getElementById('modal-new-assistant').classList.add('hidden');
-  }
-
-  // Close on backdrop click
-  document.getElementById('modal-new-assistant').addEventListener('click', function (e) {
-    if (e.target === this) closeNewAssistantModal();
-  });
-
-  // Close on Escape
-  document.addEventListener('keydown', function (e) {
-    if (e.key === 'Escape') closeNewAssistantModal();
-  });
-
-  async function handleCreateAssistant() {
-    console.log('[BTN] Create Assistant clicked');
-    const errEl = document.getElementById('modal-assistant-error');
-    const btn   = document.getElementById('modal-create-btn');
-
-    if (!currentUser) {
-      errEl.textContent   = 'You are not logged in. Please refresh the page and log in again.';
-      errEl.style.display = 'block';
-      console.error('[CREATE ASSISTANT] BLOCKED — currentUser is null (not authenticated)');
-      return;
-    }
-
-    const name     = document.getElementById('ma-name').value.trim();
-    const language = document.getElementById('ma-language').value;
-    const voice    = document.getElementById('ma-voice').value;
-
-    console.log('[CREATE ASSISTANT] Form values:', { name, language, voice, user_id: currentUser.id });
-
-    if (!name) {
-      errEl.textContent   = 'Please enter a name for the assistant.';
-      errEl.style.display = 'block';
-      document.getElementById('ma-name').focus();
-      console.warn('[CREATE ASSISTANT] Validation failed — name is empty');
-      return;
-    }
-
-    btn.disabled    = true;
-    btn.textContent = 'Creating…';
-    errEl.style.display = 'none';
-
-    console.log('[CREATE ASSISTANT] Calling db.createAssistant…');
-    const result = await db.createAssistant({ name, language, voice, status: 'offline' });
-
-    console.log('[CREATE ASSISTANT] db response:', result);
-
-    if (!result.success) {
-      console.error('[CREATE ASSISTANT] FAILED:', result.error);
-      errEl.textContent   = result.error || 'Could not create assistant. Please try again.';
-      errEl.style.display = 'block';
-      btn.disabled        = false;
-      btn.textContent     = 'Create Assistant';
-      return;
-    }
-
-    console.log('[CREATE ASSISTANT] SUCCESS — assistant "' + name + '" created', result.data);
-    closeNewAssistantModal();
-
-    // Reload full list from DB so counts and cards are always in sync
-    const freshRes = await db.getAssistants();
-    const list     = freshRes.success ? freshRes.data : [];
-    const activeCount = list.filter(a => a.status === 'active' || a.status === 'online').length;
-
-    renderAssistants(list);
-    document.getElementById('assistants-sub').textContent =
-      `${list.length} assistant${list.length !== 1 ? 's' : ''} · ${activeCount} active`;
-    // Keep home-page metric card in sync
-    if (document.getElementById('metric-assistants')) {
-      document.getElementById('metric-assistants').textContent = list.length;
-      document.getElementById('metric-assistants-sub').textContent = `${activeCount} active`;
-    }
-  }
-
-  // ── Activity feed ─────────────────────────────────────────────────────────────
-  function renderActivity(calls) {
-    const list = document.getElementById('activity-list');
-    if (calls.length === 0) {
-      list.innerHTML = `<div style="padding:24px 20px;text-align:center;color:#9CA3AF;font-size:13px;">No recent activity</div>`;
-      return;
-    }
-    list.innerHTML = calls.map(c => {
-      const caller  = c.caller_name || c.phone_number || 'Unknown';
-      const asst    = c.assistant_name || 'Lana';
-      const dur     = c.duration_seconds ? fmtDur(c.duration_seconds) : '';
-      const timeAgo = relTime(new Date(c.created_at));
-      const missed  = c.status === 'missed' || c.status === 'no-answer';
-      return `
-        <div class="activity-item">
-          <div class="activity-dot ${missed ? 'dot-system' : 'dot-call'}"></div>
-          <div class="activity-body">
-            <div class="activity-text">
-              <strong>${escHtml(asst)}</strong> ${missed ? 'missed call from' : 'completed a call with'} <strong>${escHtml(caller)}</strong>
+          <!-- SEPA Form -->
+          <div id="formSepa">
+            <div class="form-group">
+              <label class="form-label">Kontoinhaber</label>
+              <input type="text" class="form-input" id="sepaHolder" placeholder="Max Mustermann" autocomplete="name">
             </div>
-            <div class="activity-time">${timeAgo}${dur ? ' · ' + dur : ''}</div>
-          </div>
-        </div>`;
-    }).join('');
-  }
-
-  // ── Calls page (lazy) ─────────────────────────────────────────────────────────
-  const _loaded = { calls: false, contacts: false };
-
-  async function loadCallsPage() {
-    if (_loaded.calls) return;
-    _loaded.calls = true;
-    const list = document.getElementById('calls-list');
-    list.innerHTML = `<div style="padding:24px 20px;text-align:center;color:#9CA3AF;font-size:13px;">Loading…</div>`;
-
-    const callsRes = await db.getCalls(50);
-
-    if (!callsRes.success) {
-      list.innerHTML = `<div style="padding:24px 20px;text-align:center;color:#9CA3AF;font-size:13px;">Could not load calls. Please try again.</div>`;
-      _loaded.calls = false;
-      return;
-    }
-
-    const rows = callsRes.data || [];
-    document.getElementById('calls-sub').textContent =
-      rows.length === 0 ? 'No calls yet'
-        : `${rows.length} call${rows.length !== 1 ? 's' : ''} · most recent first`;
-    renderCalls(rows);
-  }
-
-  function renderCalls(calls) {
-    const list = document.getElementById('calls-list');
-    if (calls.length === 0) {
-      list.innerHTML = `<div style="padding:48px 20px;text-align:center;color:#9CA3AF;font-size:13px;">No calls recorded yet.</div>`;
-      return;
-    }
-    list.innerHTML = calls.map(c => {
-      const caller  = c.caller_name || c.phone_number || 'Unknown';
-      const asst    = c.assistant_name || 'Lana';
-      const dur     = c.duration_seconds ? fmtDur(c.duration_seconds) : '—';
-      const d       = new Date(c.created_at).toLocaleDateString('de-DE', { day: '2-digit', month: 'short', year: 'numeric' });
-      const missed  = c.status === 'missed' || c.status === 'no-answer';
-      const summary = c.summary
-        ? ` · ${escHtml(c.summary.slice(0, 60))}${c.summary.length > 60 ? '…' : ''}` : '';
-      return `
-        <div class="activity-item">
-          <div class="activity-dot ${missed ? 'dot-system' : 'dot-call'}"></div>
-          <div class="activity-body">
-            <div class="activity-text">
-              <strong>${escHtml(asst)}</strong> ${missed ? 'missed call from' : 'call with'} <strong>${escHtml(caller)}</strong><span style="color:#9CA3AF;">${summary}</span>
+            <div class="form-group">
+              <label class="form-label">IBAN</label>
+              <input type="text" class="form-input" id="sepaIban" placeholder="DE89 3704 0044 0532 0130 00" autocomplete="off" style="font-family:'Manrope',monospace;letter-spacing:.05em;">
+              <div style="font-size:11px;color:var(--tx3);margin-top:4px;" id="ibanHint"></div>
             </div>
-            <div class="activity-time">${d} · ${dur}</div>
+            <div class="form-group">
+              <label class="form-label">BIC (optional)</label>
+              <input type="text" class="form-input" id="sepaBic" placeholder="Wird automatisch ermittelt" autocomplete="off">
+            </div>
+
+            <!-- SEPA Mandate Confirmation -->
+            <div style="background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.15);border-radius:12px;padding:16px;margin-top:16px;">
+              <div style="font-size:13px;font-weight:700;margin-bottom:10px;color:var(--tx);">SEPA-Lastschriftmandat</div>
+              <div style="font-size:12px;color:var(--tx2);line-height:1.7;">
+                Ich ermächtige die <strong>Call Lana GmbH</strong> (Gläubiger-ID: wird bei Aktivierung mitgeteilt),
+                Zahlungen von meinem Konto mittels Lastschrift einzuziehen.
+                Zugleich weise ich mein Kreditinstitut an, die von der Call Lana GmbH
+                auf mein Konto gezogenen Lastschriften einzulösen.
+                <br><br>
+                <strong>Hinweis:</strong> Ich kann innerhalb von acht Wochen, beginnend mit dem
+                Belastungsdatum, die Erstattung des belasteten Betrages verlangen.
+                Es gelten dabei die mit meinem Kreditinstitut vereinbarten Bedingungen.
+              </div>
+              <label style="display:flex;align-items:flex-start;gap:10px;margin-top:14px;cursor:pointer;">
+                <input type="checkbox" id="sepaConsent" style="width:18px;height:18px;margin-top:2px;accent-color:var(--pu);cursor:pointer;">
+                <span style="font-size:13px;color:var(--tx);line-height:1.5;">
+                  Ich bestätige das SEPA-Lastschriftmandat und stimme den
+                  <a href="agb.html" target="_blank" style="color:var(--pu);">AGB</a> sowie der
+                  <a href="datenschutz.html" target="_blank" style="color:var(--pu);">Datenschutzerklärung</a> zu.
+                </span>
+              </label>
+            </div>
           </div>
-        </div>`;
-    }).join('');
+
+          <!-- Credit Card Form -->
+          <div id="formCard" style="display:none;">
+            <div class="form-group">
+              <label class="form-label">Karteninhaber</label>
+              <input type="text" class="form-input" id="cardHolder" placeholder="Max Mustermann" autocomplete="cc-name">
+            </div>
+            <div class="form-group">
+              <label class="form-label">Kartennummer</label>
+              <input type="text" class="form-input" id="cardNumber" placeholder="4242 4242 4242 4242" autocomplete="cc-number" maxlength="19" style="font-family:'Manrope',monospace;letter-spacing:.05em;">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">Gültig bis</label>
+                <input type="text" class="form-input" id="cardExpiry" placeholder="MM/YY" autocomplete="cc-exp" maxlength="5">
+              </div>
+              <div class="form-group">
+                <label class="form-label">CVC</label>
+                <input type="text" class="form-input" id="cardCvc" placeholder="123" autocomplete="cc-csc" maxlength="4">
+              </div>
+            </div>
+          </div>
+
+          <!-- PayPal Form -->
+          <div id="formPaypal" style="display:none;">
+            <div class="form-group">
+              <label class="form-label">PayPal E-Mail-Adresse</label>
+              <input type="email" class="form-input" id="paypalEmail" placeholder="max@beispiel.de" autocomplete="email">
+            </div>
+            <div class="info-box" style="margin-top:12px;">
+              Du wirst nach dem Speichern zu PayPal weitergeleitet, um die Zahlung zu autorisieren.
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" onclick="closePaymentModal()">Abbrechen</button>
+          <button class="btn-primary" id="pmSaveBtn" onclick="savePaymentMethod()">Zahlungsmethode speichern</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== PLANS ===================== -->
+    <div id="page-plans" class="page-section">
+      <h1>Dein Paket</h1>
+      <p class="page-desc">Verwalte dein Abonnement.</p>
+
+      <div class="plan-card">
+        <!-- Skeleton shown until loadPlan() populates and reveals planContent -->
+        <div id="planSkeleton" style="padding:4px 0;">
+          <div style="height:20px;width:80px;background:var(--bg3);border-radius:20px;margin-bottom:14px;animation:pulse 1.5s ease-in-out infinite;"></div>
+          <div style="height:26px;width:160px;background:var(--bg3);border-radius:8px;margin-bottom:10px;animation:pulse 1.5s ease-in-out infinite;animation-delay:.1s;"></div>
+          <div style="height:14px;width:220px;background:var(--bg3);border-radius:6px;margin-bottom:20px;animation:pulse 1.5s ease-in-out infinite;animation-delay:.2s;"></div>
+          <div style="height:12px;width:180px;background:var(--bg3);border-radius:6px;margin-bottom:8px;animation:pulse 1.5s ease-in-out infinite;animation-delay:.25s;"></div>
+          <div style="height:12px;width:140px;background:var(--bg3);border-radius:6px;margin-bottom:24px;animation:pulse 1.5s ease-in-out infinite;animation-delay:.3s;"></div>
+        </div>
+        <div id="planContent" style="display:none;">
+          <div class="plan-badge" id="planBadge"></div>
+          <div class="plan-name" id="planName"></div>
+          <p style="color:var(--tx3);font-size:.9rem;margin-bottom:20px;" id="planDesc"></p>
+          <ul class="plan-features" id="planFeatures"></ul>
+          <a href="preise.html" class="btn-secondary">Pakete vergleichen &rarr;</a>
+        </div>
+      </div>
+
+      <div class="info-box" style="margin-top:20px;">
+        Beim Upgrade behältst du alle deine Daten und Einstellungen.
+      </div>
+    </div>
+
+    <!-- ===================== TEAM MANAGEMENT ===================== -->
+    <div id="page-team" class="page-section">
+      <div class="page-title-row">
+        <h1>Team</h1>
+        <button class="btn-primary" id="btnInviteMember" style="font-size:13px;padding:10px 20px;">+ Mitglied einladen</button>
+      </div>
+      <p class="page-desc">Verwalte die Teammitglieder deiner Organisation.</p>
+
+      <div class="data-section">
+        <div class="data-header">
+          <h2>Teammitglieder</h2>
+          <span class="badge" id="teamCount">0 Mitglieder</span>
+        </div>
+        <div id="teamListBody">
+          <div class="loading-state"><div class="spinner"></div><p>Team wird geladen...</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== MESSAGES ===================== -->
+    <div id="page-messages" class="page-section">
+      <div class="page-title-row">
+        <h1>Nachrichten</h1>
+        <button class="btn-primary" id="btnNewConversation" style="font-size:13px;padding:10px 20px;">+ Neue Nachricht</button>
+      </div>
+      <p class="page-desc">Interne Kommunikation mit deinem Sales-Ansprechpartner.</p>
+
+      <div class="chat-layout" id="chatLayout">
+        <!-- Conversation List -->
+        <div class="data-section" style="overflow-y:auto;max-height:500px;">
+          <div id="conversationsList">
+            <div class="empty-state" style="padding:24px;"><h3>Keine Nachrichten</h3><p>Starte eine Konversation mit deinem Ansprechpartner.</p></div>
+          </div>
+        </div>
+        <!-- Message Area -->
+        <div class="data-section" style="display:flex;flex-direction:column;">
+          <div id="messageArea" style="flex:1;overflow-y:auto;padding:16px;min-height:300px;">
+            <div class="empty-state"><h3>Konversation auswählen</h3><p>Wähle links eine Konversation aus.</p></div>
+          </div>
+          <div style="padding:12px;border-top:1px solid var(--border);display:none;" id="messageInputArea">
+            <div style="display:flex;gap:8px;">
+              <input type="text" class="form-input" id="messageInput" placeholder="Nachricht schreiben..." style="flex:1;">
+              <button class="btn-primary" id="btnSendMessage" style="padding:10px 16px;">Senden</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== INTEGRATIONS ===================== -->
+    <div id="page-integrations" class="page-section">
+      <div class="page-title-row">
+        <h1>Integrationen</h1>
+        <div style="display:flex;gap:8px;">
+          <a href="settings.html#connectors" class="btn-primary" style="font-size:13px;padding:10px 20px;text-decoration:none;">Connectoren verwalten</a>
+          <button class="btn-secondary" style="font-size:13px;padding:10px 20px;" onclick="openContactImport()">CSV-Import</button>
+        </div>
+      </div>
+      <p class="page-desc">Hier siehst du deine verbundenen Tools und synchronisierten Kontakte. Connectoren verwaltest du unter <a href="settings.html#connectors" style="color:var(--pu3);">Einstellungen &rarr; Connectoren</a>.</p>
+
+      <!-- Connected integrations -->
+      <div class="data-section" style="margin-bottom:20px;">
+        <div class="data-header">
+          <h2>Verbundene Tools</h2>
+          <span class="badge" id="intConnectedCount">0 verbunden</span>
+        </div>
+        <div id="intConnectedBody" style="padding:20px;">
+          <div id="intEmptyState" class="empty-state" style="padding:30px 20px;">
+            <div class="icon">🔗</div>
+            <h3>Noch keine Tools verbunden</h3>
+            <p>Verbinde dein CRM, Kalender oder andere Tools unter <a href="settings.html#connectors" style="color:var(--pu3);">Einstellungen &rarr; Connectoren</a>, um den KI-Assistenten mit Kundendaten zu versorgen.</p>
+          </div>
+          <div id="intConnectedList" style="display:none;"></div>
+        </div>
+      </div>
+
+      <!-- Synced Contacts -->
+      <div class="data-section">
+        <div class="data-header">
+          <h2>Kontakte</h2>
+          <span class="badge" id="contactsCount">0</span>
+        </div>
+        <div id="contactsBody">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Name</th><th>Firma</th><th>Telefon</th><th>E-Mail</th><th>Quelle</th><th>VIP</th></tr></thead>
+              <tbody id="contactsTableBody">
+                <tr><td colspan="6" style="text-align:center;color:var(--tx3);padding:30px;">Keine Kontakte vorhanden. Importiere per CSV oder verbinde ein CRM.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CSV Import Modal -->
+    <div class="modal-overlay" id="csvImportModal" style="display:none;">
+      <div class="modal" style="max-width:520px;">
+        <div class="modal-header">
+          <h2>Kontakte importieren</h2>
+          <button class="modal-close" onclick="closeCsvImportModal()">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p style="font-size:13px;color:var(--tx2);margin-bottom:16px;">Lade eine CSV-Datei mit Kontaktdaten hoch. Erwartete Spalten: <code>Vorname, Nachname, Firma, Telefon, E-Mail</code></p>
+          <div style="border:2px dashed var(--border);border-radius:12px;padding:40px 20px;text-align:center;cursor:pointer;" id="csvDropZone" onclick="document.getElementById('csvFileInput').click()">
+            <div style="font-size:2rem;margin-bottom:8px;">📄</div>
+            <p style="font-size:13px;color:var(--tx3);">CSV-Datei hierher ziehen oder klicken zum Auswählen</p>
+            <input type="file" id="csvFileInput" accept=".csv" style="display:none;" onchange="handleCsvFile(this)">
+          </div>
+          <div id="csvPreview" style="display:none;margin-top:16px;">
+            <div style="font-size:13px;font-weight:700;margin-bottom:8px;">Vorschau: <span id="csvRowCount">0</span> Kontakte</div>
+            <div style="max-height:200px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;" id="csvPreviewTable"></div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn-secondary" onclick="closeCsvImportModal()">Abbrechen</button>
+          <button class="btn-primary" id="csvImportBtn" onclick="importCsvContacts()" disabled>Importieren</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- New Conversation Modal -->
+<div class="modal-overlay" id="modal-new-conversation">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title">Neue Konversation</h2>
+      <button class="modal-close" onclick="closeNewConvModal()">&times;</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="convSubject">Betreff</label>
+      <input type="text" id="convSubject" class="form-input" placeholder="z.B. Frage zum Setup">
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="convMessage">Erste Nachricht</label>
+      <textarea id="convMessage" class="form-input form-textarea" placeholder="Schreibe deine Nachricht..." style="min-height:100px;resize:vertical;"></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeNewConvModal()">Abbrechen</button>
+      <button class="btn-primary" onclick="createNewConversation()">Konversation starten</button>
+    </div>
+  </div>
+</div>
+
+<!-- Invite Team Member Modal -->
+<div class="modal-overlay" id="modal-invite-member">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title">Teammitglied einladen</h2>
+      <button class="modal-close" onclick="closeInviteModal()">&times;</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="inviteEmail">E-Mail-Adresse</label>
+      <input type="email" id="inviteEmail" class="form-input" placeholder="name@beispiel.de">
+    </div>
+    <div class="form-group">
+      <label class="form-label" for="inviteRole">Rolle</label>
+      <select id="inviteRole" class="form-input form-select">
+        <option value="member">Member</option>
+        <option value="admin">Admin</option>
+      </select>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="closeInviteModal()">Abbrechen</button>
+      <button class="btn-primary" onclick="sendInvite()">Einladung senden</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/impersonation.js"></script>
+<script src="js/modal.js"></script>
+<script src="js/error-handler.js"></script>
+<script>ErrorHandler.init();</script>
+<script src="js/logger.js"></script>
+<script src="js/supabase-init.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/db/calls.js"></script>
+<script src="js/db/assistants.js"></script>
+<script src="js/db/profiles.js"></script>
+<script src="js/db/leads.js"></script>
+<script src="js/db/messaging.js"></script>
+<script src="js/db/customers.js"></script>
+<script src="js/db/tools.js"></script>
+<script src="js/db.js"></script>
+<script src="js/auth-guard.js"></script>
+<script src="js/pricing-data.js"></script>
+<script src="js/config.js"></script>
+<script src="js/dashboard-components.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/dashboard-home-data.js"></script>
+<script src="js/dashboard-team.js"></script>
+<script src="js/dashboard-billing.js"></script>
+<script src="js/dashboard-integrations.js"></script>
+<script src="js/dashboard-payment.js"></script>
+<script src="js/onboarding.js"></script>
+<script src="js/notifications.js"></script>
+<script src="js/dashboard-extras.js"></script>
+<script src="js/dashboard-analytics.js"></script>
+<script src="js/dashboard-home-widgets.js"></script>
+<script src="js/appointments.js"></script>
+<script src="js/analytics-page.js"></script>
+<script src="js/realtime.js"></script>
+<script src="js/global-search.js"></script>
+<script src="js/keyboard-shortcuts.js"></script>
+<script>KeyboardShortcuts.init({});</script>
+<script src="js/invoices.js"></script>
+<script>
+// Lazy-load jsPDF + invoice-pdf only when invoice tab is opened
+(function() {
+  var loaded = false;
+  function loadJsPdf() {
+    if (loaded) return;
+    loaded = true;
+    var s1 = document.createElement('script');
+    s1.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.2/jspdf.umd.min.js';
+    s1.onload = function() {
+      var s2 = document.createElement('script');
+      s2.src = 'https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.4/jspdf.plugin.autotable.min.js';
+      s2.onload = function() {
+        var s3 = document.createElement('script');
+        s3.src = 'js/invoice-pdf.js';
+        document.head.appendChild(s3);
+      };
+      document.head.appendChild(s2);
+    };
+    document.head.appendChild(s1);
   }
-
-  // ── Contacts page (lazy) ──────────────────────────────────────────────────────
-  async function loadContactsPage() {
-    if (_loaded.contacts) return;
-    _loaded.contacts = true;
-    const list = document.getElementById('contacts-list');
-    list.innerHTML = `<div style="padding:24px 20px;text-align:center;color:#9CA3AF;font-size:13px;">Loading…</div>`;
-
-    const { data, error } = await sb.from('customer_contacts')
-      .select('id, first_name, last_name, company, phone, email, created_at')
-      .eq('user_id', currentUser.id)
-      .order('created_at', { ascending: false })
-      .limit(50);
-
-    if (error) {
-      list.innerHTML = `<div style="padding:24px 20px;text-align:center;color:#9CA3AF;font-size:13px;">Could not load contacts. Please try again.</div>`;
-      _loaded.contacts = false;
-      return;
-    }
-
-    const rows = data || [];
-    document.getElementById('contacts-sub').textContent =
-      rows.length === 0 ? 'No contacts yet' : `${rows.length} contact${rows.length !== 1 ? 's' : ''}`;
-    renderContacts(rows);
-  }
-
-  function renderContacts(contacts) {
-    const list = document.getElementById('contacts-list');
-    if (contacts.length === 0) {
-      list.innerHTML = `<div style="padding:48px 20px;text-align:center;color:#9CA3AF;font-size:13px;">No contacts yet. They are added automatically from incoming calls.</div>`;
-      return;
-    }
-    list.innerHTML = contacts.map(c => {
-      const name = [c.first_name, c.last_name].filter(Boolean).join(' ') || 'Unknown';
-      const d    = new Date(c.created_at).toLocaleDateString('de-DE', { day: '2-digit', month: 'short', year: 'numeric' });
-      return `
-        <div class="invoice-row">
-          <span class="invoice-date" style="width:150px;">${escHtml(name)}</span>
-          <span class="invoice-desc">${escHtml(c.company || c.email || '—')}</span>
-          <span class="invoice-amt" style="width:130px;text-align:right;">${escHtml(c.phone || '—')}</span>
-          <span style="font-size:11px;color:#9CA3AF;margin-left:12px;white-space:nowrap;">${d}</span>
-        </div>`;
-    }).join('');
-  }
-
-  // ── Helpers ──────────────────────────────────────────────────────────────────
-  function escHtml(s) {
-    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-  function fmtDur(sec) {
-    const m = Math.floor(sec / 60), s = sec % 60;
-    return `${m}m ${String(s).padStart(2,'0')}s`;
-  }
-  function relTime(date) {
-    const diff = Date.now() - date;
-    const m = Math.floor(diff / 60000);
-    if (m < 1)  return 'just now';
-    if (m < 60) return `${m} minute${m > 1 ? 's' : ''} ago`;
-    const h = Math.floor(m / 60);
-    if (h < 24) return `${h} hour${h > 1 ? 's' : ''} ago`;
-    return `${Math.floor(h / 24)} days ago`;
-  }
-
-  // ── Navigation ────────────────────────────────────────────────────────────────
-  const PAGE_TITLES = {
-    home: 'Home', assistants: 'Assistants', calls: 'Calls',
-    messages: 'Messages', contacts: 'Contacts', integrations: 'Integrations',
-    team: 'Team', billing: 'Billing', packages: 'Packages', settings: 'Settings'
-  };
-
-  document.querySelectorAll('.nav-item').forEach(item => {
-    item.addEventListener('click', () => {
-      const page = item.dataset.page;
-      if (!page) return;
-      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-      document.getElementById('page-' + page).classList.add('active');
-      item.classList.add('active');
-      document.getElementById('page-title').textContent = PAGE_TITLES[page] || page;
-      closeAssistantSettings();
-      if (page === 'calls'    && currentUser) loadCallsPage();
-      if (page === 'contacts' && currentUser) loadContactsPage();
-    });
+  // Load when invoices tab is shown or any PDF button is clicked
+  document.addEventListener('click', function(e) {
+    var t = e.target.closest('[data-tab="invoices"], .invoice-pdf-btn, [onclick*="PDF"], [onclick*="pdf"]');
+    if (t) loadJsPdf();
   });
-
-  function handleTestCall(assistantName) {
-    console.log('[BTN] Test Call clicked for:', assistantName);
-    alert('Test Call for "' + assistantName + '" is not yet configured.\nPlease assign a phone number to this assistant first.');
-  }
-
-  function handleAddCredits() {
-    console.log('[BTN] Add Credits clicked — not yet implemented');
-    alert('Add Credits: payment integration not yet connected.');
-  }
-
-  function handleTransactionHistory() {
-    console.log('[BTN] Transaction History clicked — not yet implemented');
-    alert('Transaction History: full history not yet implemented.');
-  }
-
-  function handleAddPaymentMethod() {
-    console.log('[BTN] Add Payment Method clicked — not yet implemented');
-    alert('Add Payment Method: payment integration not yet connected.');
-  }
-
-  function openAssistantSettings(id) { openAssistantSettingsById(id); }
-
-  function closeAssistantSettings() {
-    const panel = document.getElementById('assistant-settings-panel');
-    if (!panel) return;
-    panel.style.display = 'none';
-    document.getElementById('assistants-grid').style.display = 'grid';
-    document.querySelector('#page-assistants .page-header').style.display = 'flex';
-  }
+  // Also load if navigated directly to invoices tab
+  if (location.hash === '#invoices') loadJsPdf();
+})();
 </script>
+<script src="js/theme-toggle.js"></script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});</script>
+<script src="js/idle-timeout.js"></script>
+<script src="js/confetti.js"></script>
+<script src="js/integration-demo.js"></script>
+<script src="js/push-notifications.js"></script>
+<script src="js/offline-cache.js"></script>
+<script src="js/install-prompt.js"></script>
+<script src="cookie-consent.js"></script>
+<!-- Invoice Selection Action Bar -->
+<div id="invoiceSelectionBar" style="display:none;position:fixed;bottom:0;left:0;right:0;background:var(--bg2);border-top:2px solid var(--pu);padding:14px 24px;align-items:center;justify-content:space-between;z-index:100;box-shadow:0 -4px 12px rgba(0,0,0,.1);">
+  <span id="invoiceSelectionCount" style="font-weight:700;color:var(--tx);font-size:14px;">0 Rechnungen ausgewählt</span>
+  <div style="display:flex;gap:10px;">
+    <button onclick="downloadSelectedInvoices()" style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:8px 16px;cursor:pointer;color:var(--tx);font-size:13px;font-weight:600;font-family:'Manrope',sans-serif;transition:all .2s;">📄 PDFs herunterladen</button>
+    <button onclick="sendSelectedInvoices()" style="background:var(--pu);border:1px solid var(--pu);border-radius:8px;padding:8px 16px;cursor:pointer;color:#fff;font-size:13px;font-weight:600;font-family:'Manrope',sans-serif;transition:all .2s;">✉️ Per E-Mail senden</button>
+  </div>
+</div>
+
+<!-- MOBILE BOTTOM NAV (Spec §6) -->
+<nav class="mobile-bottom-nav" id="mobileBottomNav">
+  <a class="mob-nav-item active" data-page="home" onclick="navigateToPage('home')">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="14" height="14" rx="3"/><path d="M3 8h14"/></svg>
+    <span>Home</span>
+  </a>
+  <a class="mob-nav-item" data-page="transactions" onclick="navigateToPage('transactions')">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 10h-4l-2 7-4-14-2 7H2"/></svg>
+    <span>Anrufe</span>
+  </a>
+  <a class="mob-nav-item" data-page="appointments" onclick="navigateToPage('appointments')">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="14" height="13" rx="2"/><path d="M3 8h14"/><path d="M7 2v4M13 2v4"/></svg>
+    <span>Termine</span>
+  </a>
+  <a class="mob-nav-item" data-page="analytics" onclick="navigateToPage('analytics')">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 17V11M8 17V7M12 17V9M16 17V4"/></svg>
+    <span>Analytics</span>
+  </a>
+  <a class="mob-nav-item" data-page="more" onclick="document.querySelector('.sidebar').classList.toggle('open');document.getElementById('sidebarOverlay').classList.toggle('open');">
+    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="10" cy="5" r="1.5"/><circle cx="10" cy="10" r="1.5"/><circle cx="10" cy="15" r="1.5"/></svg>
+    <span>Mehr</span>
+  </a>
+</nav>
 </body>
 </html>

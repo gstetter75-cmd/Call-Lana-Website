@@ -1,91 +1,346 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>AGB — Call Lana</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
-  <script>
-    tailwind.config = {
-      theme: { extend: {
-        colors: {
-          brand: { 50:'#FAF5FF', 100:'#F3E8FF', 200:'#E9D5FF', 300:'#D8B4FE', 400:'#7C3AED', 500:'#6D28D9', 600:'#5B21B6', 700:'#4C1D95', 800:'#3B0764', 900:'#2E1065' },
-          dark: { 950:'#FFFFFF', 900:'#F9FAFB', 850:'#F5F3FF', 800:'#F3F4F6', 700:'#E5E7EB', 600:'#D1D5DB', 500:'#9CA3AF' },
-          surface: { dark:'#FFFFFF', mid:'#F9FAFB' },
-        },
-        fontFamily: { display: ['"Space Grotesk"', 'system-ui', 'sans-serif'], body: ['"Inter"', 'system-ui', 'sans-serif'] },
-      }}
-    }
-  </script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Allgemeine Geschäftsbedingungen – Call Lana</title>
+<meta property="og:title" content="Allgemeine Geschäftsbedingungen – Call Lana">
+<meta property="og:description" content="AGB von Call Lana – Allgemeine Geschäftsbedingungen für die Nutzung des KI-Telefonassistenten.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="de_DE">
+<link rel="canonical" href="https://call-lana.de/agb">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/marketing.css">
+<style>
+  .legal-hero { padding: 120px 6% 48px; text-align: center; }
+  .legal-hero h1 { font-size: clamp(1.8rem, 4vw, 3rem); font-weight: 800; margin-bottom: 8px; }
+  .legal-hero p { color: #64748b; font-size: 0.95rem; }
+  .legal-content { max-width: 800px; margin: 0 auto 80px; padding: 0 6%; }
+  .legal-section { margin-bottom: 40px; }
+  .legal-section h2 { font-size: 1.4rem; font-weight: 700; color: #1e293b; margin-bottom: 12px; }
+  .legal-section h3 { font-size: 1.1rem; font-weight: 600; color: #475569; margin: 24px 0 10px; }
+  .legal-section p { color: #475569; line-height: 1.8; margin-bottom: 12px; }
+  .legal-section a { color: #7c3aed; text-decoration: none; }
+  .legal-section a:hover { text-decoration: underline; }
+  .legal-section ul { list-style: none; padding-left: 0; }
+  .legal-section ul li { padding-left: 20px; position: relative; margin-bottom: 8px; color: #475569; }
+  .legal-section ul li::before { content: '\2192'; position: absolute; left: 0; color: #7c3aed; }
+  .legal-section ol { padding-left: 24px; color: #475569; }
+  .legal-section ol li { margin-bottom: 10px; line-height: 1.75; }
+  .highlight-box { background: #f1f0ff; border: 1px solid #e0dbff; border-radius: 12px; padding: 20px 24px; margin: 24px 0; }
+  .highlight-box h3 { color: #7c3aed; margin-top: 0; font-size: 1.1rem; font-weight: 600; }
+  .highlight-box p { color: #475569; line-height: 1.8; margin-bottom: 0; }
+  .highlight-box a { color: #7c3aed; text-decoration: none; }
+  .highlight-box a:hover { text-decoration: underline; }
+</style>
 </head>
-<body class="bg-white text-gray-900 antialiased overflow-x-hidden">
-  <div id="nav-container"></div>
+<body>
 
-  <main class="pt-28 pb-20 bg-section-dark">
-    <div class="max-w-3xl mx-auto px-6">
-      <h1 class="font-display text-4xl font-extrabold text-gray-900 mb-2" style="letter-spacing:-0.03em;">Allgemeine Geschäftsbedingungen</h1>
-      <p class="text-gray-500 text-sm mb-10">Stand: März 2026</p>
+<nav id="nav">
+  <a href="index.html" class="logo"><picture><source srcset="logo-nav.webp" type="image/webp"><img src="logo-nav.png" alt="Call Lana" height="40"></picture></a>
+  <ul class="nav-links">
+    <li><a href="funktionen.html">Funktionen</a></li>
+    <li><a href="branchen.html">Branchen</a></li>
+    <li><a href="preise.html">Preise</a></li>
+    <li><a href="kontakt.html">Kontakt</a></li>
+  </ul>
+  <div class="nav-right"><a href="login.html" class="nav-login">Login</a><a href="registrierung.html" class="nav-cta">Kostenlos starten</a></div>
+  <button class="mob-btn" id="mb" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
 
-      <div class="legal-content">
-        <h2>§ 1 Geltungsbereich</h2>
-        <p>(1) Diese Allgemeinen Geschäftsbedingungen (nachfolgend „AGB") gelten für die Nutzung des KI-Telefonassistenz-Dienstes „Call Lana" (nachfolgend „Dienst"), betrieben von der Call Lana GmbH, Osianderstraße 18, 73525 Schwäbisch Gmünd, Deutschland (nachfolgend „Anbieter").</p>
-        <p>(2) Abweichende Geschäftsbedingungen des Nutzers werden nicht anerkannt, es sei denn, der Anbieter stimmt ihrer Geltung ausdrücklich schriftlich zu.</p>
-        <p>(3) Der Nutzer erklärt sich mit der Registrierung und Nutzung des Dienstes mit diesen AGB einverstanden.</p>
+<section class="legal-hero">
+  <h1>Allgemeine Geschäftsbedingungen</h1>
+  <p>Stand: März 2026</p>
+</section>
 
-        <h2>§ 2 Vertragsgegenstand und Leistungsumfang</h2>
-        <p>(1) Der Anbieter stellt dem Nutzer einen KI-basierten Telefonassistenz-Dienst zur Verfügung, der eingehende Anrufe automatisiert entgegennimmt und bearbeitet.</p>
-        <p>(2) Der Leistungsumfang richtet sich nach dem jeweils gewählten Tarif und umfasst insbesondere: automatisierte Anrufannahme, Terminvereinbarung, Gesprächstranskription, Benachrichtigungen und Weiterleitung.</p>
-        <p>(3) Der Anbieter ist berechtigt, den Dienst jederzeit weiterzuentwickeln und zu verbessern, sofern dies den Leistungsumfang nicht wesentlich einschränkt.</p>
+<div class="legal-content">
 
-        <h2>§ 3 Vertragsschluss und Registrierung</h2>
-        <p>(1) Die Registrierung erfolgt über das Online-Registrierungsformular auf der Website des Anbieters.</p>
-        <p>(2) Mit der Registrierung gibt der Nutzer ein verbindliches Angebot zum Abschluss eines Nutzungsvertrages ab. Der Vertrag kommt mit der Bestätigung der Registrierung durch den Anbieter zustande.</p>
-        <p>(3) Der Nutzer ist verpflichtet, bei der Registrierung wahrheitsgemäße und vollständige Angaben zu machen und diese aktuell zu halten.</p>
+  <!-- § 1 -->
+  <div class="legal-section">
+    <h2>§ 1 Geltungsbereich</h2>
+    <p>
+      (1) Diese Allgemeinen Geschäftsbedingungen (nachfolgend „AGB") gelten für alle Verträge zwischen der Call Lana GmbH, Wetzellplatz 2, 31137 Hildesheim, vertreten durch den Geschäftsführer Gero Stetter (nachfolgend „Anbieter"), und dem Nutzer des Dienstes (nachfolgend „Nutzer") über die Nutzung des KI-gestützten Telefonassistenten „Call Lana" (nachfolgend „Dienst").
+    </p>
+    <p>
+      (2) Nutzer kann jede natürliche oder juristische Person sein, die sich für den Dienst registriert. Der Dienst richtet sich ausschließlich an Unternehmer im Sinne von § 14 BGB.
+    </p>
+    <p>
+      (3) Abweichende oder ergänzende AGB des Nutzers werden nicht Vertragsbestandteil, es sei denn, der Anbieter hat deren Geltung ausdrücklich schriftlich zugestimmt.
+    </p>
+  </div>
 
-        <h2>§ 4 Verfügbarkeit und technische Anforderungen</h2>
-        <p>(1) Der Anbieter strebt eine Verfügbarkeit des Dienstes von 99,9 % im Jahresmittel an.</p>
-        <p>(2) Hiervon ausgenommen sind Zeiten, in denen der Dienst aufgrund von technischen oder sonstigen Problemen, die nicht im Einflussbereich des Anbieters liegen, nicht erreichbar ist.</p>
-        <p>(3) Der Nutzer benötigt einen aktiven Telefonanschluss und eine stabile Internetverbindung zur vollständigen Nutzung des Dienstes.</p>
+  <!-- § 2 -->
+  <div class="legal-section">
+    <h2>§ 2 Vertragsgegenstand</h2>
+    <p>
+      (1) Der Anbieter stellt dem Nutzer eine cloudbasierte Softwarelösung zur KI-gestützten Bearbeitung von Telefonanrufen als Software-as-a-Service (SaaS) zur Verfügung.
+    </p>
+    <p>
+      (2) Der Dienst umfasst insbesondere:
+    </p>
+    <ul>
+      <li>Automatische Annahme und KI-gestützte Bearbeitung eingehender Telefonanrufe</li>
+      <li>KI-gestützte Gesprächsführung in deutscher Sprache</li>
+      <li>Transkription und Zusammenfassung von Gesprächen</li>
+      <li>Integration mit Kalendersystemen und CRM-Plattformen (je nach Tarif)</li>
+      <li>Weiterleitung komplexer Anfragen an den Nutzer</li>
+    </ul>
+    <p>
+      (3) Der konkrete Leistungsumfang richtet sich nach dem vom Nutzer gewählten Tarif. Die aktuellen Tarife und deren Umfang sind unter <a href="preise.html">www.call-lana.de/preise</a> einsehbar.
+    </p>
+    <p>
+      (4) Der Anbieter ist berechtigt, den Dienst jederzeit weiterzuentwickeln, zu ändern oder einzelne Funktionen einzustellen. Wesentliche Einschränkungen des Funktionsumfangs werden dem Nutzer mit einer Frist von 4 Wochen mitgeteilt. In diesem Fall steht dem Nutzer ein Sonderkündigungsrecht zu.
+    </p>
+  </div>
 
-        <h2>§ 5 Preise und Zahlungsbedingungen</h2>
-        <p>(1) Es gelten die zum Zeitpunkt des Vertragsschlusses auf der Website des Anbieters veröffentlichten Preise.</p>
-        <p>(2) Alle Preise verstehen sich als Nettopreise zuzüglich der jeweils gültigen gesetzlichen Mehrwertsteuer.</p>
-        <p>(3) Die Abrechnung erfolgt monatlich im Voraus. Die Zahlung ist innerhalb von 14 Tagen nach Rechnungsstellung fällig.</p>
-        <p>(4) Bei Zahlungsverzug ist der Anbieter berechtigt, den Zugang zum Dienst vorübergehend zu sperren.</p>
+  <!-- § 3 -->
+  <div class="legal-section">
+    <h2>§ 3 Vertragsschluss und Registrierung</h2>
+    <p>
+      (1) Der Vertrag kommt durch Registrierung des Nutzers auf der Website des Anbieters und Freischaltung des Nutzerkontos zustande.
+    </p>
+    <p>
+      (2) Der Nutzer versichert, dass alle bei der Registrierung angegebenen Daten wahrheitsgemäß und vollständig sind. Änderungen sind unverzüglich im Nutzerkonto zu aktualisieren.
+    </p>
+    <p>
+      (3) Der Nutzer ist verantwortlich für die Geheimhaltung seiner Zugangsdaten. Jede Nutzung des Dienstes unter den Zugangsdaten des Nutzers gilt als durch den Nutzer autorisiert.
+    </p>
+    <p>
+      (4) Der Anbieter behält sich vor, Registrierungen ohne Angabe von Gründen abzulehnen.
+    </p>
+  </div>
 
-        <h2>§ 6 Nutzungsrechte und Pflichten des Nutzers</h2>
-        <p>(1) Der Nutzer erhält ein einfaches, nicht übertragbares Recht zur Nutzung des Dienstes für die Dauer des Vertrages.</p>
-        <p>(2) Der Nutzer verpflichtet sich, den Dienst nicht missbräuchlich zu nutzen, insbesondere nicht für rechtswidrige Zwecke oder in einer Weise, die den Betrieb des Dienstes beeinträchtigt.</p>
-        <p>(3) Der Nutzer ist für die Geheimhaltung seiner Zugangsdaten verantwortlich.</p>
+  <!-- § 4 -->
+  <div class="legal-section">
+    <h2>§ 4 Verfügbarkeit des Dienstes</h2>
 
-        <h2>§ 7 Datenschutz und Datenverarbeitung</h2>
-        <p>(1) Der Anbieter verarbeitet personenbezogene Daten des Nutzers und dessen Kunden im Einklang mit der Datenschutz-Grundverordnung (DSGVO) und dem Bundesdatenschutzgesetz (BDSG).</p>
-        <p>(2) Einzelheiten zur Datenverarbeitung sind der Datenschutzerklärung des Anbieters zu entnehmen.</p>
-        <p>(3) Sofern der Anbieter im Auftrag des Nutzers personenbezogene Daten verarbeitet, wird ein Auftragsverarbeitungsvertrag gemäß Art. 28 DSGVO geschlossen.</p>
-
-        <h2>§ 8 Haftung</h2>
-        <p>(1) Der Anbieter haftet unbeschränkt für Vorsatz und grobe Fahrlässigkeit.</p>
-        <p>(2) Bei leichter Fahrlässigkeit haftet der Anbieter nur bei Verletzung wesentlicher Vertragspflichten und beschränkt auf den vorhersehbaren, vertragstypischen Schaden.</p>
-        <p>(3) Die Haftung für mittelbare Schäden und Folgeschäden ist ausgeschlossen, es sei denn, sie beruhen auf vorsätzlichem oder grob fahrlässigem Verhalten des Anbieters.</p>
-
-        <h2>§ 9 Laufzeit und Kündigung</h2>
-        <p>(1) Der Vertrag wird auf unbestimmte Zeit geschlossen und kann von beiden Seiten mit einer Frist von 30 Tagen zum Ende eines Abrechnungszeitraums gekündigt werden.</p>
-        <p>(2) Das Recht zur außerordentlichen Kündigung aus wichtigem Grund bleibt unberührt.</p>
-        <p>(3) Die Kündigung bedarf der Textform (E-Mail genügt) oder kann über das Dashboard des Nutzers erfolgen.</p>
-
-        <h2>§ 10 Schlussbestimmungen</h2>
-        <p>(1) Es gilt das Recht der Bundesrepublik Deutschland.</p>
-        <p>(2) Gerichtsstand für alle Streitigkeiten aus diesem Vertrag ist, soweit gesetzlich zulässig, der Sitz des Anbieters.</p>
-        <p>(3) Sollten einzelne Bestimmungen dieser AGB unwirksam sein oder werden, so wird die Wirksamkeit der übrigen Bestimmungen nicht berührt.</p>
-      </div>
+    <div class="highlight-box">
+      <h3>Wichtiger Hinweis zur Verfügbarkeit</h3>
+      <p>
+        Der Dienst wird „wie besehen" (as-is) bereitgestellt. Der Anbieter übernimmt keine Garantie für eine bestimmte Verfügbarkeit, Erreichbarkeit oder Funktionsfähigkeit des Dienstes. Es besteht kein Rechtsanspruch des Nutzers auf eine ununterbrochene oder fehlerfreie Bereitstellung.
+      </p>
     </div>
-  </main>
 
-  <div id="footer-container"></div>
-  <script src="components.js"></script>
+    <p>
+      (1) Der Anbieter bemüht sich um eine möglichst hohe Verfügbarkeit des Dienstes, übernimmt jedoch keinerlei Garantie für eine bestimmte Verfügbarkeitsquote. Insbesondere besteht <strong>kein Rechtsanspruch auf Verfügbarkeit, Erreichbarkeit oder Funktionsfähigkeit</strong> des Dienstes.
+    </p>
+    <p>
+      (2) Der Dienst kann aus technischen, betrieblichen oder wirtschaftlichen Gründen jederzeit ganz oder teilweise unterbrochen, eingeschränkt oder eingestellt werden. Dies umfasst insbesondere:
+    </p>
+    <ul>
+      <li>Wartungsarbeiten und Updates (geplant oder ungeplant)</li>
+      <li>Störungen der Telekommunikationsinfrastruktur oder externer Dienstleister</li>
+      <li>Störungen der KI-Sprachmodelle oder deren Anbieter</li>
+      <li>Höhere Gewalt, Cyberangriffe oder sonstige unvorhersehbare Ereignisse</li>
+      <li>Überlastung durch hohes Anrufaufkommen</li>
+    </ul>
+    <p>
+      (3) Aus einer vorübergehenden oder dauerhaften Nichtverfügbarkeit des Dienstes entstehen dem Nutzer <strong>keinerlei Ansprüche</strong> auf Schadensersatz, Minderung, Erstattung oder Entschädigung, es sei denn, der Anbieter hat die Nichtverfügbarkeit vorsätzlich oder grob fahrlässig verursacht.
+    </p>
+    <p>
+      (4) Der Nutzer ist selbst dafür verantwortlich, alternative Erreichbarkeit (z.&nbsp;B. Anrufbeantworter, menschliche Annahme) für den Fall sicherzustellen, dass der Dienst nicht verfügbar ist. Der Anbieter haftet nicht für entgangene Geschäfte, verpasste Anrufe oder sonstige mittelbare Schäden.
+    </p>
+  </div>
+
+  <!-- § 5 -->
+  <div class="legal-section">
+    <h2>§ 5 Preise und Zahlung</h2>
+    <p>
+      (1) Es gelten die zum Zeitpunkt des Vertragsschlusses auf der Website angegebenen Preise. Alle Preise verstehen sich zuzüglich der gesetzlichen Umsatzsteuer.
+    </p>
+    <p>
+      (2) Die Abrechnung erfolgt monatlich oder jährlich im Voraus, je nach gewähltem Abrechnungszeitraum. Überschreitungsminuten werden am Ende des jeweiligen Abrechnungszeitraums nachberechnet.
+    </p>
+    <p>
+      (3) Die Zahlung erfolgt per SEPA-Lastschrift, Kreditkarte oder einem anderen auf der Website angebotenen Zahlungsmittel. Die Zahlungsabwicklung erfolgt über den externen Zahlungsdienstleister Stripe (Stripe, Inc.).
+    </p>
+    <p>
+      (4) Bei Zahlungsverzug von mehr als 14 Tagen ist der Anbieter berechtigt, den Zugang zum Dienst zu sperren. Die Zahlungspflicht besteht fort.
+    </p>
+    <p>
+      (5) Der Anbieter behält sich Preisanpassungen mit einer Ankündigungsfrist von 6 Wochen vor. Bei Preiserhöhungen hat der Nutzer ein Sonderkündigungsrecht mit Wirkung zum Zeitpunkt des Inkrafttretens der Preiserhöhung.
+    </p>
+  </div>
+
+  <!-- § 6 -->
+  <div class="legal-section">
+    <h2>§ 6 Pflichten des Nutzers</h2>
+    <p>
+      (1) Der Nutzer erhält ein einfaches, nicht übertragbares, nicht unterlizenzierbares Recht zur Nutzung des Dienstes für die Vertragsdauer.
+    </p>
+    <p>
+      (2) Der Nutzer verpflichtet sich:
+    </p>
+    <ul>
+      <li>Den Dienst nur für rechtmäßige geschäftliche Zwecke zu nutzen</li>
+      <li>Keine Spam-Anrufe, Werbeanrufe oder sonstige Belästigungen durchzuführen oder zu ermöglichen</li>
+      <li>Keine rechtswidrigen, beleidigenden oder jugendgefährdenden Inhalte über den Dienst zu verbreiten</li>
+      <li>Die geltenden Datenschutzbestimmungen (insbesondere DSGVO) einzuhalten</li>
+      <li>Seinen Anrufern mitzuteilen, dass Gespräche von einem KI-System geführt und aufgezeichnet werden, sofern dies gesetzlich erforderlich ist</li>
+      <li>Den Dienst nicht zu dekompilieren, zurückzuentwickeln oder auf andere Weise den Quellcode zu extrahieren</li>
+    </ul>
+    <p>
+      (3) Bei Verstößen ist der Anbieter berechtigt, den Zugang sofort zu sperren und den Vertrag fristlos zu kündigen. Ein Anspruch auf Rückerstattung bereits gezahlter Entgelte besteht in diesem Fall nicht.
+    </p>
+  </div>
+
+  <!-- § 7 -->
+  <div class="legal-section">
+    <h2>§ 7 KI-generierte Inhalte und Haftungsausschluss</h2>
+
+    <div class="highlight-box">
+      <h3>Wichtiger Hinweis zu KI-Antworten</h3>
+      <p>
+        Der Dienst basiert auf künstlicher Intelligenz. KI-generierte Antworten können fehlerhaft, unvollständig oder unangemessen sein. Der Nutzer trägt die alleinige Verantwortung für die Überwachung und Kontrolle der KI-Ausgaben.
+      </p>
+    </div>
+
+    <p>
+      (1) Die vom KI-System generierten Antworten, Zusammenfassungen, Terminvorschläge und sonstigen Inhalte stellen <strong>keine rechtsverbindlichen Zusagen oder Erklärungen</strong> des Anbieters dar.
+    </p>
+    <p>
+      (2) Der Anbieter übernimmt <strong>keinerlei Haftung</strong> für:
+    </p>
+    <ul>
+      <li>Die inhaltliche Richtigkeit, Vollständigkeit oder Angemessenheit der vom KI-System generierten Antworten</li>
+      <li>Falsche Terminvereinbarungen, falsche Auskünfte oder Missverständnisse im KI-gestützten Gespräch</li>
+      <li>Zusagen oder Versprechen, die das KI-System gegenüber Anrufern macht</li>
+      <li>Geschäftsentscheidungen, die auf Grundlage von KI-generierten Informationen getroffen werden</li>
+    </ul>
+    <p>
+      (3) Der Nutzer ist verpflichtet, die Ergebnisse des KI-Systems regelmäßig zu überprüfen und gegebenenfalls zu korrigieren. Der Anbieter empfiehlt, wichtige Kundenanfragen manuell nachzuverfolgen.
+    </p>
+  </div>
+
+  <!-- § 8 -->
+  <div class="legal-section">
+    <h2>§ 8 Datenschutz</h2>
+    <p>
+      (1) Der Anbieter verarbeitet personenbezogene Daten ausschließlich nach Maßgabe der <a href="datenschutz.html">Datenschutzerklärung</a> und der DSGVO.
+    </p>
+    <p>
+      (2) Telefongespräche werden verschlüsselt übertragen und gespeichert. Die Verarbeitung erfolgt auf Servern innerhalb der Europäischen Union.
+    </p>
+    <p>
+      (3) Der Nutzer ist als datenschutzrechtlich Verantwortlicher dafür zuständig, seine Gesprächspartner über die KI-Verarbeitung und Aufzeichnung der Gespräche zu informieren, soweit gesetzlich erforderlich. Der Anbieter stellt hierfür Informationsvorlagen zur Verfügung.
+    </p>
+    <p>
+      (4) Soweit der Anbieter im Auftrag des Nutzers personenbezogene Daten verarbeitet, wird ein Auftragsverarbeitungsvertrag (AVV) gemäß Art. 28 DSGVO geschlossen.
+    </p>
+  </div>
+
+  <!-- § 9 -->
+  <div class="legal-section">
+    <h2>§ 9 Haftungsbeschränkung</h2>
+    <p>
+      (1) Der Anbieter haftet unbeschränkt nur für Schäden aus der Verletzung des Lebens, des Körpers oder der Gesundheit sowie für Vorsatz und grobe Fahrlässigkeit.
+    </p>
+    <p>
+      (2) Bei leichter Fahrlässigkeit haftet der Anbieter nur bei Verletzung wesentlicher Vertragspflichten (Kardinalpflichten). Die Haftung ist in diesem Fall auf den vertragstypischen, vorhersehbaren Schaden begrenzt und auf maximal den Betrag beschränkt, den der Nutzer in den letzten 12 Monaten als Vergütung an den Anbieter gezahlt hat.
+    </p>
+    <p>
+      (3) <strong>Der Anbieter haftet ausdrücklich nicht für:</strong>
+    </p>
+    <ul>
+      <li>Ausfälle, Unterbrechungen oder Fehlfunktionen des Dienstes gleich welcher Art und Dauer</li>
+      <li>Entgangenen Gewinn, entgangene Geschäfte, verpasste Anrufe oder sonstige mittelbare Schäden</li>
+      <li>Fehlerhafte, unvollständige oder irreführende KI-generierte Antworten</li>
+      <li>Schäden durch Handlungen oder Unterlassungen Dritter (Telekommunikationsanbieter, Cloud-Provider, KI-Dienstleister)</li>
+      <li>Datenverlust, soweit der Nutzer keine angemessene Datensicherung vorgenommen hat</li>
+    </ul>
+    <p>
+      (4) Der Nutzer erkennt an, dass der Dienst auf komplexer Technologie (Telekommunikation, KI-Sprachmodelle, Cloud-Infrastruktur) basiert und dass eine fehlerfreie oder ununterbrochene Funktion technisch nicht garantiert werden kann. Aus Funktionsstörungen entstehen <strong>keine Gewährleistungs-, Schadensersatz- oder Minderungsansprüche</strong>, sofern diese nicht auf Vorsatz oder grobe Fahrlässigkeit des Anbieters zurückzuführen sind.
+    </p>
+  </div>
+
+  <!-- § 10 -->
+  <div class="legal-section">
+    <h2>§ 10 Laufzeit und Kündigung</h2>
+    <p>
+      (1) Der kostenlose Testzeitraum (sofern angeboten) endet automatisch nach dem angegebenen Zeitraum und geht nicht automatisch in ein kostenpflichtiges Abonnement über, es sei denn, der Nutzer wählt aktiv einen kostenpflichtigen Tarif.
+    </p>
+    <p>
+      (2) Monatliche Abonnements verlängern sich automatisch um jeweils einen Monat, sofern sie nicht mit einer Frist von 14 Tagen zum Ende des laufenden Monats gekündigt werden.
+    </p>
+    <p>
+      (3) Jährliche Abonnements verlängern sich automatisch um ein weiteres Jahr, sofern sie nicht mit einer Frist von einem Monat zum Ende der Laufzeit gekündigt werden.
+    </p>
+    <p>
+      (4) Das Recht zur außerordentlichen Kündigung aus wichtigem Grund bleibt unberührt. Ein wichtiger Grund liegt für den Anbieter insbesondere vor bei: Zahlungsverzug von mehr als 30 Tagen, Verstoß gegen § 6 dieser AGB, oder missbräuchlicher Nutzung des Dienstes.
+    </p>
+    <p>
+      (5) Kündigungen bedürfen der Textform. Eine Kündigung per E-Mail an <a href="mailto:info@call-lana.de">info@call-lana.de</a> ist ausreichend. Die Kündigung kann auch über die Kontoeinstellungen im Dashboard erfolgen.
+    </p>
+    <p>
+      (6) Nach Vertragsende werden die Daten des Nutzers innerhalb von 30 Tagen gelöscht, sofern keine gesetzlichen Aufbewahrungspflichten entgegenstehen. Der Nutzer kann vor Vertragsende einen Export seiner Daten anfordern.
+    </p>
+  </div>
+
+  <!-- § 11 -->
+  <div class="legal-section">
+    <h2>§ 11 Änderungen der AGB</h2>
+    <p>
+      (1) Der Anbieter behält sich vor, diese AGB mit Wirkung für die Zukunft zu ändern. Der Nutzer wird über Änderungen mindestens 4 Wochen vor Inkrafttreten per E-Mail informiert.
+    </p>
+    <p>
+      (2) Widerspricht der Nutzer den geänderten AGB nicht innerhalb von 4 Wochen nach Zugang der Änderungsmitteilung, gelten die geänderten AGB als angenommen. Auf diese Rechtsfolge wird in der Änderungsmitteilung gesondert hingewiesen.
+    </p>
+    <p>
+      (3) Im Falle des Widerspruchs hat der Anbieter das Recht, den Vertrag zum Zeitpunkt des Inkrafttretens der Änderung ordentlich zu kündigen.
+    </p>
+  </div>
+
+  <!-- § 12 -->
+  <div class="legal-section">
+    <h2>§ 12 Schlussbestimmungen</h2>
+    <p>
+      (1) Es gilt das Recht der Bundesrepublik Deutschland unter Ausschluss des UN-Kaufrechts.
+    </p>
+    <p>
+      (2) Ist der Nutzer Kaufmann, juristische Person des öffentlichen Rechts oder öffentlich-rechtliches Sondervermögen, ist ausschließlicher Gerichtsstand für alle Streitigkeiten aus oder im Zusammenhang mit diesem Vertrag Hildesheim.
+    </p>
+    <p>
+      (3) Sollten einzelne Bestimmungen dieser AGB ganz oder teilweise unwirksam sein oder werden, bleibt die Wirksamkeit der übrigen Bestimmungen hiervon unberührt. An die Stelle der unwirksamen Bestimmung tritt die gesetzliche Regelung.
+    </p>
+    <p>
+      (4) Mündliche Nebenabreden bestehen nicht. Änderungen und Ergänzungen bedürfen der Textform.
+    </p>
+  </div>
+
+  <div class="highlight-box">
+    <h3>Download &amp; Archivierung</h3>
+    <p>
+      Sie können diese AGB jederzeit ausdrucken oder als PDF speichern. Die jeweils aktuelle Version finden Sie unter: <a href="agb.html">www.call-lana.de/agb</a>
+    </p>
+  </div>
+
+  <div class="highlight-box">
+    <h3>Fragen zu den AGB?</h3>
+    <p>
+      Wir helfen Ihnen gerne weiter:<br>
+      E-Mail: <a href="mailto:info@call-lana.de">info@call-lana.de</a><br>
+      Telefon: +49 5121 9343395
+    </p>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand"><a href="index.html" class="logo"><picture><source srcset="logo-footer.webp" type="image/webp"><img src="logo-footer.png" alt="Call Lana" height="28"></picture></a><p>Der KI-Telefonassistent auf Deutsch. DSGVO-konform, skalierbar, sofort einsatzbereit.</p></div>
+    <div class="footer-col"><h4>Produkt</h4><ul><li><a href="funktionen.html">Funktionen</a></li><li><a href="branchen.html">Branchen</a></li><li><a href="preise.html">Preise</a></li></ul></div>
+    <div class="footer-col"><h4>Rechtliches</h4><ul><li><a href="impressum.html">Impressum</a></li><li><a href="datenschutz.html">Datenschutz</a></li><li><a href="agb.html">AGB</a></li></ul></div>
+    <div class="footer-col"><h4>Konto</h4><ul><li><a href="registrierung.html">Registrieren</a></li><li><a href="login.html">Login</a></li><li><a href="dashboard.html">Dashboard</a></li></ul></div>
+  </div>
+  <div class="footer-bottom"><p class="footer-copy">Copyright 2025 by Call Lana — Alle Rechte vorbehalten</p></div>
+</footer>
+
+<script src="cookie-consent.js"></script>
+<script>
+document.querySelector('.mob-btn').addEventListener('click',()=>document.getElementById('nav').classList.toggle('open'));
+window.addEventListener('scroll',()=>{document.getElementById('nav').classList.toggle('scrolled',window.scrollY>10);},{passive:true});
+</script>
 </body>
 </html>

@@ -1,0 +1,19 @@
+{
+  "name": "Call Lana",
+  "short_name": "Call Lana",
+  "description": "KI-Telefonassistent für dein Unternehmen",
+  "start_url": "/login.html",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#06060f",
+  "theme_color": "#7c3aed",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

@@ -3,13 +3,74 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <title>Call Lana — KI-Telefonassistentin für Handwerker</title>
   <meta name="description" content="Call Lana ist die KI-Rezeptionistin für Handwerker: nimmt Anrufe an, bucht Termine und beantwortet Kundenfragen — 24/7, DSGVO-konform." />
+  <meta property="og:title" content="Call Lana — KI-Telefonassistentin für Handwerker" />
+  <meta property="og:description" content="KI-Rezeptionistin, die Anrufe annimmt, Termine bucht und Anfragen festhält. Ab 149 €/Monat. DSGVO-konform." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://call-lana.de/" />
+  <meta property="og:image" content="https://call-lana.de/img/og-image.png" />
+  <meta property="og:locale" content="de_DE" />
+  <meta name="google-site-verification" content="mWo1KB3eRU7lInLR4Mk6VDZL3J_WaKMq30L1oJ-G_BI">
+  <meta property="og:site_name" content="Call Lana" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Call Lana — KI-Telefonassistentin für Handwerker" />
+  <meta name="twitter:description" content="KI-Rezeptionistin, die Anrufe annimmt, Termine bucht und Anfragen festhält. Ab 149 €/Monat." />
+  <link rel="canonical" href="https://call-lana.de/" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Call Lana",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web",
+    "description": "KI-Telefonassistentin für Handwerksbetriebe. Nimmt Anrufe automatisch an, bucht Termine und hält Anfragen fest — 24/7, DSGVO-konform.",
+    "url": "https://call-lana.de",
+    "offers": {
+      "@type": "AggregateOffer",
+      "priceCurrency": "EUR",
+      "lowPrice": "149",
+      "highPrice": "299",
+      "offerCount": "2"
+    },
+    "provider": {
+      "@type": "Organization",
+      "name": "Call Lana GmbH",
+      "url": "https://call-lana.de",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "Wetzellplatz 2",
+        "addressLocality": "Hildesheim",
+        "postalCode": "31137",
+        "addressCountry": "DE"
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+49-5121-9343395",
+        "email": "info@call-lana.de",
+        "contactType": "sales"
+      }
+    }
+  }
+  </script>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="css/design.css" />
+  <script>
+    tailwind.config = {
+      theme: { extend: {
+        colors: {
+          brand: { 50:'#FAF5FF', 100:'#F3E8FF', 200:'#E9D5FF', 300:'#D8B4FE', 400:'#7C3AED', 500:'#6D28D9', 600:'#5B21B6', 700:'#4C1D95', 800:'#3B0764', 900:'#2E1065' },
+          dark: { 950:'#FFFFFF', 900:'#F9FAFB', 850:'#F5F3FF', 800:'#F3F4F6', 700:'#E5E7EB', 600:'#D1D5DB', 500:'#9CA3AF' },
+          surface: { dark:'#FFFFFF', mid:'#F9FAFB' },
+        },
+        fontFamily: { display: ['"Space Grotesk"', 'system-ui', 'sans-serif'], body: ['"Inter"', 'system-ui', 'sans-serif'] },
+      }}
+    }
+  </script>
   <script>
     // Global error handler: catch Spline / WebGL errors so they never break the page
     window.addEventListener('error', function(e) {
@@ -22,32 +83,23 @@
       }
     });
   </script>
-  <script type="module" src="https://unpkg.com/@splinetool/viewer@1.9.82/build/spline-viewer.js" onerror="document.querySelectorAll('spline-viewer').forEach(function(el){el.remove()})"></script>
-  <script>
-    tailwind.config = {
-      theme: {
-        extend: {
-          colors: {
-            brand: { 50:'#FAF5FF', 100:'#F3E8FF', 200:'#E9D5FF', 300:'#D8B4FE', 400:'#7C3AED', 500:'#6D28D9', 600:'#5B21B6', 700:'#4C1D95', 800:'#3B0764', 900:'#2E1065' },
-            dark: { 950:'#FFFFFF', 900:'#F9FAFB', 850:'#F5F3FF', 800:'#F3F4F6', 700:'#E5E7EB', 600:'#D1D5DB', 500:'#9CA3AF' },
-            surface: { dark:'#FFFFFF', mid:'#F9FAFB' },
-          },
-          fontFamily: {
-            display: ['"Space Grotesk"', 'system-ui', 'sans-serif'],
-            body: ['"Inter"', 'system-ui', 'sans-serif'],
-          },
-        },
-      },
-    }
-  </script>
+  <!-- Spline 3D viewer loaded lazily after page renders -->
+
 </head>
 <body class="bg-white text-gray-900 antialiased overflow-x-hidden">
+
+  <!-- ===== TEMPORARY DEBUG MARKER — REMOVE AFTER VERIFICATION ===== -->
+  <div id="debug-marker" style="position:fixed;top:0;left:0;right:0;z-index:99999;background:#FF0000;color:#FFFFFF;font-family:monospace;font-size:16px;font-weight:bold;text-align:center;padding:10px 20px;letter-spacing:0.05em;box-shadow:0 4px 20px rgba(0,0,0,0.5);">
+    ⚠️ LOCAL TEST BUILD — index.html AKTIV — 2026-04-02 ⚠️
+  </div>
+  <div style="height:44px;"></div>
+  <!-- ===== END DEBUG MARKER ===== -->
 
   <!-- NAV -->
   <div id="nav-container"></div>
 
   <!-- ========== HERO SECTION ========== -->
-  <section class="relative pt-32 pb-8 md:pt-36 md:pb-16 noise-overlay overflow-hidden" style="background: linear-gradient(135deg, #FFFFFF 0%, #FBF7FF 30%, #F5EEFF 60%, #EFE8FF 100%);">
+  <section class="relative pt-32 pb-8 md:pt-36 md:pb-16 noise-overlay overflow-x-hidden" style="background: linear-gradient(135deg, #FFFFFF 0%, #FBF7FF 30%, #F5EEFF 60%, #EFE8FF 100%);">
     <!-- Primary radial glow — right side behind robot -->
     <div class="absolute top-0 right-0 w-[60%] h-full pointer-events-none" style="background: radial-gradient(ellipse at 70% 50%, rgba(124,58,237,0.10) 0%, rgba(124,58,237,0.04) 40%, transparent 70%);"></div>
     <!-- Secondary glow — soft bloom top-left for depth -->
@@ -57,99 +109,135 @@
       <div class="grid md:grid-cols-2 gap-12 md:gap-8 items-center">
         <div style="position:relative;z-index:20;pointer-events:auto;">
           <div class="inline-flex items-center gap-2.5 bg-brand-400/10 border border-brand-400/20 rounded-full px-4 py-1.5 mb-8">
-            <img src="brand_assets/A_vector-style_digital_logo_for_the_brand_Clana_.png" alt="" class="w-5 h-5 object-contain" />
+            <img src="brand_assets/clana-icon-64.png" alt="" class="w-5 h-5 object-contain" />
             <span class="text-brand-400 text-xs font-medium tracking-wide uppercase lang-de">KI-Telefonassistentin für Handwerker</span>
             <span class="text-brand-400 text-xs font-medium tracking-wide uppercase lang-en hidden">AI Phone Assistant for Trades</span>
           </div>
           <h1 class="font-display text-4xl sm:text-5xl md:text-[3.5rem] font-extrabold leading-none text-gray-950 mb-6" style="letter-spacing:-0.03em; line-height:1.08;">
-            <span class="lang-de">Nie wieder einen Kundenanruf <span class="text-brand-400" style="text-shadow: 0 0 30px rgba(124,58,237,0.15);">verpassen.</span></span>
-            <span class="lang-en hidden">Never miss a customer call <span class="text-brand-400" style="text-shadow: 0 0 30px rgba(124,58,237,0.15);">again.</span></span>
+            <span class="lang-de">Dein Telefon klingelt. <span class="text-brand-400" style="text-shadow: 0 0 30px rgba(124,58,237,0.15);">Lana nimmt ab.</span></span>
+            <span class="lang-en hidden">Your phone rings. <span class="text-brand-400" style="text-shadow: 0 0 30px rgba(124,58,237,0.15);">Lana answers.</span></span>
           </h1>
-          <p class="text-gray-600 text-lg md:text-xl max-w-lg mb-8" style="line-height:1.7;">
-            <span class="lang-de">Call Lana beantwortet deine Anrufe automatisch – 24/7 für Handwerksbetriebe.</span>
-            <span class="lang-en hidden">Call Lana answers your calls automatically – 24/7 for trade businesses.</span>
+          <p class="text-gray-600 text-lg md:text-xl max-w-lg mb-4" style="line-height:1.7;">
+            <span class="lang-de">KI-Telefonassistentin, die Anrufe annimmt, Termine bucht und Anfragen für dich festhält. Damit du dich auf dein Handwerk konzentrieren kannst.</span>
+            <span class="lang-en hidden">AI phone assistant that answers calls, books appointments, and captures customer requests for you. So you can focus on your craft.</span>
           </p>
+          <p class="text-gray-500 text-sm mb-8 lang-de">Einrichtung in 15 Minuten. Monatlich kündbar. Ab 149 €/Monat.</p>
+          <p class="text-gray-500 text-sm mb-8 lang-en hidden">Setup in 15 minutes. Cancel monthly. From €149/month.</p>
           <div class="flex flex-col sm:flex-row items-start gap-3 mb-5">
-            <a href="demo.html" class="btn-brand inline-block px-8 py-4 rounded-xl text-base font-bold">
-              <span class="lang-de">Jetzt Demo buchen</span>
-              <span class="lang-en hidden">Book a demo</span>
+            <a href="registrierung.html" class="btn-brand inline-block px-8 py-4 rounded-xl text-base font-bold">
+              <span class="lang-de">Jetzt starten – 30 Tage Garantie</span>
+              <span class="lang-en hidden">Get started – 30-day guarantee</span>
             </a>
-            <a href="registrierung.html" class="btn-outline inline-block px-8 py-4 rounded-xl text-base font-semibold">
-              <span class="lang-de">Kostenlos starten</span>
-              <span class="lang-en hidden">Start free</span>
+            <a href="kontakt.html" class="btn-outline inline-block px-8 py-4 rounded-xl text-base font-semibold">
+              <span class="lang-de">Demo anfragen</span>
+              <span class="lang-en hidden">Request a demo</span>
             </a>
           </div>
-          <!-- Call test element -->
-          <div class="relative inline-flex flex-col items-start gap-3 rounded-2xl px-7 py-5" style="background: linear-gradient(135deg, rgba(124,58,237,0.06) 0%, rgba(124,58,237,0.02) 100%); border: 1.5px solid rgba(124,58,237,0.25); box-shadow: 0 0 20px rgba(124,58,237,0.10), 0 4px 24px rgba(124,58,237,0.08), inset 0 1px 0 rgba(255,255,255,0.8);">
-            <div class="absolute -inset-px rounded-2xl pointer-events-none" style="background: linear-gradient(135deg, rgba(124,58,237,0.15) 0%, transparent 50%); mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0); mask-composite: exclude; -webkit-mask-composite: xor; padding: 1.5px; border-radius: 1rem;"></div>
-            <p class="text-gray-700 text-sm font-medium lang-de" style="line-height:1.5;">Teste Call Lana jetzt live.</p>
-            <p class="text-gray-700 text-sm font-medium lang-en hidden" style="line-height:1.5;">Test Call Lana live now.</p>
-            <div class="flex items-center gap-4">
-              <div class="w-11 h-11 rounded-xl bg-brand-400/15 flex items-center justify-center shrink-0" style="box-shadow: 0 0 12px rgba(124,58,237,0.12);">
-                <svg class="w-5.5 h-5.5 text-brand-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
-              </div>
-              <div class="text-left">
-                <a href="tel:+49XXXXXXXXXX" class="font-display text-xl font-bold text-gray-900 hover:text-brand-400" style="letter-spacing:-0.02em;transition:color 0.2s ease;">+49 XXX XXX XXXX</a>
-                <p class="text-gray-500 text-xs mt-0.5 lang-de">Ruf jetzt an und erlebe, wie Call Lana deinen Anruf beantwortet.</p>
-                <p class="text-gray-500 text-xs mt-0.5 lang-en hidden">Call now and experience how Call Lana answers your call.</p>
-              </div>
-            </div>
-          </div>
+          
         </div>
         <div class="flex justify-center md:justify-end">
-          <div class="robot-container relative w-full max-w-lg" style="height:480px;overflow:hidden;contain:strict;perspective:800px;">
-            <!-- Ambient glow behind robot -->
-            <div class="absolute -inset-16 rounded-full blur-3xl" style="z-index:0;background:radial-gradient(circle, rgba(124,58,237,0.20) 0%, rgba(124,58,237,0.08) 45%, transparent 72%);"></div>
-            <!-- Spline 3D robot — contained, non-blocking -->
-            <spline-viewer
-              url="https://prod.spline.design/kZDDjO5HuC9GJUM2/scene.splinecode"
-              loading="lazy"
-              style="position:absolute;inset:0;width:100%;height:100%;background:transparent;pointer-events:none;z-index:1;"
-            ></spline-viewer>
-            <!-- Bottom fade to ground the robot -->
-            <div style="position:absolute;bottom:0;left:0;right:0;height:60px;background:linear-gradient(to top,rgba(237,233,254,1) 0%,rgba(237,233,254,0) 100%);pointer-events:none;z-index:4;"></div>
-            <!-- Call Lana badge — physically attached to robot chest in 3D -->
-            <div id="robotLogo" style="position:absolute;top:52%;left:50%;width:0;height:0;transform-style:preserve-3d;z-index:5;pointer-events:none;opacity:0;transition:opacity 0.8s ease;will-change:transform;">
-              <div style="position:absolute;top:0;left:0;transform:translate(-50%,-50%);transform-style:preserve-3d;">
-                <!-- Contact shadow pressed onto chest surface -->
-                <div style="position:absolute;bottom:-4px;left:50%;transform:translateX(-50%) translateZ(-2px);width:50px;height:10px;border-radius:50%;background:rgba(0,0,0,0.35);filter:blur(4px);"></div>
-                <!-- Badge body — solid opaque disc with physical thickness -->
-                <div style="position:relative;width:54px;height:54px;border-radius:50%;background:linear-gradient(160deg,#eee8f8 0%,#d8cdef 40%,#c0aee0 100%);border:2px solid rgba(100,40,200,0.25);display:flex;align-items:center;justify-content:center;transform-style:preserve-3d;box-shadow:
-                  0 2px 1px rgba(0,0,0,0.18),
-                  0 4px 6px rgba(0,0,0,0.15),
-                  0 1px 0 rgba(0,0,0,0.25),
-                  0 -1px 0 rgba(255,255,255,0.15),
-                  inset 0 2px 3px rgba(255,255,255,0.5),
-                  inset 0 -2px 3px rgba(80,30,160,0.12);
-                ">
-                  <!-- Top-edge bevel highlight (catches light) -->
-                  <div style="position:absolute;inset:2px;border-radius:50%;border-top:1.5px solid rgba(255,255,255,0.6);border-left:1px solid rgba(255,255,255,0.3);border-bottom:1.5px solid rgba(0,0,0,0.12);border-right:1px solid rgba(0,0,0,0.06);pointer-events:none;"></div>
-                  <!-- Rim edge — simulates physical thickness -->
-                  <div style="position:absolute;inset:-1px;border-radius:50%;border:1px solid rgba(0,0,0,0.1);pointer-events:none;"></div>
-                  <img src="brand_assets/A_vector-style_digital_logo_for_the_brand_Clana_.png" alt="Call Lana" style="width:34px;height:34px;object-fit:contain;filter:drop-shadow(0 1px 1px rgba(80,30,160,0.2));" />
-                </div>
-              </div>
-            </div>
-            <!-- Phone visual element floating near robot hand -->
-            <div style="position:absolute;bottom:28%;right:8%;z-index:5;pointer-events:none;animation:phoneFloat 3s ease-in-out infinite;">
-              <div style="width:38px;height:64px;border-radius:10px;background:linear-gradient(135deg,#1F2937 0%,#374151 100%);border:2px solid #4B5563;box-shadow:0 4px 20px rgba(124,58,237,0.25),0 0 30px rgba(124,58,237,0.1);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;">
-                <!-- Phone screen -->
-                <div style="width:30px;height:52px;border-radius:6px;background:linear-gradient(180deg,#7C3AED 0%,#5B21B6 100%);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;">
-                  <!-- Phone icon on screen -->
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
-                  </svg>
-                  <!-- Signal waves -->
-                  <div style="display:flex;gap:1px;align-items:flex-end;">
-                    <div style="width:2px;height:4px;background:rgba(255,255,255,0.6);border-radius:1px;animation:signalPulse 1.5s ease-in-out infinite;"></div>
-                    <div style="width:2px;height:7px;background:rgba(255,255,255,0.8);border-radius:1px;animation:signalPulse 1.5s ease-in-out 0.2s infinite;"></div>
-                    <div style="width:2px;height:10px;background:rgba(255,255,255,1);border-radius:1px;animation:signalPulse 1.5s ease-in-out 0.4s infinite;"></div>
+          <!-- ═══════════════════════════════════════════════════════
+               LANA AI PRESENCE — pure CSS hero visual
+               ASSET SWAP POINT: to replace this visual, edit the
+               contents of this .robot-container div.
+               ═══════════════════════════════════════════════════════ -->
+          <div class="robot-container relative w-full max-w-lg" style="height:580px;overflow:visible;contain:layout style;">
+
+            <!-- Ambient background glow -->
+            <div style="position:absolute;inset:-70px;background:radial-gradient(circle at 50% 42%, rgba(124,58,237,0.22) 0%, rgba(139,92,246,0.1) 38%, transparent 70%);pointer-events:none;z-index:0;"></div>
+
+            <!-- === Visual column === -->
+            <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding-top:44px;z-index:2;">
+
+              <!-- ORB + RINGS -->
+              <div style="position:relative;width:220px;height:220px;flex-shrink:0;">
+
+                <!-- Pulse ring 3 — outermost, fades out furthest -->
+                <div style="position:absolute;inset:-72px;border-radius:50%;border:1px solid rgba(124,58,237,0.1);animation:lana-pulse 3.8s cubic-bezier(0.4,0,0.6,1) 0s infinite;"></div>
+                <!-- Pulse ring 2 -->
+                <div style="position:absolute;inset:-42px;border-radius:50%;border:1px solid rgba(124,58,237,0.18);animation:lana-pulse 3.8s cubic-bezier(0.4,0,0.6,1) 1.25s infinite;"></div>
+                <!-- Pulse ring 1 — closest -->
+                <div style="position:absolute;inset:-14px;border-radius:50%;border:1.5px solid rgba(124,58,237,0.3);animation:lana-pulse 3.8s cubic-bezier(0.4,0,0.6,1) 2.5s infinite;"></div>
+
+                <!-- Glow halo (blurred, behind orb) -->
+                <div style="position:absolute;inset:-24px;border-radius:50%;background:radial-gradient(circle, rgba(124,58,237,0.32) 0%, rgba(167,139,250,0.16) 45%, transparent 75%);filter:blur(20px);animation:lana-breathe 4.5s ease-in-out infinite;pointer-events:none;"></div>
+
+                <!-- Core sphere — radial gradient creates 3D sphere illusion -->
+                <div style="position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 35% 28%, #ffffff 0%, #ede9fe 12%, #c4b5fd 30%, #8b5cf6 52%, #7c3aed 68%, #5b21b6 82%, #3b0764 100%);box-shadow:0 6px 80px rgba(124,58,237,0.5), 0 0 0 1px rgba(167,139,250,0.25), inset 0 2px 0 rgba(255,255,255,0.5), inset 0 -2px 0 rgba(0,0,0,0.15);animation:lana-breathe 4.5s ease-in-out infinite;">
+                  <!-- Primary specular highlight — top left -->
+                  <div style="position:absolute;top:11%;left:17%;width:40%;height:34%;border-radius:50%;background:radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.25) 40%, transparent 70%);pointer-events:none;"></div>
+                  <!-- Secondary micro-highlight — upper right -->
+                  <div style="position:absolute;top:20%;right:20%;width:18%;height:15%;border-radius:50%;background:radial-gradient(circle, rgba(255,255,255,0.45) 0%, transparent 70%);pointer-events:none;"></div>
+                  <!-- Brand icon centered in orb -->
+                  <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+                    <img src="brand_assets/clana-icon-64.png" alt="" style="width:56px;height:56px;object-fit:contain;filter:brightness(10) opacity(0.35);pointer-events:none;" aria-hidden="true"/>
                   </div>
                 </div>
-                <!-- Phone notch -->
-                <div style="position:absolute;top:3px;left:50%;transform:translateX(-50%);width:14px;height:3px;background:#1F2937;border-radius:2px;"></div>
               </div>
-            </div>
+
+              <!-- Voice waveform bars -->
+              <div style="display:flex;align-items:center;gap:3.5px;margin-top:26px;height:30px;flex-shrink:0;">
+                <div style="width:3px;height:7px;background:rgba(124,58,237,0.35);border-radius:2px;animation:lana-bar 1.6s ease-in-out 0s infinite;transform-origin:bottom;"></div>
+                <div style="width:3px;height:13px;background:rgba(124,58,237,0.48);border-radius:2px;animation:lana-bar 1.6s ease-in-out 0.14s infinite;transform-origin:bottom;"></div>
+                <div style="width:3px;height:22px;background:rgba(124,58,237,0.65);border-radius:2px;animation:lana-bar 1.6s ease-in-out 0.28s infinite;transform-origin:bottom;"></div>
+                <div style="width:3px;height:15px;background:rgba(124,58,237,0.55);border-radius:2px;animation:lana-bar 1.6s ease-in-out 0.42s infinite;transform-origin:bottom;"></div>
+                <div style="width:3px;height:28px;background:rgba(124,58,237,0.8);border-radius:2px;animation:lana-bar 1.6s ease-in-out 0.56s infinite;transform-origin:bottom;"></div>
+                <div style="width:3px;height:19px;background:rgba(124,58,237,0.68);border-radius:2px;animation:lana-bar 1.6s ease-in-out 0.7s infinite;transform-origin:bottom;"></div>
+                <div style="width:3px;height:11px;background:rgba(124,58,237,0.45);border-radius:2px;animation:lana-bar 1.6s ease-in-out 0.84s infinite;transform-origin:bottom;"></div>
+                <div style="width:3px;height:17px;background:rgba(124,58,237,0.6);border-radius:2px;animation:lana-bar 1.6s ease-in-out 0.98s infinite;transform-origin:bottom;"></div>
+                <div style="width:3px;height:8px;background:rgba(124,58,237,0.38);border-radius:2px;animation:lana-bar 1.6s ease-in-out 1.12s infinite;transform-origin:bottom;"></div>
+              </div>
+
+              <!-- Status pill -->
+              <div style="display:inline-flex;align-items:center;gap:8px;margin-top:16px;background:rgba(124,58,237,0.07);border:1px solid rgba(124,58,237,0.18);border-radius:100px;padding:6px 16px 6px 10px;flex-shrink:0;">
+                <div style="width:7px;height:7px;border-radius:50%;background:#7c3aed;box-shadow:0 0 0 3px rgba(124,58,237,0.15);animation:lana-dot-pulse 2.4s ease-in-out infinite;"></div>
+                <span style="font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;color:#7c3aed;letter-spacing:0.07em;text-transform:uppercase;white-space:nowrap;">Lana · Bereit</span>
+              </div>
+
+              <!-- Incoming call card -->
+              <div style="width:min(278px,90%);margin-top:28px;background:rgba(255,255,255,0.84);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border:1px solid rgba(124,58,237,0.1);border-radius:20px;padding:15px 17px 13px;box-shadow:0 16px 56px rgba(124,58,237,0.12),0 2px 8px rgba(0,0,0,0.05);flex-shrink:0;animation:lana-card-float 5.5s ease-in-out infinite;">
+                <div style="display:flex;align-items:center;gap:13px;">
+                  <!-- Phone icon -->
+                  <div style="width:44px;height:44px;border-radius:14px;background:linear-gradient(135deg,#7c3aed 0%,#a78bfa 100%);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 4px 18px rgba(124,58,237,0.32);">
+                    <svg width="19" height="19" fill="none" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+                  </div>
+                  <!-- Call info -->
+                  <div style="flex:1;min-width:0;">
+                    <p style="font-size:11px;font-weight:500;color:#9ca3af;margin:0 0 3px;line-height:1.2;font-family:'Space Grotesk',sans-serif;">Eingehender Anruf</p>
+                    <p style="font-size:15px;font-weight:700;color:#111827;margin:0;line-height:1.3;font-family:'Space Grotesk',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">Müller Sanitär GmbH</p>
+                  </div>
+                  <!-- Active indicator dot -->
+                  <div style="width:8px;height:8px;border-radius:50%;background:#10b981;box-shadow:0 0 0 3px rgba(16,185,129,0.15);flex-shrink:0;animation:lana-dot-pulse 2s ease-in-out infinite;"></div>
+                </div>
+                <!-- Mini waveform -->
+                <div style="display:flex;align-items:center;gap:1.5px;margin-top:11px;height:22px;padding:0 2px;">
+                  <div style="flex:1;height:1px;background:linear-gradient(to right,transparent,rgba(124,58,237,0.15));"></div>
+                  <div style="display:flex;align-items:center;gap:2px;">
+                    <div style="width:2px;height:5px;background:rgba(124,58,237,0.3);border-radius:1px;"></div>
+                    <div style="width:2px;height:10px;background:rgba(124,58,237,0.5);border-radius:1px;animation:lana-bar 1.1s ease-in-out 0s infinite;transform-origin:center;"></div>
+                    <div style="width:2px;height:16px;background:rgba(124,58,237,0.7);border-radius:1px;animation:lana-bar 1.1s ease-in-out 0.18s infinite;transform-origin:center;"></div>
+                    <div style="width:2px;height:12px;background:rgba(124,58,237,0.6);border-radius:1px;animation:lana-bar 1.1s ease-in-out 0.36s infinite;transform-origin:center;"></div>
+                    <div style="width:2px;height:20px;background:rgba(124,58,237,0.85);border-radius:1px;animation:lana-bar 1.1s ease-in-out 0.54s infinite;transform-origin:center;"></div>
+                    <div style="width:2px;height:14px;background:rgba(124,58,237,0.65);border-radius:1px;animation:lana-bar 1.1s ease-in-out 0.72s infinite;transform-origin:center;"></div>
+                    <div style="width:2px;height:8px;background:rgba(124,58,237,0.45);border-radius:1px;animation:lana-bar 1.1s ease-in-out 0.9s infinite;transform-origin:center;"></div>
+                    <div style="width:2px;height:5px;background:rgba(124,58,237,0.3);border-radius:1px;"></div>
+                  </div>
+                  <div style="flex:1;height:1px;background:linear-gradient(to left,transparent,rgba(124,58,237,0.15));"></div>
+                </div>
+                <!-- Status line -->
+                <p style="font-size:11px;font-weight:600;color:#10b981;margin:7px 0 0;text-align:center;font-family:'Space Grotesk',sans-serif;letter-spacing:0.03em;">&#10003; Lana nimmt ab — 24/7</p>
+              </div>
+
+            </div><!-- end visual column -->
+
+            <style>
+              @keyframes lana-breathe { 0%,100%{transform:scale(1);opacity:1} 50%{transform:scale(1.04);opacity:0.94} }
+              @keyframes lana-pulse { 0%{opacity:0.75;transform:scale(1)} 100%{opacity:0;transform:scale(1.7)} }
+              @keyframes lana-card-float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-7px)} }
+              @keyframes lana-bar { 0%,100%{transform:scaleY(0.3);opacity:0.45} 50%{transform:scaleY(1);opacity:1} }
+              @keyframes lana-dot-pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+            </style>
+
           </div>
         </div>
       </div>
@@ -181,13 +269,7 @@
           <span class="text-gray-800 text-sm font-semibold whitespace-nowrap lang-de">24/7 erreichbar</span>
           <span class="text-gray-800 text-sm font-semibold whitespace-nowrap lang-en hidden">Available 24/7</span>
         </div>
-        <div class="flex items-center gap-2.5 shrink-0">
-          <div class="w-9 h-9 rounded-xl bg-brand-400/10 flex items-center justify-center shrink-0">
-            <svg class="w-4.5 h-4.5 text-brand-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-          </div>
-          <span class="text-gray-800 text-sm font-semibold whitespace-nowrap lang-de">EU-AI-Act konform</span>
-          <span class="text-gray-800 text-sm font-semibold whitespace-nowrap lang-en hidden">EU AI Act compliant</span>
-        </div>
+        
         <div class="flex items-center gap-2.5 shrink-0">
           <div class="w-9 h-9 rounded-xl bg-brand-400/10 flex items-center justify-center shrink-0">
             <svg class="w-4.5 h-4.5 text-brand-400" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
@@ -199,43 +281,84 @@
     </div>
   </section>
 
-  <!-- ========== TRUSTED BY ========== -->
-  <section class="relative py-12 md:py-14 noise-overlay bg-section-dark overflow-hidden">
-    <div class="relative z-10 max-w-5xl mx-auto px-6">
-      <p class="text-center text-gray-400 text-xs font-medium tracking-widest uppercase mb-6 lang-de">Vertraut von Handwerksbetrieben in ganz Deutschland</p>
-      <p class="text-center text-gray-400 text-xs font-medium tracking-widest uppercase mb-6 lang-en hidden">Trusted by trade businesses across Germany</p>
+    <!-- ========== BRANCHEN BAR ========== -->
+  <section class="relative py-10 border-b border-gray-100 bg-white overflow-hidden">
+    <div class="relative z-10 text-center mb-5">
+      <p class="text-gray-400 text-xs font-medium tracking-widest uppercase lang-de">Entwickelt für alle Handwerks-Branchen</p>
+      <p class="text-gray-400 text-xs font-medium tracking-widest uppercase lang-en hidden">Built for every trade</p>
     </div>
-    <div class="relative">
-      <!-- Fade edges -->
-      <div class="absolute inset-y-0 left-0 w-24 z-10" style="background: linear-gradient(to right, #FFFFFF 0%, transparent 100%);"></div>
-      <div class="absolute inset-y-0 right-0 w-24 z-10" style="background: linear-gradient(to left, #FFFFFF 0%, transparent 100%);"></div>
-      <!-- Scrolling track -->
-      <div class="logo-scroll-track flex items-center gap-16" style="width: max-content; animation: logoScroll 30s linear infinite;">
-        <!-- First set -->
-        <div class="flex items-center gap-16 shrink-0">
-          <span class="text-lg font-bold text-gray-400 font-display tracking-tight whitespace-nowrap" style="opacity:0.6;">Dachdecker Klein GmbH</span>
-          <span class="text-lg font-bold text-gray-400 font-display tracking-tight whitespace-nowrap" style="opacity:0.6;">Elektro Schneider GmbH</span>
-          <span class="text-lg font-bold text-gray-400 font-display tracking-tight whitespace-nowrap" style="opacity:0.6;">Sanitär Müller & Sohn</span>
-          <span class="text-lg font-bold text-gray-400 font-display tracking-tight whitespace-nowrap" style="opacity:0.6;">Heizungsbau Weber GmbH</span>
-          <span class="text-lg font-bold text-gray-400 font-display tracking-tight whitespace-nowrap" style="opacity:0.6;">Bauunternehmen Hoffmann</span>
-          <span class="text-lg font-bold text-gray-400 font-display tracking-tight whitespace-nowrap" style="opacity:0.6;">Malerbetrieb Yildiz GmbH</span>
-          <span class="text-lg font-bold text-gray-400 font-display tracking-tight whitespace-nowrap" style="opacity:0.6;">Schreinerei Beck & Co.</span>
-          <span class="text-lg font-bold text-gray-400 font-display tracking-tight whitespace-nowrap" style="opacity:0.6;">Klima Fischer GmbH</span>
+    <!-- Marquee DE -->
+    <div class="lang-de relative overflow-hidden" style="-webkit-mask-image:linear-gradient(to right,transparent 0%,black 6%,black 94%,transparent 100%);mask-image:linear-gradient(to right,transparent 0%,black 6%,black 94%,transparent 100%);">
+      <div class="brch-track" style="display:flex;align-items:center;width:max-content;animation:branchen-scroll 50s linear infinite;">
+        <div style="display:flex;align-items:center;">
+          <span class="brch-name">Elektriker</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Sanitärbetriebe</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Dachdecker</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Heizungsbauer</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Malerbetriebe</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Schreinereien</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Bauunternehmen</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Klimatechnik</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Kfz-Betriebe</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Fliesenleger</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Zimmerei</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Garten &amp; Landschaft</span><span class="brch-dot">◆</span>
         </div>
-        <!-- Duplicate set for seamless loop -->
-        <div class="flex items-center gap-16 shrink-0">
-          <span class="text-lg font-bold text-gray-400 font-display tracking-tight whitespace-nowrap" style="opacity:0.6;">Dachdecker Klein GmbH</span>
-          <span class="text-lg font-bold text-gray-400 font-display tracking-tight whitespace-nowrap" style="opacity:0.6;">Elektro Schneider GmbH</span>
-          <span class="text-lg font-bold text-gray-400 font-display tracking-tight whitespace-nowrap" style="opacity:0.6;">Sanitär Müller & Sohn</span>
-          <span class="text-lg font-bold text-gray-400 font-display tracking-tight whitespace-nowrap" style="opacity:0.6;">Heizungsbau Weber GmbH</span>
-          <span class="text-lg font-bold text-gray-400 font-display tracking-tight whitespace-nowrap" style="opacity:0.6;">Bauunternehmen Hoffmann</span>
-          <span class="text-lg font-bold text-gray-400 font-display tracking-tight whitespace-nowrap" style="opacity:0.6;">Malerbetrieb Yildiz GmbH</span>
-          <span class="text-lg font-bold text-gray-400 font-display tracking-tight whitespace-nowrap" style="opacity:0.6;">Schreinerei Beck & Co.</span>
-          <span class="text-lg font-bold text-gray-400 font-display tracking-tight whitespace-nowrap" style="opacity:0.6;">Klima Fischer GmbH</span>
+        <div style="display:flex;align-items:center;">
+          <span class="brch-name">Elektriker</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Sanitärbetriebe</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Dachdecker</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Heizungsbauer</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Malerbetriebe</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Schreinereien</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Bauunternehmen</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Klimatechnik</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Kfz-Betriebe</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Fliesenleger</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Zimmerei</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Garten &amp; Landschaft</span><span class="brch-dot">◆</span>
         </div>
       </div>
     </div>
-    <div class="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-brand-400/15 to-transparent"></div>
+    <!-- Marquee EN -->
+    <div class="lang-en hidden relative overflow-hidden" style="-webkit-mask-image:linear-gradient(to right,transparent 0%,black 6%,black 94%,transparent 100%);mask-image:linear-gradient(to right,transparent 0%,black 6%,black 94%,transparent 100%);">
+      <div class="brch-track" style="display:flex;align-items:center;width:max-content;animation:branchen-scroll 50s linear infinite;">
+        <div style="display:flex;align-items:center;">
+          <span class="brch-name">Electricians</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Plumbers</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Roofers</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Heating</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Painters</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Carpenters</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Builders</span><span class="brch-dot">◆</span>
+          <span class="brch-name">HVAC</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Auto Repair</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Tilers</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Timber Framing</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Landscaping</span><span class="brch-dot">◆</span>
+        </div>
+        <div style="display:flex;align-items:center;">
+          <span class="brch-name">Electricians</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Plumbers</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Roofers</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Heating</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Painters</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Carpenters</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Builders</span><span class="brch-dot">◆</span>
+          <span class="brch-name">HVAC</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Auto Repair</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Tilers</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Timber Framing</span><span class="brch-dot">◆</span>
+          <span class="brch-name">Landscaping</span><span class="brch-dot">◆</span>
+        </div>
+      </div>
+    </div>
+    <style>
+      @keyframes branchen-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+      .brch-track:hover { animation-play-state: paused; }
+      .brch-name { font-family: 'Space Grotesk', system-ui, sans-serif; font-size: 1.0625rem; font-weight: 600; color: #374151; white-space: nowrap; padding: 0 1.5rem; letter-spacing: -0.01em; }
+      .brch-dot { color: #7C3AED; font-size: 0.375rem; opacity: 0.4; flex-shrink: 0; line-height: 1; }
+    </style>
   </section>
 
   <!-- ========== FÜR WEN IST LANA? ========== -->
@@ -249,8 +372,8 @@
           <span class="lang-en hidden">Perfect for <span class="text-brand-400">craft businesses</span></span>
         </h2>
         <p class="text-gray-500 text-lg max-w-xl mx-auto" style="line-height:1.7;">
-          <span class="lang-de">Egal welches Gewerk — Lana versteht dein Handwerk und übernimmt die Telefonzentrale.</span>
-          <span class="lang-en hidden">No matter the trade — Lana understands your craft and takes over the phone line.</span>
+          <span class="lang-de">Egal welches Gewerk — Lana kennt deine Leistungen und übernimmt die Telefonzentrale.</span>
+          <span class="lang-en hidden">No matter the trade — Lana knows your services and takes over the phone line.</span>
         </p>
       </div>
       <div class="grid sm:grid-cols-2 lg:grid-cols-5 gap-5">
@@ -356,8 +479,8 @@
           <h3 class="font-display text-base font-semibold text-gray-900 mb-2 lang-de">24/7 erreichbar</h3>
           <h3 class="font-display text-base font-semibold text-gray-900 mb-2 lang-en hidden">Available 24/7</h3>
           <p class="text-gray-500 text-sm" style="line-height:1.7;">
-            <span class="lang-de">Tag und Nacht, werktags und am Wochenende — Call Lana ist immer im Dienst. Kein Lead geht verloren.</span>
-            <span class="lang-en hidden">Day and night, weekdays and weekends — Call Lana is always on duty. No lead is lost.</span>
+            <span class="lang-de">Tag und Nacht, werktags und am Wochenende — Call Lana ist immer im Dienst. Kein Auftrag geht verloren.</span>
+            <span class="lang-en hidden">Day and night, weekdays and weekends — Call Lana is always on duty. No job is lost.</span>
           </p>
         </div>
         <div class="feature-card bg-dark-900 border border-gray-200 rounded-2xl p-6">
@@ -367,8 +490,8 @@
           <h3 class="font-display text-base font-semibold text-gray-900 mb-2 lang-de">Natürliche Gespräche</h3>
           <h3 class="font-display text-base font-semibold text-gray-900 mb-2 lang-en hidden">Natural conversations</h3>
           <p class="text-gray-500 text-sm" style="line-height:1.7;">
-            <span class="lang-de">Durch fortschrittliche KI führt Lana echte Gespräche — keine robotischen Ansagen. Anrufer merken keinen Unterschied.</span>
-            <span class="lang-en hidden">With advanced AI, Lana conducts real conversations — no robotic announcements. Callers can't tell the difference.</span>
+            <span class="lang-de">Lana spricht natürliches Deutsch — keine robotischen Ansagen, kein Sprachmenü, kein "Drücken Sie die 1".</span>
+            <span class="lang-en hidden">With advanced AI, Lana holds natural conversations in German — no robotic announcements, no hold music.</span>
           </p>
         </div>
         <div class="feature-card bg-dark-900 border border-gray-200 rounded-2xl p-6">
@@ -582,82 +705,32 @@
     <div class="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-brand-400/15 to-transparent"></div>
   </section>
 
-  <!-- ========== STATS BAR ========== -->
-  <section class="relative py-16 noise-overlay" style="background: linear-gradient(135deg, #F3EDFF 0%, #EDE7FF 50%, #F3EDFF 100%);">
-    <!-- Subtle glow accent -->
-    <div class="absolute inset-0 pointer-events-none" style="background: radial-gradient(ellipse at 50% 50%, rgba(124,58,237,0.06) 0%, transparent 60%);"></div>
-    <div class="relative z-10 max-w-5xl mx-auto px-6">
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-0">
-        <div class="stat-item text-center md:pr-8">
-          <p class="font-display text-3xl md:text-4xl font-bold text-brand-400 mb-1" style="letter-spacing:-0.03em;">99,9%</p>
-          <p class="text-gray-500 text-sm lang-de">Annahmequote</p>
-          <p class="text-gray-500 text-sm lang-en hidden">Pickup rate</p>
-        </div>
-        <div class="stat-item text-center md:px-8">
-          <p class="font-display text-3xl md:text-4xl font-bold text-gray-900 mb-1" style="letter-spacing:-0.03em;">&lt; 1 Sek.</p>
-          <p class="text-gray-500 text-sm lang-de">Durchschn. Abnahmezeit</p>
-          <p class="text-gray-500 text-sm lang-en hidden">Avg. response time</p>
-        </div>
-        <div class="stat-item text-center md:px-8">
-          <p class="font-display text-3xl md:text-4xl font-bold text-gray-900 mb-1" style="letter-spacing:-0.03em;">30+</p>
-          <p class="text-gray-500 text-sm lang-de">Gewerke betreut</p>
-          <p class="text-gray-500 text-sm lang-en hidden">Trades served</p>
-        </div>
-        <div class="stat-item text-center md:pl-8">
-          <p class="font-display text-3xl md:text-4xl font-bold text-gray-900 mb-1" style="letter-spacing:-0.03em;">500+</p>
-          <p class="text-gray-500 text-sm lang-de">Betriebe vertrauen uns</p>
-          <p class="text-gray-500 text-sm lang-en hidden">Businesses trust us</p>
-        </div>
-      </div>
-    </div>
-    <div class="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-brand-400/20 to-transparent"></div>
-  </section>
-
-  <!-- ========== HÖR LANA ZU ========== -->
+    <!-- ========== LANA ERLEBEN ========== -->
   <section class="relative py-[100px] md:py-[120px] noise-overlay bg-section-dark">
     <div class="relative z-10 max-w-3xl mx-auto px-6 text-center">
-      <p class="text-brand-400 text-xs font-medium tracking-wide uppercase mb-4">Live-Demo</p>
+      <p class="text-brand-400 text-xs font-medium tracking-wide uppercase mb-4 lang-de">Live-Demo</p>
+      <p class="text-brand-400 text-xs font-medium tracking-wide uppercase mb-4 lang-en hidden">Live Demo</p>
       <h2 class="font-display text-[2.5rem] md:text-[3rem] font-extrabold text-gray-900 mb-6" style="letter-spacing:-0.03em;">
-        <span class="lang-de">Hör selbst, wie <span class="text-brand-400">Lana</span> klingt</span>
-        <span class="lang-en hidden">Hear how <span class="text-brand-400">Lana</span> sounds</span>
+        <span class="lang-de">Erlebe <span class="text-brand-400">Lana</span> live</span>
+        <span class="lang-en hidden">Experience <span class="text-brand-400">Lana</span> live</span>
       </h2>
       <p class="text-gray-500 text-lg mb-10" style="line-height:1.7;">
-        <span class="lang-de">Ein echter Anruf — so klingt deine neue Rezeptionistin.</span>
-        <span class="lang-en hidden">A real call — this is what your new receptionist sounds like.</span>
+        <span class="lang-de">Ruf uns an — Lana nimmt ab. Oder vereinbare einen Demo-Termin und wir zeigen dir alles in Echtzeit.</span>
+        <span class="lang-en hidden">Call us — Lana answers. Or book a demo and we'll show you everything live.</span>
       </p>
-      <a href="demo.html" class="play-pulse w-20 h-20 rounded-full bg-brand-400 flex items-center justify-center mx-auto mb-6 hover:scale-105 active:scale-100 focus-visible:outline-2 focus-visible:outline-brand-400 focus-visible:outline-offset-4" style="transition:transform 0.2s cubic-bezier(0.34,1.56,0.64,1);" aria-label="Demo anfragen">
-        <svg class="w-8 h-8 text-white ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
-      </a>
-      <p class="text-gray-900 font-semibold text-sm mb-2">
-        <span class="lang-de">Erlebe Lana live</span>
-        <span class="lang-en hidden">Experience Lana live</span>
-      </p>
-      <p class="text-gray-500 text-xs mb-8 lang-de">Klicke, um eine Demo anzufragen</p>
-      <p class="text-gray-500 text-xs mb-8 lang-en hidden">Click to request a demo</p>
-      <div class="flex items-center justify-center gap-1 h-16 mb-8">
-        <div class="waveform-bar w-1 bg-brand-400/60 rounded-full" style="height:100%"></div>
-        <div class="waveform-bar w-1 bg-brand-400/60 rounded-full" style="height:100%"></div>
-        <div class="waveform-bar w-1 bg-brand-400/60 rounded-full" style="height:100%"></div>
-        <div class="waveform-bar w-1 bg-brand-400/60 rounded-full" style="height:100%"></div>
-        <div class="waveform-bar w-1 bg-brand-400/60 rounded-full" style="height:100%"></div>
-        <div class="waveform-bar w-1 bg-brand-400/60 rounded-full" style="height:100%"></div>
-        <div class="waveform-bar w-1 bg-brand-400/60 rounded-full" style="height:100%"></div>
-        <div class="waveform-bar w-1 bg-brand-400/60 rounded-full" style="height:100%"></div>
-        <div class="waveform-bar w-1 bg-brand-400/60 rounded-full" style="height:100%"></div>
-        <div class="waveform-bar w-1 bg-brand-400/60 rounded-full" style="height:100%"></div>
-        <div class="waveform-bar w-1 bg-brand-400/60 rounded-full" style="height:100%"></div>
-        <div class="waveform-bar w-1 bg-brand-400/60 rounded-full" style="height:100%"></div>
-        <div class="waveform-bar w-1 bg-brand-400/60 rounded-full" style="height:100%"></div>
-        <div class="waveform-bar w-1 bg-brand-400/60 rounded-full" style="height:100%"></div>
-        <div class="waveform-bar w-1 bg-brand-400/60 rounded-full" style="height:100%"></div>
-        <div class="waveform-bar w-1 bg-brand-400/60 rounded-full" style="height:100%"></div>
-        <div class="waveform-bar w-1 bg-brand-400/60 rounded-full" style="height:100%"></div>
-        <div class="waveform-bar w-1 bg-brand-400/60 rounded-full" style="height:100%"></div>
-        <div class="waveform-bar w-1 bg-brand-400/60 rounded-full" style="height:100%"></div>
-        <div class="waveform-bar w-1 bg-brand-400/60 rounded-full" style="height:100%"></div>
+      <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+        <a href="tel:+4951219343395" class="btn-brand inline-flex items-center gap-3 px-8 py-4 rounded-xl text-base font-bold">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/></svg>
+          <span class="lang-de">Jetzt anrufen — Lana nimmt ab</span>
+          <span class="lang-en hidden">Call now — Lana answers</span>
+        </a>
+        <a href="kontakt.html" class="btn-outline inline-flex items-center gap-2 px-8 py-4 rounded-xl text-base font-semibold">
+          <span class="lang-de">Demo-Termin vereinbaren</span>
+          <span class="lang-en hidden">Book a demo appointment</span>
+        </a>
       </div>
-      <p class="text-gray-500 text-sm italic lang-de">Kein Skript. Echte KI-Konversation.</p>
-      <p class="text-gray-500 text-sm italic lang-en hidden">No script. Real AI conversation.</p>
+      <p class="text-gray-400 text-xs mt-6 lang-de">Kein Verkaufsgespräch. Einfach Lana in Aktion erleben.</p>
+      <p class="text-gray-400 text-xs mt-6 lang-en hidden">No sales pitch. Just experience Lana in action.</p>
     </div>
     <div class="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-brand-400/15 to-transparent"></div>
   </section>
@@ -781,24 +854,24 @@
         <span class="lang-en hidden">Lana connects with your tools</span>
       </h2>
       <p class="text-gray-500 text-lg mb-12" style="line-height:1.7;">
-        <span class="lang-de">Einrichtung in weniger als 15 Minuten.</span>
-        <span class="lang-en hidden">Setup in under 15 minutes.</span>
+        <span class="lang-de">Google Calendar, WhatsApp, E-Mail — alles verbunden in wenigen Klicks.</span>
+        <span class="lang-en hidden">Google Calendar, WhatsApp, email — all connected in just a few clicks.</span>
       </p>
       <div class="flex flex-wrap items-center justify-center gap-5">
         <div class="feature-card bg-white border border-gray-200 rounded-xl px-6 py-4 flex items-center gap-3">
-          <img src="Pictures/google_calendar_logo_icon_159345.png" alt="Google Calendar" class="w-8 h-8 object-contain" />
+          <img src="pictures/google_calendar_logo_icon_159345.png" alt="Google Calendar" class="w-8 h-8 object-contain" />
           <span class="text-sm font-medium text-gray-700">Google Calendar</span>
         </div>
         <div class="feature-card bg-white border border-gray-200 rounded-xl px-6 py-4 flex items-center gap-3">
-          <img src="Pictures/whatsapp_101778.png" alt="WhatsApp" class="w-8 h-8 object-contain" />
+          <img src="pictures/whatsapp_101778.png" alt="WhatsApp" class="w-8 h-8 object-contain" />
           <span class="text-sm font-medium text-gray-700">WhatsApp</span>
         </div>
         <div class="feature-card bg-white border border-gray-200 rounded-xl px-6 py-4 flex items-center gap-3">
-          <img src="Pictures/telegram_icon-icons.com_72055.png" alt="Telegram" class="w-8 h-8 object-contain" />
+          <img src="pictures/telegram_icon-icons.com_72055.png" alt="Telegram" class="w-8 h-8 object-contain" />
           <span class="text-sm font-medium text-gray-700">Telegram</span>
         </div>
         <div class="feature-card bg-white border border-gray-200 rounded-xl px-6 py-4 flex items-center gap-3">
-          <img src="Pictures/gmail_new_logo_icon_159149.png" alt="Gmail / E-Mail" class="w-8 h-8 object-contain" />
+          <img src="pictures/gmail_new_logo_icon_159149.png" alt="Gmail / E-Mail" class="w-8 h-8 object-contain" />
           <span class="text-sm font-medium text-gray-700">Gmail / E-Mail</span>
         </div>
       </div>
@@ -852,7 +925,7 @@
             <tr>
               <td class="text-gray-700 font-medium lang-de">Kosten/Monat</td>
               <td class="text-gray-700 font-medium lang-en hidden">Cost/month</td>
-              <td class="compare-highlight"><span class="text-brand-400 font-semibold lang-de">Ab 99 €</span><span class="text-brand-400 font-semibold lang-en hidden">From €99</span></td>
+              <td class="compare-highlight"><span class="text-brand-400 font-semibold lang-de">Ab 149 €</span><span class="text-brand-400 font-semibold lang-en hidden">From €149</span></td>
               <td class="text-gray-500">~10 €</td>
               <td><span class="text-red-400">~2.500 €</span></td>
             </tr>
@@ -915,27 +988,26 @@
           <div class="p-7 border-b border-gray-200">
             <div class="inline-block bg-dark-800 rounded-full px-3 py-1 text-xs font-medium text-gray-500 mb-4 lang-de">Starter</div>
             <div class="inline-block bg-dark-800 rounded-full px-3 py-1 text-xs font-medium text-gray-500 mb-4 lang-en hidden">Starter</div>
-            <h3 class="font-display text-xl font-bold text-gray-900 mb-2 lang-de">Call Lana Light</h3>
-            <h3 class="font-display text-xl font-bold text-gray-900 mb-2 lang-en hidden">Call Lana Light</h3>
+            <h3 class="font-display text-xl font-bold text-gray-900 mb-2 lang-de">Call Lana Starter</h3>
+            <h3 class="font-display text-xl font-bold text-gray-900 mb-2 lang-en hidden">Call Lana Starter</h3>
             <p class="text-gray-500 text-sm mb-6" style="line-height:1.7;">
               <span class="lang-de">Perfekt für kleine Handwerksbetriebe, die mit KI-Anrufbearbeitung starten wollen.</span>
               <span class="lang-en hidden">Perfect for small craft businesses starting with AI call handling.</span>
             </p>
             <div class="flex items-end gap-1.5">
               <span class="line-through text-gray-500 text-base font-medium hidden" id="price-old-lite"></span>
-              <span class="font-display text-4xl font-bold text-gray-900" id="price-lite">99 €</span>
+              <span class="font-display text-4xl font-bold text-gray-900" id="price-lite">149 €</span>
               <span class="text-gray-500 text-sm mb-1" id="period-lite">/Monat</span>
             </div>
           </div>
           <div class="p-7 flex flex-col flex-1">
             <ul class="space-y-3.5 mb-8 flex-1">
-              <li class="flex items-start gap-3"><svg class="w-4 h-4 text-brand-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><span class="text-gray-700 text-sm lang-de">340 Inklusivminuten</span><span class="text-gray-700 text-sm lang-en hidden">340 included minutes</span></li>
+              <li class="flex items-start gap-3"><svg class="w-4 h-4 text-brand-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><span class="text-gray-700 text-sm lang-de">300 Inklusivminuten</span><span class="text-gray-700 text-sm lang-en hidden">300 included minutes</span></li>
               <li class="flex items-start gap-3"><svg class="w-4 h-4 text-brand-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><span class="text-gray-700 text-sm lang-de">Terminbuchung</span><span class="text-gray-700 text-sm lang-en hidden">Appointment booking</span></li>
               <li class="flex items-start gap-3"><svg class="w-4 h-4 text-brand-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><span class="text-gray-700 text-sm lang-de">Anrufzusammenfassung per E-Mail</span><span class="text-gray-700 text-sm lang-en hidden">Call summary by email</span></li>
               <li class="flex items-start gap-3"><svg class="w-4 h-4 text-brand-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><span class="text-gray-700 text-sm lang-de">Weiterleitung nach Geschäftszeiten</span><span class="text-gray-700 text-sm lang-en hidden">After-hours routing</span></li>
             </ul>
-            <a href="registrierung.html" class="btn-ghost lang-de">Jetzt starten</a>
-            <a href="registrierung.html" class="btn-ghost lang-en hidden">Get started</a>
+            <a href="registrierung.html" class="btn-ghost"><span class="lang-de">Jetzt starten</span><span class="lang-en hidden">Get started</span></a>
           </div>
         </div>
 
@@ -948,10 +1020,10 @@
           <div class="p-7 border-b border-gray-200">
             <div class="inline-block bg-brand-400/15 rounded-full px-3 py-1 text-xs font-medium text-brand-400 mb-4 lang-de">Beliebteste Wahl</div>
             <div class="inline-block bg-brand-400/15 rounded-full px-3 py-1 text-xs font-medium text-brand-400 mb-4 lang-en hidden">Most popular</div>
-            <h3 class="font-display text-xl font-bold text-gray-900 mb-2 lang-de">Call Lana Pro</h3>
-            <h3 class="font-display text-xl font-bold text-gray-900 mb-2 lang-en hidden">Call Lana Pro</h3>
+            <h3 class="font-display text-xl font-bold text-gray-900 mb-2 lang-de">Call Lana Professional</h3>
+            <h3 class="font-display text-xl font-bold text-gray-900 mb-2 lang-en hidden">Call Lana Professional</h3>
             <p class="text-gray-500 text-sm mb-6" style="line-height:1.7;">
-              <span class="lang-de">Volle KI-Rezeptionistin mit großzügigem Minutenkontingent für wachsende Betriebe.</span>
+              <span class="lang-de">Mehr Minuten, mehr Funktionen — für Betriebe mit regelmäßigem Anrufvolumen.</span>
               <span class="lang-en hidden">Full AI receptionist with generous minutes for growing businesses.</span>
             </p>
             <div class="flex items-end gap-1.5">
@@ -962,15 +1034,14 @@
           </div>
           <div class="p-7 flex flex-col flex-1">
             <ul class="space-y-3.5 mb-8 flex-1">
-              <li class="flex items-start gap-3"><svg class="w-4 h-4 text-brand-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><span class="text-gray-700 text-sm lang-de">560 Inklusivminuten</span><span class="text-gray-700 text-sm lang-en hidden">560 included minutes</span></li>
+              <li class="flex items-start gap-3"><svg class="w-4 h-4 text-brand-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><span class="text-gray-700 text-sm lang-de">800 Inklusivminuten</span><span class="text-gray-700 text-sm lang-en hidden">800 included minutes</span></li>
               <li class="flex items-start gap-3"><svg class="w-4 h-4 text-brand-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><span class="text-gray-700 text-sm lang-de">Terminbuchung + Kalender-Sync</span><span class="text-gray-700 text-sm lang-en hidden">Booking + Calendar sync</span></li>
               <li class="flex items-start gap-3"><svg class="w-4 h-4 text-brand-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><span class="text-gray-700 text-sm lang-de">Echtzeit-Anrufweiterleitung</span><span class="text-gray-700 text-sm lang-en hidden">Real-time call routing</span></li>
               <li class="flex items-start gap-3"><svg class="w-4 h-4 text-brand-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><span class="text-gray-700 text-sm lang-de">SMS + E-Mail-Zusammenfassungen</span><span class="text-gray-700 text-sm lang-en hidden">SMS + Email summaries</span></li>
               <li class="flex items-start gap-3"><svg class="w-4 h-4 text-brand-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><span class="text-gray-700 text-sm lang-de">Individuelle Skripte</span><span class="text-gray-700 text-sm lang-en hidden">Custom scripts</span></li>
               <li class="flex items-start gap-3"><svg class="w-4 h-4 text-brand-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><span class="text-gray-700 text-sm lang-de">Prioritäts-Support</span><span class="text-gray-700 text-sm lang-en hidden">Priority support</span></li>
             </ul>
-            <a href="registrierung.html" class="btn-brand block w-full text-center px-6 py-3 text-sm lang-de">Jetzt starten</a>
-            <a href="registrierung.html" class="btn-brand block w-full text-center px-6 py-3 text-sm lang-en hidden">Get started</a>
+            <a href="registrierung.html" class="btn-brand block w-full text-center px-6 py-3 text-sm"><span class="lang-de">Jetzt starten</span><span class="lang-en hidden">Get started</span></a>
           </div>
         </div>
 
@@ -998,8 +1069,7 @@
               <li class="flex items-start gap-3"><svg class="w-4 h-4 text-brand-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><span class="text-gray-700 text-sm lang-de">Persönlicher Ansprechpartner</span><span class="text-gray-700 text-sm lang-en hidden">Dedicated account manager</span></li>
               <li class="flex items-start gap-3"><svg class="w-4 h-4 text-brand-400 mt-0.5 shrink-0" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg><span class="text-gray-700 text-sm lang-de">API + White Label Option</span><span class="text-gray-700 text-sm lang-en hidden">API + White label option</span></li>
             </ul>
-            <a href="demo.html" class="btn-ghost lang-de">Demo buchen</a>
-            <a href="demo.html" class="btn-ghost lang-en hidden">Book a demo</a>
+            <a href="kontakt.html" class="btn-ghost"><span class="lang-de">Demo buchen</span><span class="lang-en hidden">Book a demo</span></a>
           </div>
         </div>
       </div>
@@ -1016,45 +1086,15 @@
       <div class="mt-14 max-w-3xl mx-auto text-center bg-brand-400/5 border border-brand-400/15 rounded-2xl px-8 py-8" style="box-shadow: 0 0 40px rgba(124,58,237,0.04);">
         <svg class="w-8 h-8 text-brand-400 mx-auto mb-4" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
         <p class="text-gray-800 text-lg md:text-xl font-semibold font-display" style="line-height:1.6;letter-spacing:-0.01em;">
-          <span class="lang-de">"Ein verpasster Anruf kann im Handwerk mehrere hundert Euro kosten. Call Lana sorgt dafür, dass kein Kunde verloren geht."</span>
-          <span class="lang-en hidden">"A missed call can cost hundreds of euros in the trades. Call Lana makes sure no customer is lost."</span>
+          <span class="lang-de">Ein verpasster Anruf kann im Handwerk mehrere hundert Euro kosten. Call Lana sorgt dafür, dass kein Auftrag verloren geht.</span>
+          <span class="lang-en hidden">A missed call can cost hundreds of euros in the trades. Call Lana makes sure no job is lost.</span>
         </p>
       </div>
     </div>
     <div class="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-brand-400/15 to-transparent"></div>
   </section>
-  <script>
-    // Pricing toggle (index.html)
-    var _billing = 'monthly';
-    var _pricingData = {
-      monthly: { lite: '99 €', pro: '299 €', liteOld: '', proOld: '', periodLabel: '/Monat', note: '' },
-      yearly:  { lite: '85 €', pro: '225 €', liteOld: '99 €', proOld: '299 €', periodLabel: '/Monat', note: 'Jährliche Abrechnung · Light 1.020 €/Jahr · Pro 2.700 €/Jahr' }
-    };
-    function setBilling(mode) {
-      _billing = mode;
-      var d = _pricingData[mode];
-      var elPL = document.getElementById('price-lite');
-      var elPP = document.getElementById('price-pro');
-      var elOldL = document.getElementById('price-old-lite');
-      var elOldP = document.getElementById('price-old-pro');
-      var elPerL = document.getElementById('period-lite');
-      var elPerP = document.getElementById('period-pro');
-      var elNote = document.getElementById('billingNote');
-      if (elPL) elPL.textContent = d.lite;
-      if (elPP) elPP.textContent = d.pro;
-      if (elOldL) { elOldL.textContent = d.liteOld; elOldL.classList.toggle('hidden', !d.liteOld); }
-      if (elOldP) { elOldP.textContent = d.proOld; elOldP.classList.toggle('hidden', !d.proOld); }
-      if (elPerL) elPerL.textContent = d.periodLabel;
-      if (elPerP) elPerP.textContent = d.periodLabel;
-      if (elNote) elNote.textContent = d.note;
-      var bM = document.getElementById('btnMonthly');
-      var bY = document.getElementById('btnYearly');
-      if (bM && bY) {
-        bM.classList.toggle('active', mode === 'monthly');
-        bY.classList.toggle('active', mode === 'yearly');
-      }
-    }
-  </script>
+  <script src="js/pricing-data.js" defer></script>
+
 
   <!-- ========== PRICING CALCULATOR ========== -->
   <section class="relative py-16 md:py-20 noise-overlay bg-section-light">
@@ -1106,7 +1146,7 @@
           </div>
           <div class="bg-brand-400/5 border border-brand-400/15 rounded-xl p-5 text-center">
             <p class="text-brand-400 text-xs font-medium uppercase tracking-wider mb-2">Call Lana</p>
-            <p class="font-display text-2xl font-bold text-brand-400" id="calc-lana">99 €</p>
+            <p class="font-display text-2xl font-bold text-brand-400" id="calc-lana">149 €</p>
             <p class="text-gray-400 text-xs mt-1 lang-de">pro Monat</p>
             <p class="text-gray-400 text-xs mt-1 lang-en hidden">per month</p>
           </div>
@@ -1122,45 +1162,7 @@
     </div>
     <div class="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-brand-400/15 to-transparent"></div>
   </section>
-  <script>
-  (function initCalc() {
-    var callsSlider = document.getElementById('calc-calls');
-    var durationSlider = document.getElementById('calc-duration');
-    var callsVal = document.getElementById('calc-calls-val');
-    var durationVal = document.getElementById('calc-duration-val');
-    var employeeEl = document.getElementById('calc-employee');
-    var lanaEl = document.getElementById('calc-lana');
-    var savingsEl = document.getElementById('calc-savings');
-    if (!callsSlider || !durationSlider) return;
 
-    var HOURLY_COST = 120; // €/hour fully loaded employee cost (salary + overhead)
-    var WORKDAYS = 22;
-    // Call Lana pricing tiers based on minutes
-    function getLanaCost(totalMinutes) {
-      if (totalMinutes <= 340) return 99;
-      if (totalMinutes <= 560) return 299;
-      return 299 + Math.ceil((totalMinutes - 560) / 100) * 50;
-    }
-
-    function update() {
-      var calls = parseInt(callsSlider.value);
-      var duration = parseInt(durationSlider.value);
-      callsVal.textContent = calls;
-      durationVal.textContent = duration;
-      var totalMinutesMonth = calls * duration * WORKDAYS;
-      var totalHoursMonth = totalMinutesMonth / 60;
-      var employeeCost = Math.round(totalHoursMonth * HOURLY_COST);
-      var lanaCost = getLanaCost(totalMinutesMonth);
-      var savings = Math.max(0, employeeCost - lanaCost);
-      employeeEl.textContent = employeeCost.toLocaleString('de-DE') + ' €';
-      lanaEl.textContent = lanaCost + ' €';
-      savingsEl.textContent = savings.toLocaleString('de-DE') + ' €';
-    }
-    callsSlider.addEventListener('input', update);
-    durationSlider.addEventListener('input', update);
-    update();
-  })();
-  </script>
 
   <!-- ========== TESTIMONIALS ========== -->
   <section class="relative py-[100px] md:py-[120px] noise-overlay bg-section-light">
@@ -1169,9 +1171,11 @@
         <p class="text-brand-400 text-xs font-medium tracking-wide uppercase mb-4 lang-de">Kundenstimmen</p>
         <p class="text-brand-400 text-xs font-medium tracking-wide uppercase mb-4 lang-en hidden">Testimonials</p>
         <h2 class="font-display text-[2.5rem] md:text-[3rem] font-extrabold text-gray-900 mb-6" style="letter-spacing:-0.03em;">
-          <span class="lang-de">Von Handwerkern geliebt.</span>
-          <span class="lang-en hidden">Loved by craftsmen.</span>
+          <span class="lang-de">Erste Rückmeldungen aus der Beta.</span>
+          <span class="lang-en hidden">First feedback from our beta.</span>
         </h2>
+        <p class="text-gray-400 text-xs mt-2 lang-de">Call Lana befindet sich in der Early-Access-Phase.</p>
+        <p class="text-gray-400 text-xs mt-2 lang-en hidden">Call Lana is in early access.</p>
       </div>
       <div class="grid md:grid-cols-3 gap-6">
         <div class="testimonial-card bg-dark-900 border border-gray-200 rounded-2xl p-7">
@@ -1194,19 +1198,19 @@
           </div>
           <p class="text-gray-700 text-sm mb-5" style="line-height:1.7;">"Call Lana hat unseren Betrieb verändert. Wir haben früher Anrufe auf der Baustelle und nach Feierabend verpasst — jetzt kommt jeder Kunde durch."</p>
           <div class="bg-brand-400/10 border border-brand-400/20 rounded-lg px-4 py-2 inline-block">
-            <p class="text-brand-400 text-xs font-semibold lang-de">Spart uns 3 Stunden pro Tag</p>
-            <p class="text-brand-400 text-xs font-semibold lang-en hidden">Saves us 3 hours per day</p>
+            <p class="text-brand-400 text-xs font-semibold lang-de">Endlich kein verpasster Anruf mehr auf der Baustelle</p>
+            <p class="text-brand-400 text-xs font-semibold lang-en hidden">No more missed calls on the job site</p>
           </div>
         </div>
         <div class="testimonial-card bg-dark-900 border border-gray-200 rounded-2xl p-7">
           <div class="flex items-center gap-4 mb-5">
             <div class="w-20 h-20 rounded-full bg-dark-700 border border-gray-200 flex items-center justify-center shrink-0 overflow-hidden">
-              <div class="w-full h-full bg-brand-400/15 flex items-center justify-center"><span class="text-brand-400 text-2xl font-bold font-display">MT</span></div>
+              <div class="w-full h-full bg-brand-400/15 flex items-center justify-center"><span class="text-brand-400 text-2xl font-bold font-display">MP</span></div>
             </div>
             <div>
-              <p class="text-gray-900 text-sm font-semibold">Marcus Torres</p>
+              <p class="text-gray-900 text-sm font-semibold">Markus Pfeiffer</p>
               <p class="text-gray-500 text-xs">Klempnermeister</p>
-              <p class="text-gray-600 text-xs">Torres Sanitär GmbH</p>
+              <p class="text-gray-600 text-xs">Pfeiffer Sanitär GmbH</p>
             </div>
           </div>
           <div class="flex items-center gap-0.5 mb-4">
@@ -1218,8 +1222,8 @@
           </div>
           <p class="text-gray-700 text-sm mb-5" style="line-height:1.7;">"Wir sind ein kleines Klempner-Team — auf der Baustelle können wir einfach nicht ans Telefon gehen. Lana bucht unsere Termine und die Kunden lieben es."</p>
           <div class="bg-brand-400/10 border border-brand-400/20 rounded-lg px-4 py-2 inline-block">
-            <p class="text-brand-400 text-xs font-semibold lang-de">40 % mehr Aufträge pro Woche</p>
-            <p class="text-brand-400 text-xs font-semibold lang-en hidden">40% more jobs per week</p>
+            <p class="text-brand-400 text-xs font-semibold lang-de">Deutlich weniger verpasste Anfragen</p>
+            <p class="text-brand-400 text-xs font-semibold lang-en hidden">Noticeably fewer missed requests</p>
           </div>
         </div>
         <div class="testimonial-card bg-dark-900 border border-gray-200 rounded-2xl p-7">
@@ -1240,10 +1244,10 @@
             <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
             <svg class="w-4 h-4 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
           </div>
-          <p class="text-gray-700 text-sm mb-5" style="line-height:1.7;">"Ich war skeptisch gegenüber KI-Telefonie, aber unsere Kunden merken den Unterschied nicht. Hat sich in der ersten Woche bezahlt gemacht."</p>
+          <p class="text-gray-700 text-sm mb-5" style="line-height:1.7;">"Ich war skeptisch gegenüber KI-Telefonie, aber Lana klingt verblüffend natürlich auf Deutsch. Hat sich in der ersten Woche bezahlt gemacht."</p>
           <div class="bg-brand-400/10 border border-brand-400/20 rounded-lg px-4 py-2 inline-block">
-            <p class="text-brand-400 text-xs font-semibold lang-de">Null verpasste Kundenanrufe</p>
-            <p class="text-brand-400 text-xs font-semibold lang-en hidden">Zero missed customer calls</p>
+            <p class="text-brand-400 text-xs font-semibold lang-de">Bezahlt sich bereits in der ersten Woche</p>
+            <p class="text-brand-400 text-xs font-semibold lang-en hidden">Paid for itself in the first week</p>
           </div>
         </div>
       </div>
@@ -1285,8 +1289,8 @@
           </label>
           <div class="faq-answer px-6 pb-5">
             <p class="text-gray-500 text-sm" style="line-height:1.7;">
-              <span class="lang-de">Call Lana klingt unglaublich natürlich. Die meisten Anrufer merken nicht, dass sie mit einem KI-Assistenten sprechen. Pausen, Unterbrechungen und komplexe Fragen werden souverän gemeistert.</span>
-              <span class="lang-en hidden">Call Lana sounds incredibly natural. Most callers don't realize they're speaking with an AI assistant. Pauses, interruptions, and complex questions are handled confidently.</span>
+              <span class="lang-de">Call Lana klingt professionell und natürlich auf Deutsch. Pausen, Unterbrechungen und komplexe Fragen werden souverän gemeistert. Lana stellt sich als digitale Assistentin vor und handelt dabei vollständig transparent.</span>
+              <span class="lang-en hidden">Call Lana sounds professional and natural. Pauses, interruptions, and complex questions are handled confidently. Lana identifies itself as a digital assistant and operates with full transparency.</span>
             </p>
           </div>
         </div>
@@ -1333,6 +1337,20 @@
           </div>
         </div>
         <div class="faq-item bg-dark-900 border border-gray-200 rounded-xl overflow-hidden">
+          <input type="checkbox" id="faqRuf" />
+          <label for="faqRuf" class="flex items-center justify-between w-full px-6 py-5 cursor-pointer select-none hover:bg-white/[0.02] transition-colors duration-200">
+            <span class="font-display text-sm font-semibold text-gray-900 pr-4 lang-de">Kann ich meine bestehende Rufnummer behalten?</span>
+            <span class="font-display text-sm font-semibold text-gray-900 pr-4 lang-en hidden">Can I keep my existing phone number?</span>
+            <span class="faq-icon text-brand-400 text-xl font-light shrink-0">+</span>
+          </label>
+          <div class="faq-answer px-6 pb-5">
+            <p class="text-gray-500 text-sm" style="line-height:1.7;">
+              <span class="lang-de">Ja. Du kannst deine bestehende Nummer einfach per Rufumleitung mit Call Lana verbinden — deine Kunden merken nichts. Alternativ stellen wir dir eine neue deutsche Festnetz- oder Mobilnummer bereit. Eine vollständige Portierung ist ebenfalls möglich.</span>
+              <span class="lang-en hidden">Yes. You can connect your existing number to Call Lana via call forwarding — your customers won't notice anything. Alternatively, we provide a new German landline or mobile number. Full number porting is also possible.</span>
+            </p>
+          </div>
+        </div>
+        <div class="faq-item bg-dark-900 border border-gray-200 rounded-xl overflow-hidden">
           <input type="checkbox" id="faq6" />
           <label for="faq6" class="flex items-center justify-between w-full px-6 py-5 cursor-pointer select-none hover:bg-white/[0.02] transition-colors duration-200">
             <span class="font-display text-sm font-semibold text-gray-900 pr-4 lang-de">Ist Call Lana DSGVO-konform?</span>
@@ -1343,6 +1361,48 @@
             <p class="text-gray-500 text-sm" style="line-height:1.7;">
               <span class="lang-de">Ja, absolut. Alle Gespräche werden auf deutschen Servern verarbeitet und gespeichert. Call Lana ist vollständig DSGVO-konform nach deutschem Recht.</span>
               <span class="lang-en hidden">Yes, absolutely. All conversations are processed and stored on German servers. Call Lana is fully GDPR-compliant under German law.</span>
+            </p>
+          </div>
+        </div>
+        <div class="faq-item bg-dark-900 border border-gray-200 rounded-xl overflow-hidden">
+          <input type="checkbox" id="faq7" />
+          <label for="faq7" class="flex items-center justify-between w-full px-6 py-5 cursor-pointer select-none hover:bg-white/[0.02] transition-colors duration-200">
+            <span class="font-display text-sm font-semibold text-gray-900 pr-4 lang-de">Wie werde ich über Anrufe benachrichtigt?</span>
+            <span class="font-display text-sm font-semibold text-gray-900 pr-4 lang-en hidden">How am I notified about calls?</span>
+            <span class="faq-icon text-brand-400 text-xl font-light shrink-0">+</span>
+          </label>
+          <div class="faq-answer px-6 pb-5">
+            <p class="text-gray-500 text-sm" style="line-height:1.7;">
+              <span class="lang-de">Nach jedem Gespräch erhältst du eine E-Mail mit einer kurzen Zusammenfassung: Anliegen, Kontaktdaten und ob eine Reaktion von dir nötig ist. Optional auch per SMS oder WhatsApp.</span>
+              <span class="lang-en hidden">After every call you receive an email summary: topic, contact details, and whether follow-up is needed. SMS and WhatsApp notifications also available.</span>
+            </p>
+          </div>
+        </div>
+        <div class="faq-item bg-dark-900 border border-gray-200 rounded-xl overflow-hidden">
+          <input type="checkbox" id="faq8" />
+          <label for="faq8" class="flex items-center justify-between w-full px-6 py-5 cursor-pointer select-none hover:bg-white/[0.02] transition-colors duration-200">
+            <span class="font-display text-sm font-semibold text-gray-900 pr-4 lang-de">Was passiert außerhalb meiner Geschäftszeiten?</span>
+            <span class="font-display text-sm font-semibold text-gray-900 pr-4 lang-en hidden">What happens outside business hours?</span>
+            <span class="faq-icon text-brand-400 text-xl font-light shrink-0">+</span>
+          </label>
+          <div class="faq-answer px-6 pb-5">
+            <p class="text-gray-500 text-sm" style="line-height:1.7;">
+              <span class="lang-de">Lana ist rund um die Uhr aktiv. Du bestimmst selbst, was außerhalb deiner Öffnungszeiten passiert — z.&nbsp;B. Anfragen festhalten für den nächsten Morgen oder Dringendes direkt weiterleiten. Kein Anruf geht verloren.</span>
+              <span class="lang-en hidden">Lana is active around the clock. You decide what happens outside business hours — for example, log requests for the next morning or immediately route urgent ones. No call is ever lost.</span>
+            </p>
+          </div>
+        </div>
+        <div class="faq-item bg-dark-900 border border-gray-200 rounded-xl overflow-hidden">
+          <input type="checkbox" id="faq9" />
+          <label for="faq9" class="flex items-center justify-between w-full px-6 py-5 cursor-pointer select-none hover:bg-white/[0.02] transition-colors duration-200">
+            <span class="font-display text-sm font-semibold text-gray-900 pr-4 lang-de">Muss ich Lana ständig pflegen oder einstellen?</span>
+            <span class="font-display text-sm font-semibold text-gray-900 pr-4 lang-en hidden">Do I need to constantly maintain or adjust Lana?</span>
+            <span class="faq-icon text-brand-400 text-xl font-light shrink-0">+</span>
+          </label>
+          <div class="faq-answer px-6 pb-5">
+            <p class="text-gray-500 text-sm" style="line-height:1.7;">
+              <span class="lang-de">Nein. Lana läuft nach der Ersteinrichtung vollständig selbstständig. Du kannst im Dashboard jederzeit Anpassungen machen — musst es aber nicht. Die meisten Betriebe richten Lana einmal ein und lassen sie einfach laufen.</span>
+              <span class="lang-en hidden">No. Once set up, Lana runs fully on its own. You can make adjustments in the dashboard at any time — but you don't have to. Most businesses set it up once and let it run.</span>
             </p>
           </div>
         </div>
@@ -1426,28 +1486,28 @@
         <div class="absolute top-0 left-1/2 -translate-x-1/2 w-[60%] h-px bg-gradient-to-r from-transparent via-brand-400/30 to-transparent"></div>
         <div class="relative z-10">
           <div class="flex items-center justify-center gap-2 mb-6">
-            <img src="brand_assets/A_vector-style_digital_logo_for_the_brand_Clana_.png" alt="" class="w-8 h-8 object-contain" style="filter: drop-shadow(0 2px 6px rgba(124,58,237,0.15));" />
+            <img src="brand_assets/clana-icon-64.png" alt="" class="w-8 h-8 object-contain" style="filter: drop-shadow(0 2px 6px rgba(124,58,237,0.15));" />
           </div>
           <h2 class="font-display text-[2.5rem] md:text-[3rem] font-extrabold text-gray-900 mb-6" style="letter-spacing:-0.03em;">
             <span class="lang-de">Bereit, jeden <span class="text-brand-400">Anruf</span> anzunehmen?</span>
             <span class="lang-en hidden">Ready to answer every <span class="text-brand-400">call</span>?</span>
           </h2>
           <p class="text-gray-500 text-lg max-w-xl mx-auto mb-8" style="line-height:1.7;">
-            <span class="lang-de">Schließ dich hunderten Handwerksbetrieben an, die mit Call Lana keinen Auftrag mehr verpassen.</span>
-            <span class="lang-en hidden">Join hundreds of craft businesses that never miss a job with Call Lana.</span>
+            <span class="lang-de">Starte jetzt und verpasse keinen Auftrag mehr.</span>
+            <span class="lang-en hidden">Start now and never miss another job with Call Lana.</span>
           </p>
           <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
             <a href="registrierung.html" class="btn-brand inline-block px-10 py-4 rounded-xl text-base font-bold">
               <span class="lang-de">Jetzt starten – 30 Tage Geld-zurück-Garantie</span>
               <span class="lang-en hidden">Get started – 30-day money-back guarantee</span>
             </a>
-            <a href="demo.html" class="btn-outline inline-flex items-center gap-2 px-8 py-4 rounded-xl text-base font-semibold">
+            <a href="kontakt.html" class="btn-outline inline-flex items-center gap-2 px-8 py-4 rounded-xl text-base font-semibold">
               <span class="lang-de">Demo buchen</span>
               <span class="lang-en hidden">Book a demo</span>
             </a>
           </div>
-          <p class="text-gray-400 text-xs mt-5 lang-de">30 Tage Geld-zurück-Garantie · Monatlich kündbar – optional mit Jahresrabatt</p>
-          <p class="text-gray-400 text-xs mt-5 lang-en hidden">30-day money-back guarantee · Cancel monthly – optional annual discount</p>
+          <p class="text-gray-400 text-xs mt-5 lang-de">Monatlich kündbar · keine Einrichtungsgebühr · optional mit Jahresrabatt</p>
+          <p class="text-gray-400 text-xs mt-5 lang-en hidden">Cancel monthly · no setup fee · optional annual discount</p>
         </div>
       </div>
     </div>
@@ -1457,236 +1517,14 @@
   <div id="footer-container"></div>
 
   <!-- SCRIPTS -->
-  <script src="components.js"></script>
-  <script>
-  /* ===== SCROLL REVEAL ===== */
-  (function initScrollReveal() {
-    // Auto-add scroll-reveal to section headers and cards that don't already have it
-    document.querySelectorAll('section .text-center.mb-12, section .text-center.mb-10, section .text-center.mb-16').forEach(function(el) {
-      if (!el.classList.contains('scroll-reveal')) el.classList.add('scroll-reveal');
-    });
-    var cards = document.querySelectorAll('.feature-card:not(.step-item .feature-card), .testimonial-card, .stat-item, .faq-item, .pricing-card');
-    cards.forEach(function(el, i) {
-      if (!el.classList.contains('scroll-reveal')) {
-        el.classList.add('scroll-reveal');
-        if (!el.hasAttribute('data-reveal-delay')) {
-          el.setAttribute('data-reveal-delay', String((i % 4) + 1));
-        }
-      }
-    });
+  <script src="js/components.js" defer></script>
 
-    var observer = new IntersectionObserver(function(entries) {
-      entries.forEach(function(entry) {
-        if (entry.isIntersecting) {
-          entry.target.classList.add('revealed');
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
 
-    document.querySelectorAll('.scroll-reveal').forEach(function(el) {
-      observer.observe(el);
-    });
-  })();
-  </script>
-  <script>
-  (function() {
-    var container = document.getElementById('heroBg');
-    if (!container) return;
-    function createPathGroup(position) {
-      var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-      svg.setAttribute('viewBox', '0 0 696 316');
-      svg.setAttribute('fill', 'none');
-      svg.setAttribute('preserveAspectRatio', 'xMidYMid slice');
-      svg.style.position = 'absolute';
-      svg.style.inset = '0';
-      for (var i = 0; i < 36; i++) {
-        var p = position;
-        var d = 'M-' + (380 - i * 5 * p) + ' -' + (189 + i * 6) +
-                'C-' + (380 - i * 5 * p) + ' -' + (189 + i * 6) +
-                ' -' + (312 - i * 5 * p) + ' ' + (216 - i * 6) +
-                ' ' + (152 - i * 5 * p) + ' ' + (343 - i * 6) +
-                'C' + (616 - i * 5 * p) + ' ' + (470 - i * 6) +
-                ' ' + (684 - i * 5 * p) + ' ' + (875 - i * 6) +
-                ' ' + (684 - i * 5 * p) + ' ' + (875 - i * 6);
-        var path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        path.setAttribute('d', d);
-        path.setAttribute('stroke', 'rgba(124,58,237,' + (0.04 + i * 0.008) + ')');
-        path.setAttribute('stroke-width', (0.5 + i * 0.03).toFixed(2));
-        path.setAttribute('stroke-dasharray', '0.8 1.2');
-        path.setAttribute('pathLength', '2');
-        path.style.setProperty('--dur', (20 + Math.random() * 10).toFixed(1) + 's');
-        svg.appendChild(path);
-      }
-      container.appendChild(svg);
-    }
-    createPathGroup(1);
-    createPathGroup(-1);
-  })();
-  </script>
-  <!-- Spline: branding removal, mouse relay for head tracking, logo parallax -->
-  <script>
-  (function splineSetup() {
-    try {
-    var viewer = document.querySelector('spline-viewer');
-    if (!viewer) return;
 
-    var heroSection = viewer.closest('section');
-    var robotContainer = viewer.closest('.robot-container');
-    var logo = document.getElementById('robotLogo');
-    var canvas = null;
-    var ready = false;
 
-    // ── Safety timeout: if Spline hasn't loaded after 15s, remove it ──
-    var safetyTimeout = setTimeout(function() {
-      if (!ready && viewer && viewer.parentNode) {
-        console.warn('Spline viewer did not load in time — removing to unblock page.');
-        viewer.remove();
-      }
-    }, 15000);
 
-    // ── 1. Shadow DOM: remove branding, contain canvas, allow pointermove ──
-    function patchShadow(sr) {
-      try {
-        var style = document.createElement('style');
-        style.textContent = [
-          '#logo, a[href*="spline"], [id*="logo"] { display:none!important; visibility:hidden!important; }',
-          'canvas { position:absolute!important; inset:0!important; width:100%!important; height:100%!important; max-width:100%!important; max-height:100%!important; }',
-          ':host { overflow:hidden!important; }'
-        ].join('\n');
-        sr.appendChild(style);
-        sr.querySelectorAll('#logo, a[href*="spline"], [id*="logo"]').forEach(function(el) { el.remove(); });
-        canvas = sr.querySelector('canvas');
-        if (canvas) { ready = true; clearTimeout(safetyTimeout); }
-      } catch(e) { /* ignore shadow DOM errors */ }
-    }
-
-    var attempts = 0;
-    var patchInterval = setInterval(function() {
-      try {
-        attempts++;
-        if (viewer.shadowRoot) {
-          patchShadow(viewer.shadowRoot);
-          if (ready) clearInterval(patchInterval);
-        }
-        if (attempts > 30) clearInterval(patchInterval);
-      } catch(e) { clearInterval(patchInterval); }
-    }, 500);
-
-    // ── 2. Mouse relay: forward mousemove to the Spline canvas ──
-    function relayMove(e) {
-      try {
-        if (!canvas) {
-          if (viewer.shadowRoot) canvas = viewer.shadowRoot.querySelector('canvas');
-          if (!canvas) return;
-        }
-        canvas.style.pointerEvents = 'auto';
-        var rect = canvas.getBoundingClientRect();
-        var synthetic = new PointerEvent('pointermove', {
-          clientX: e.clientX,
-          clientY: e.clientY,
-          screenX: e.screenX,
-          screenY: e.screenY,
-          bubbles: true,
-          cancelable: true,
-          pointerId: 1,
-          pointerType: 'mouse'
-        });
-        canvas.dispatchEvent(synthetic);
-        requestAnimationFrame(function() {
-          if (canvas) canvas.style.pointerEvents = 'none';
-        });
-      } catch(e) { /* ignore relay errors */ }
-    }
-
-    if (heroSection) {
-      heroSection.addEventListener('mousemove', relayMove, { passive: true });
-    }
-
-    // ── 3. Logo: fades in, then tracks torso rotation via mouse ──
-    if (logo) {
-      var ZOOM_DURATION_MS = 3000;
-      var FADE_DELAY_MS = 500;
-
-      // Badge transform state — tracks torso rotation
-      var badgeRotY = 0;
-      var badgeRotX = 0;
-      var badgeOffX = 0;
-      var badgeOffY = 0;
-      var targetRotY = 0;
-      var targetRotX = 0;
-      var targetOffX = 0;
-      var targetOffY = 0;
-
-      // How much the badge moves / rotates with cursor (matches torso feel)
-      var TORSO_ROT_RANGE = 12;   // degrees Y rotation (torso turn)
-      var TORSO_TILT_RANGE = 5;   // degrees X rotation (slight tilt)
-      var TORSO_SHIFT_RANGE = 8;  // pixels lateral shift
-      var CHEST_OFFSET_Z = 30;    // badge sits 30px in front of rotation axis (chest depth)
-
-      function updateBadgeOnMouseMove(e) {
-        if (!robotContainer) return;
-        var rect = robotContainer.getBoundingClientRect();
-        // Normalized -1 to 1 from container center
-        var nx = ((e.clientX - rect.left) / rect.width - 0.5) * 2;
-        var ny = ((e.clientY - rect.top) / rect.height - 0.5) * 2;
-        // Clamp
-        nx = Math.max(-1, Math.min(1, nx));
-        ny = Math.max(-1, Math.min(1, ny));
-        // Torso follows cursor direction
-        targetRotY = nx * TORSO_ROT_RANGE;
-        targetRotX = -ny * TORSO_TILT_RANGE;
-        targetOffX = nx * TORSO_SHIFT_RANGE;
-        targetOffY = ny * (TORSO_SHIFT_RANGE * 0.3);
-      }
-
-      // Smooth interpolation loop
-      var badgeRaf;
-      function animateBadge() {
-        badgeRotY += (targetRotY - badgeRotY) * 0.08;
-        badgeRotX += (targetRotX - badgeRotX) * 0.08;
-        badgeOffX += (targetOffX - badgeOffX) * 0.08;
-        badgeOffY += (targetOffY - badgeOffY) * 0.08;
-        // Apply full 3D transform: the badge is physically on the chest surface.
-        // First we position the anchor point, then rotate the whole badge as a unit
-        // around the torso center axis. translateZ pushes badge forward (chest depth)
-        // so rotation causes proper perspective foreshortening.
-        logo.style.transform = 'translate3d(' + badgeOffX.toFixed(2) + 'px,' + badgeOffY.toFixed(2) + 'px,' + CHEST_OFFSET_Z + 'px) rotateY(' + badgeRotY.toFixed(2) + 'deg) rotateX(' + badgeRotX.toFixed(2) + 'deg)';
-        badgeRaf = requestAnimationFrame(animateBadge);
-      }
-
-      setTimeout(function() {
-        logo.style.opacity = '0.9';
-        // Start tracking torso rotation
-        if (heroSection) {
-          heroSection.addEventListener('mousemove', updateBadgeOnMouseMove, { passive: true });
-        }
-        animateBadge();
-      }, ZOOM_DURATION_MS + FADE_DELAY_MS);
-    }
-
-    // ── 4. Performance: reduce work when off-screen ──
-    var io = new IntersectionObserver(function(entries) {
-      entries.forEach(function(entry) {
-        if (!entry.isIntersecting) {
-          if (canvas) canvas.style.willChange = 'auto';
-          if (badgeRaf) { cancelAnimationFrame(badgeRaf); badgeRaf = null; }
-        } else {
-          if (canvas) canvas.style.willChange = 'transform';
-          if (logo && !badgeRaf) animateBadge();
-        }
-      });
-    }, { threshold: 0 });
-    io.observe(viewer);
-
-    } catch(err) {
-      // If splineSetup crashes, just log it — the page must always render
-      console.warn('Spline setup failed:', err);
-      var failedViewer = document.querySelector('spline-viewer');
-      if (failedViewer) failedViewer.remove();
-    }
-  })();
-  </script>
-
+<script src="js/homepage.js" defer></script>
+<script src="i18n.js" defer></script>
+<script src="cookie-consent.js" defer></script>
 </body>
 </html>

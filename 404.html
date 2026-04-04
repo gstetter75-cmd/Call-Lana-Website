@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Seite nicht gefunden – Call Lana</title>
+<meta property="og:title" content="404 – Seite nicht gefunden">
+<meta property="og:description" content="Die angeforderte Seite konnte leider nicht gefunden werden.">
+<meta property="og:type" content="website">
+<meta property="og:locale" content="de_DE">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/marketing.css">
+<style>
+  .error-hero {
+    padding: 160px 6% 80px;
+    text-align: center;
+    min-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+  .error-hero .error-code {
+    font-size: clamp(4rem, 10vw, 8rem);
+    font-weight: 800;
+    color: #e2e8f0;
+    line-height: 1;
+    margin-bottom: 16px;
+  }
+  .error-hero h1 {
+    font-size: clamp(1.6rem, 3.5vw, 2.4rem);
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 12px;
+  }
+  .error-hero p {
+    color: #64748b;
+    font-size: 1.05rem;
+    line-height: 1.7;
+    max-width: 480px;
+    margin: 0 auto 32px;
+  }
+  .error-hero .back-btn {
+    display: inline-block;
+    padding: 14px 32px;
+    background: #7c3aed;
+    color: #fff;
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: background .2s;
+  }
+  .error-hero .back-btn:hover {
+    background: #6d28d9;
+  }
+</style>
+</head>
+<body>
+
+<a href="#main" class="skip-link" style="position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;z-index:9999;padding:8px 16px;background:#7c3aed;color:#fff;text-decoration:none;font-weight:600;border-radius:0 0 8px 0;" onfocus="this.style.cssText='position:fixed;left:0;top:0;z-index:9999;padding:8px 16px;background:#7c3aed;color:#fff;text-decoration:none;font-weight:600;border-radius:0 0 8px 0;'" onblur="this.style.cssText='position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden;'">Zum Inhalt springen</a>
+
+<nav id="nav">
+  <a href="index.html" class="logo"><picture><source srcset="logo-nav.webp" type="image/webp"><img src="logo-nav.png" alt="Call Lana" height="40"></picture></a>
+  <ul class="nav-links">
+    <li><a href="funktionen.html">Funktionen</a></li>
+    <li><a href="branchen.html">Branchen</a></li>
+    <li><a href="preise.html">Preise</a></li>
+    <li><a href="kontakt.html">Kontakt</a></li>
+  </ul>
+  <div class="nav-right"><a href="login.html" class="nav-login">Login</a><a href="registrierung.html" class="nav-cta">Kostenlos starten</a></div>
+  <button class="mob-btn" id="mb" aria-label="Menu"><span></span><span></span><span></span></button>
+</nav>
+
+<main id="main">
+  <section class="error-hero">
+    <div class="error-code">404</div>
+    <h1>Seite nicht gefunden</h1>
+    <p>Die Seite, die du suchst, existiert leider nicht oder wurde verschoben. Geh zur Startseite zurück und finde, was du brauchst.</p>
+    <a href="index.html" class="back-btn">Zur Startseite</a>
+  </section>
+</main>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand"><a href="index.html" class="logo"><picture><source srcset="logo-footer.webp" type="image/webp"><img src="logo-footer.png" alt="Call Lana" height="28"></picture></a><p>Der KI-Telefonassistent auf Deutsch. DSGVO-konform, skalierbar, sofort einsatzbereit.</p></div>
+    <div class="footer-col"><h4>Produkt</h4><ul><li><a href="funktionen.html">Funktionen</a></li><li><a href="branchen.html">Branchen</a></li><li><a href="preise.html">Preise</a></li></ul></div>
+    <div class="footer-col"><h4>Rechtliches</h4><ul><li><a href="impressum.html">Impressum</a></li><li><a href="datenschutz.html">Datenschutz</a></li><li><a href="agb.html">AGB</a></li></ul></div>
+    <div class="footer-col"><h4>Konto</h4><ul><li><a href="registrierung.html">Registrieren</a></li><li><a href="login.html">Login</a></li><li><a href="dashboard.html">Dashboard</a></li></ul></div>
+  </div>
+  <div class="footer-bottom"><p class="footer-copy">Copyright 2025 by Call Lana — Alle Rechte vorbehalten</p></div>
+</footer>
+
+<script src="cookie-consent.js"></script>
+<script>
+document.querySelector('.mob-btn').addEventListener('click',()=>document.getElementById('nav').classList.toggle('open'));
+window.addEventListener('scroll',()=>{document.getElementById('nav').classList.toggle('scrolled',window.scrollY>10);},{passive:true});
+</script>
+</body>
+</html>

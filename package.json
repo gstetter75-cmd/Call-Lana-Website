@@ -1,5 +1,39 @@
 {
-  "dependencies": {
-    "puppeteer": "^24.37.5"
+  "name": "call-lana-merged",
+  "version": "1.0.0",
+  "description": "Dieses Package enthält die **komplette Call Lana Website** mit allen Updates und Korrekturen.",
+  "main": "cookie-consent.js",
+  "scripts": {
+    "build": "node build.js",
+    "watch": "node build.js --watch",
+    "test": "npx playwright test",
+    "test:unit": "npx vitest run",
+    "test:all": "npx vitest run && npx playwright test",
+    "test:headed": "npx playwright test --headed",
+    "test:debug": "npx playwright test --debug",
+    "test:report": "npx playwright show-report",
+    "test:public": "npx playwright test public-pages",
+    "test:auth": "npx playwright test auth"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gstetter75-cmd/Call-Lana-Merged.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/gstetter75-cmd/Call-Lana-Merged/issues"
+  },
+  "homepage": "https://github.com/gstetter75-cmd/Call-Lana-Merged#readme",
+  "devDependencies": {
+    "@playwright/test": "^1.58.2",
+    "dotenv": "^17.3.1",
+    "esbuild": "^0.27.4",
+    "fake-indexeddb": "^6.2.5",
+    "http-server": "^14.1.1",
+    "jsdom": "^29.0.1",
+    "vitest": "^4.1.2"
   }
 }

@@ -30,7 +30,7 @@
     'footer.account': { de: 'Konto', en: 'Account' },
   };
 
-  let lang = localStorage.getItem('cl-lang') || 'de';
+  let lang = 'de'; // German only
 
   function t(key) { return T[key] ? (T[key][lang] || T[key].de) : key; }
 
@@ -74,11 +74,6 @@
           <a href="kontakt.html" class="nav-link text-sm font-medium ${isActive('kontakt')}" data-i18n="nav.kontakt">${t('nav.kontakt')}</a>
         </div>
         <div class="flex items-center gap-3">
-          <!-- Language Switcher -->
-          <div class="hidden sm:flex items-center bg-gray-100 rounded-lg overflow-hidden border border-gray-200">
-            <button class="lang-btn px-2.5 py-1 text-xs font-semibold rounded-lg ${lang==='de'?'active':'text-gray-500'}" data-lang="de" onclick="window.__setLang('de')">DE</button>
-            <button class="lang-btn px-2.5 py-1 text-xs font-semibold rounded-lg ${lang==='en'?'active':'text-gray-500'}" data-lang="en" onclick="window.__setLang('en')">EN</button>
-          </div>
           <a href="login.html" class="hidden md:inline-block nav-link text-sm font-medium ${isActive('login')}" data-i18n="nav.login">${t('nav.login')}</a>
           <a href="demo.html" class="btn-outline px-4 py-2 rounded-lg text-sm font-semibold hidden sm:inline-block" data-i18n="nav.demo">${t('nav.demo')}</a>
           <a href="registrierung.html" class="btn-brand px-5 py-2 rounded-lg text-sm font-semibold hidden sm:inline-block" data-i18n="nav.register">${t('nav.register')}</a>
@@ -104,10 +99,6 @@
         <a href="login.html" class="nav-link text-gray-700" data-i18n="nav.login">${t('nav.login')}</a>
         <a href="demo.html" class="btn-outline text-center px-6 py-3 rounded-xl font-bold mt-4" data-i18n="nav.demo">${t('nav.demo')}</a>
         <a href="registrierung.html" class="btn-brand text-center px-6 py-3 rounded-xl font-bold mt-2" data-i18n="nav.register">${t('nav.register')}</a>
-      </div>
-      <div class="flex items-center gap-2 mt-8">
-        <button class="lang-btn px-3 py-1.5 text-sm font-semibold rounded-lg ${lang==='de'?'active':'text-gray-500'}" data-lang="de" onclick="window.__setLang('de')">DE</button>
-        <button class="lang-btn px-3 py-1.5 text-sm font-semibold rounded-lg ${lang==='en'?'active':'text-gray-500'}" data-lang="en" onclick="window.__setLang('en')">EN</button>
       </div>
     </div>`;
 

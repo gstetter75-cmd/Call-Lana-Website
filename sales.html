@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Sales CRM – Call Lana</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#7c3aed">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/common.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  .pipeline-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
+  .lead-value { font-family: 'Syne', sans-serif; font-weight: 700; color: var(--green); font-size: 12px; }
+  .lead-contact { font-size: 11px; color: var(--tx3); margin-top: 4px; }
+  .lead-assigned { display: flex; align-items: center; gap: 6px; margin-top: 8px; }
+  .lead-assigned-avatar { width: 20px; height: 20px; border-radius: 50%; background: linear-gradient(135deg, var(--pu), var(--pu3)); display: flex; align-items: center; justify-content: center; font-size: 8px; color: white; font-weight: 700; }
+  .tab-bar { display: flex; gap: 4px; margin-bottom: 24px; background: var(--bg2); border-radius: 10px; padding: 4px; }
+  .tab-btn { background: none; border: none; padding: 8px 16px; border-radius: 8px; color: var(--tx3); font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Manrope', sans-serif; transition: all .2s; }
+  .tab-btn.active { background: var(--pu); color: white; }
+  .tab-btn:hover:not(.active) { color: var(--tx2); }
+  .task-row { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-bottom: 1px solid rgba(124,58,237,.08); transition: background .2s; }
+  .task-row:hover { background: rgba(124,58,237,.04); }
+  .task-checkbox { width: 18px; height: 18px; border: 2px solid var(--border2); border-radius: 4px; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; transition: all .2s; }
+  .task-checkbox.done { background: var(--green); border-color: var(--green); }
+  .task-title { flex: 1; font-size: 13.5px; }
+  .task-title.done { text-decoration: line-through; color: var(--tx3); }
+  .task-due { font-size: 11px; color: var(--tx3); }
+  .task-due.overdue { color: var(--red); font-weight: 600; }
+  .task-priority { font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 10px; text-transform: uppercase; }
+  .availability-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+  .avail-day { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px; text-align: center; min-height: 80px; cursor: pointer; transition: all .2s; }
+  .avail-day:hover { border-color: var(--border2); }
+  .avail-day-label { font-size: 10px; color: var(--tx3); font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
+  .avail-day-num { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; margin-bottom: 6px; }
+  .avail-dot { width: 8px; height: 8px; border-radius: 50%; margin: 0 auto; }
+  .avail-dot.available { background: var(--green); }
+  .avail-dot.busy { background: var(--orange); }
+  .avail-dot.vacation { background: var(--cyan); }
+  .avail-dot.sick { background: var(--red); }
+  @media (max-width: 600px) { .availability-grid { grid-template-columns: repeat(3, 1fr); } }
+
+  /* Lead Detail Modal */
+  .lead-detail-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+  .lead-detail-company { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 700; margin-bottom: 4px; }
+  .lead-detail-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; padding: 16px; background: var(--bg2); border-radius: 12px; }
+  .lead-detail-meta-item { font-size: 12px; }
+  .lead-detail-meta-label { color: var(--tx3); font-weight: 700; text-transform: uppercase; font-size: 10px; letter-spacing: .06em; margin-bottom: 2px; }
+  .lead-detail-section { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); }
+  .lead-detail-section-title { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 0.95rem; margin-bottom: 12px; }
+  .activity-timeline { display: flex; flex-direction: column; gap: 0; }
+  .timeline-item { position: relative; padding: 0 0 20px 28px; }
+  .timeline-item::before { content: ''; position: absolute; left: 7px; top: 8px; bottom: 0; width: 2px; background: var(--border); }
+  .timeline-item:last-child::before { display: none; }
+  .timeline-dot { position: absolute; left: 0; top: 4px; width: 16px; height: 16px; border-radius: 50%; background: var(--pu); border: 3px solid var(--bg); z-index: 1; }
+  .timeline-content { font-size: 13px; line-height: 1.5; }
+  .timeline-author { font-weight: 700; color: var(--tx); }
+  .timeline-time { font-size: 11px; color: var(--tx3); margin-left: 8px; }
+  .timeline-text { margin-top: 4px; color: var(--tx2); }
+  .timeline-empty { text-align: center; color: var(--tx3); font-size: 13px; padding: 20px 0; }
+  .note-form { display: flex; gap: 8px; margin-top: 12px; }
+  .note-form .form-input { flex: 1; }
+  .lead-detail-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); }
+  .tag-chip { display:inline-block; padding:2px 8px; border-radius:10px; font-size:11px; font-weight:600; margin:1px; }
+</style>
+</head>
+<body class="auth-pending">
+<div class="app-layout">
+  <div id="sidebar-container"></div>
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <button class="topbar-hamburger"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h14M3 10h14M3 14h14"/></svg></button>
+        <div class="topbar-breadcrumb">CRM <span>/ <span id="breadcrumb-page">Pipeline</span></span></div>
+      </div>
+    </div>
+    <div class="content">
+
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="pipeline">Pipeline</button>
+        <button class="tab-btn" data-tab="leads">Leads</button>
+        <button class="tab-btn" data-tab="tasks">Aufgaben</button>
+        <button class="tab-btn" data-tab="customers">Kunden</button>
+        <button class="tab-btn" data-tab="availability">Verfügbarkeit</button>
+        <button class="tab-btn" data-tab="commission">Provisionen</button>
+      </div>
+
+      <!-- PIPELINE -->
+      <div class="page-section active" id="tab-pipeline">
+        <!-- Follow-up Reminders -->
+        <div id="followup-banner"></div>
+
+        <div class="pipeline-header">
+          <h1>Sales Pipeline</h1>
+          <button class="btn btn-sm" id="btn-add-lead-pipeline">+ Neuer Lead</button>
+        </div>
+
+        <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:24px;">
+          <div class="stat-card">
+            <div class="stat-icon purple"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10" cy="10" r="8"/></svg></div>
+            <div class="stat-label">Leads gesamt</div>
+            <div class="stat-value" id="stat-total-leads">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon cyan"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 10l4 4 8-8"/></svg></div>
+            <div class="stat-label">Gewonnen</div>
+            <div class="stat-value" id="stat-won">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon green"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 18L10 4l8 14"/></svg></div>
+            <div class="stat-label">Pipeline-Wert</div>
+            <div class="stat-value" id="stat-pipeline-value">€0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon orange"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10" cy="10" r="3"/><path d="M10 2v3M10 15v3M2 10h3M15 10h3"/></svg></div>
+            <div class="stat-label">Conversion</div>
+            <div class="stat-value" id="stat-conversion">0%</div>
+          </div>
+        </div>
+
+        <!-- Conversion Funnel -->
+        <div class="card" style="margin-bottom:24px;padding:16px 20px;" id="conversion-funnel"></div>
+
+        <!-- Pipeline Stage Values -->
+        <div class="card" style="margin-bottom:24px;padding:16px 20px;" id="pipeline-stage-values">
+          <h3 style="font-size:14px;margin-bottom:12px;">Deal-Wert pro Stage</h3>
+          <div id="stage-value-bars"></div>
+        </div>
+
+        <div class="kanban-board" id="pipeline-board"></div>
+
+        <!-- Won vs Lost Chart + Deal Forecast -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:24px;">
+        <div class="card" style="padding:16px 20px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+            <h3 style="margin:0;font-size:14px;">Gewonnen vs. Verloren</h3>
+            <select class="form-input form-select" id="pipeline-period" style="width:140px;font-size:12px;" onchange="renderWonLostChart()">
+              <option value="30">Letzte 30 Tage</option>
+              <option value="90">Letzte 90 Tage</option>
+              <option value="365">Dieses Jahr</option>
+            </select>
+          </div>
+          <div id="won-lost-chart" style="display:flex;align-items:end;gap:4px;height:120px;"></div>
+        </div>
+        <div class="card" style="padding:16px 20px;" id="deal-forecast-widget"></div>
+        </div>
+      </div>
+
+      <!-- LEADS LIST -->
+      <div class="page-section" id="tab-leads">
+        <div class="pipeline-header">
+          <h1>Alle Leads</h1>
+          <div style="display:flex;gap:10px;align-items:center;">
+            <input type="text" id="lead-search" class="form-input" placeholder="Lead suchen…" style="width:200px;padding:8px 12px;font-size:12px;">
+            <select id="lead-status-filter" class="form-input form-select" style="width:auto;padding:8px 32px 8px 12px;font-size:12px;">
+              <option value="">Alle Status</option>
+            </select>
+            <button class="btn btn-sm" id="btn-add-lead">+ Neuer Lead</button>
+          </div>
+        </div>
+        <div class="card" style="padding:0;overflow:hidden;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Firma</th>
+                <th>Kontakt</th>
+                <th>Status</th>
+                <th>Wert</th>
+                <th>Zugewiesen</th>
+                <th>Erstellt</th>
+                <th>Aktionen</th>
+              </tr>
+            </thead>
+            <tbody id="leads-tbody">
+              <tr><td colspan="7" style="text-align:center;color:var(--tx3);padding:40px;">Laden...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- TASKS -->
+      <div class="page-section" id="tab-tasks">
+        <div class="pipeline-header">
+          <h1>Aufgaben</h1>
+          <button class="btn btn-sm" id="btn-add-task">+ Neue Aufgabe</button>
+        </div>
+
+        <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:24px;">
+          <div class="stat-card">
+            <div class="stat-label">Offen</div>
+            <div class="stat-value" id="stat-tasks-open">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">In Bearbeitung</div>
+            <div class="stat-value" id="stat-tasks-progress">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Erledigt</div>
+            <div class="stat-value" id="stat-tasks-done">0</div>
+          </div>
+        </div>
+
+        <div class="card" style="padding:0;" id="tasks-list"></div>
+      </div>
+
+      <!-- CUSTOMERS -->
+      <div class="page-section" id="tab-customers">
+        <div class="pipeline-header">
+          <h1>Kunden</h1>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-outline btn-sm" onclick="openCSVImportModal()">📁 CSV Import</button>
+            <button class="btn btn-outline btn-sm" onclick="exportCustomersCSV()">📥 CSV Export</button>
+            <button class="btn btn-sm" onclick="openNewCustomerModal()">+ Neuer Kunde</button>
+          </div>
+        </div>
+
+        <div class="stats-grid" style="margin-bottom:20px;">
+          <div class="stat-card"><div class="stat-label">KUNDEN GESAMT</div><div class="stat-value" id="cust-stat-total">0</div></div>
+          <div class="stat-card"><div class="stat-label">AKTIV</div><div class="stat-value" id="cust-stat-active">0</div></div>
+          <div class="stat-card"><div class="stat-label">Ø HEALTH SCORE</div><div class="stat-value" id="cust-stat-health">0%</div></div>
+          <div class="stat-card"><div class="stat-label">MONATL. UMSATZ</div><div class="stat-value" id="cust-stat-revenue">0 €</div></div>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+          <input type="text" class="form-input" id="cust-search" placeholder="Suche nach Firma, Kontakt, E-Mail..." style="flex:1;min-width:200px;" oninput="renderCustomersTable()">
+          <select class="form-input form-select" id="cust-status-filter" style="width:150px;" onchange="renderCustomersTable()">
+            <option value="">Alle Status</option>
+            <option value="active">Aktiv</option>
+            <option value="inactive">Inaktiv</option>
+            <option value="churned">Abgewandert</option>
+          </select>
+        </div>
+
+        <div class="card" style="padding:0;">
+          <table class="data-table">
+            <thead><tr><th>Firma</th><th>E-Mail</th><th>Plan</th><th>Status</th><th>Health</th><th>Letzter Kontakt</th><th>Tags</th><th></th></tr></thead>
+            <tbody id="customers-tbody"><tr><td colspan="8" style="text-align:center;color:var(--tx3);padding:40px;">Laden...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- AVAILABILITY (enhanced with sub-tabs) -->
+      <div class="page-section" id="tab-availability">
+        <div class="pipeline-header">
+          <h1>Verfügbarkeit</h1>
+          <button class="btn btn-sm" id="btn-set-avail">+ Eintrag</button>
+        </div>
+        <div id="avail-subtabs"></div>
+        <div class="availability-grid" id="avail-grid" style="display:none;"></div>
+      </div>
+
+      <!-- COMMISSION / PROVISIONEN -->
+      <div class="page-section" id="tab-commission">
+        <div class="pipeline-header">
+          <h1>Meine Provisionen</h1>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <span style="font-size:12px;color:var(--tx3);">5% vom Netto-Monatsumsatz aktiver Kunden</span>
+          </div>
+        </div>
+
+        <!-- Commission Stats -->
+        <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:24px;">
+          <div class="stat-card" style="border-color:var(--green);border-width:1.5px;">
+            <div class="stat-icon green"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 18L10 4l8 14"/></svg></div>
+            <div class="stat-label">Provision diesen Monat</div>
+            <div class="stat-value" id="comm-monthly" style="color:var(--green);">0 €</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon purple"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10" cy="10" r="8"/><path d="M7 10h6M10 7v6"/></svg></div>
+            <div class="stat-label">Aktive Kunden</div>
+            <div class="stat-value" id="comm-customers">0</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon cyan"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="14" height="14" rx="2"/><path d="M7 10h6"/></svg></div>
+            <div class="stat-label">Kunden-Umsatz (netto)</div>
+            <div class="stat-value" id="comm-revenue">0 €</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-icon orange"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 2v16M6 6l4-4 4 4M6 14l4 4 4-4"/></svg></div>
+            <div class="stat-label">Provision Vormonat</div>
+            <div class="stat-value" id="comm-last-month">0 €</div>
+          </div>
+        </div>
+
+        <!-- Commission Breakdown -->
+        <h2 style="margin-bottom:16px;">Kunden-Übersicht</h2>
+        <div class="card" style="padding:0;overflow:hidden;">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Kunde</th>
+                <th>Plan</th>
+                <th>Monatl. Netto</th>
+                <th>Meine Provision (5%)</th>
+                <th>Status</th>
+                <th>Kunde seit</th>
+              </tr>
+            </thead>
+            <tbody id="comm-tbody">
+              <tr><td colspan="6" style="text-align:center;color:var(--tx3);padding:40px;">Laden...</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Info Box -->
+        <div class="card" style="margin-top:24px;background:rgba(74,222,128,.05);border-color:rgba(74,222,128,.2);">
+          <div style="display:flex;align-items:flex-start;gap:12px;">
+            <svg width="20" height="20" fill="none" stroke="var(--green)" stroke-width="2" style="flex-shrink:0;margin-top:2px;"><circle cx="10" cy="10" r="8"/><path d="M10 7v3M10 13h.01"/></svg>
+            <div>
+              <strong style="font-size:13px;">So funktioniert die Provision</strong>
+              <p style="font-size:12px;color:var(--tx2);margin-top:4px;line-height:1.6;">
+                Du erhältst 5% des Netto-Monatsumsatzes jedes Kunden, den du vermittelt hast.
+                Die Provision wird monatlich ausbezahlt, solange der Kunde einen aktiven Plan bei Call Lana hat.
+                Bei Plan-Wechsel wird die neue Rate ab dem Folgemonat berechnet.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Add Lead Modal -->
+<div class="modal-overlay" id="modal-add-lead">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">Neuer Lead</h3>
+      <button class="modal-close" onclick="closeModal('modal-add-lead')">&times;</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Firma *</label>
+      <input type="text" class="form-input" id="lead-company" placeholder="Firmenname">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Kontaktperson</label>
+      <input type="text" class="form-input" id="lead-contact" placeholder="Vor- und Nachname">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="form-group">
+        <label class="form-label">E-Mail</label>
+        <input type="email" class="form-input" id="lead-email" placeholder="email@firma.de">
+        <div id="lead-dup-warning" style="display:none;color:#f59e0b;font-size:11px;margin-top:4px;font-weight:600;"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Telefon</label>
+        <input type="tel" class="form-input" id="lead-phone" placeholder="+49 ...">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Branche *</label>
+      <select class="form-input form-select" id="lead-industry">
+        <option value="">Auswählen...</option>
+        <option value="handwerk">Handwerk</option>
+        <option value="immobilien">Immobilien</option>
+        <option value="gesundheit">Gesundheit & Praxis</option>
+        <option value="recht">Rechtsanwälte & Kanzleien</option>
+        <option value="auto">Autohandel & Werkstatt</option>
+        <option value="gastronomie">Gastronomie & Hotel</option>
+        <option value="ecommerce">E-Commerce</option>
+        <option value="dienstleistung">Dienstleistung</option>
+        <option value="it">IT & Software</option>
+        <option value="sonstige">Sonstige</option>
+      </select>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="form-group">
+        <label class="form-label">Wert (EUR)</label>
+        <input type="number" class="form-input" id="lead-value" placeholder="0" min="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Quelle</label>
+        <select class="form-input form-select" id="lead-source">
+          <option value="">Auswählen...</option>
+          <option value="website">Website</option>
+          <option value="referral">Empfehlung</option>
+          <option value="cold_call">Kaltakquise</option>
+          <option value="event">Event</option>
+          <option value="other">Sonstige</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Notizen</label>
+      <textarea class="form-input" id="lead-notes" rows="3" placeholder="Erste Notizen..."></textarea>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-add-lead')">Abbrechen</button>
+      <button class="btn" id="btn-save-lead">Lead erstellen</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Task Modal -->
+<div class="modal-overlay" id="modal-add-task">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">Neue Aufgabe</h3>
+      <button class="modal-close" onclick="closeModal('modal-add-task')">&times;</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Titel *</label>
+      <input type="text" class="form-input" id="task-title" placeholder="Was muss erledigt werden?">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Beschreibung</label>
+      <textarea class="form-input" id="task-desc" rows="3" placeholder="Details..."></textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Verknüpfter Lead</label>
+      <select class="form-input form-select" id="task-lead">
+        <option value="">Kein Lead</option>
+      </select>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="form-group">
+        <label class="form-label">Fällig am</label>
+        <input type="date" class="form-input" id="task-due">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Priorität</label>
+        <select class="form-input form-select" id="task-priority">
+          <option value="low">Niedrig</option>
+          <option value="medium" selected>Mittel</option>
+          <option value="high">Hoch</option>
+          <option value="urgent">Dringend</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-add-task')">Abbrechen</button>
+      <button class="btn" id="btn-save-task">Aufgabe erstellen</button>
+    </div>
+  </div>
+</div>
+
+<!-- Availability Modal -->
+<div class="modal-overlay" id="modal-avail">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">Verfügbarkeit eintragen</h3>
+      <button class="modal-close" onclick="closeModal('modal-avail')">&times;</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Datum</label>
+      <input type="date" class="form-input" id="avail-date">
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="form-group">
+        <label class="form-label">Von</label>
+        <input type="time" class="form-input" id="avail-start" value="09:00">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Bis</label>
+        <input type="time" class="form-input" id="avail-end" value="17:00">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Typ</label>
+      <select class="form-input form-select" id="avail-type">
+        <option value="available">Verfügbar</option>
+        <option value="busy">Beschäftigt</option>
+        <option value="vacation">Urlaub</option>
+        <option value="sick">Krank</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Notiz</label>
+      <input type="text" class="form-input" id="avail-note" placeholder="Optional...">
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-avail')">Abbrechen</button>
+      <button class="btn" id="btn-save-avail">Speichern</button>
+    </div>
+  </div>
+</div>
+
+<!-- Lead Detail Modal -->
+<div class="modal-overlay" id="modal-lead-detail">
+  <div class="modal" style="max-width:600px;">
+    <div class="modal-header">
+      <h3 class="modal-title">Lead Details</h3>
+      <button class="modal-close" onclick="closeModal('modal-lead-detail')">&times;</button>
+    </div>
+    <div id="lead-detail-content">
+      <div style="text-align:center;color:var(--tx3);padding:40px;">Laden...</div>
+    </div>
+  </div>
+</div>
+
+<!-- Customer Detail Modal -->
+<div class="modal-overlay" id="modal-customer-detail">
+  <div class="modal" style="max-width:700px;">
+    <div class="modal-header">
+      <h3 class="modal-title">Kundendetails</h3>
+      <button class="modal-close" onclick="closeModal('modal-customer-detail')">&times;</button>
+    </div>
+    <div id="cust-detail-content"></div>
+  </div>
+</div>
+
+<!-- Add/Edit Customer Modal -->
+<div class="modal-overlay" id="modal-add-customer">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title" id="cust-modal-title">Neuer Kunde</h3>
+      <button class="modal-close" onclick="closeModal('modal-add-customer')">&times;</button>
+    </div>
+    <div class="form-group"><label class="form-label">Firma *</label><input type="text" class="form-input" id="cust-company" placeholder="Firmenname"></div>
+    <div class="form-group"><label class="form-label">Kontaktperson</label><input type="text" class="form-input" id="cust-contact" placeholder="Vor- und Nachname"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="form-group"><label class="form-label">E-Mail</label><input type="email" class="form-input" id="cust-email" placeholder="email@firma.de"></div>
+      <div class="form-group"><label class="form-label">Telefon</label><input type="tel" class="form-input" id="cust-phone" placeholder="+49 ..."></div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="form-group"><label class="form-label">Branche</label>
+        <select class="form-input form-select" id="cust-industry">
+          <option value="">Auswählen...</option>
+          <option value="handwerk">Handwerk</option>
+          <option value="immobilien">Immobilien</option>
+          <option value="gesundheit">Gesundheit & Praxis</option>
+          <option value="recht">Rechtsanwälte & Kanzleien</option>
+          <option value="auto">Autohandel & Werkstatt</option>
+          <option value="gastronomie">Gastronomie & Hotel</option>
+          <option value="ecommerce">E-Commerce</option>
+          <option value="dienstleistung">Dienstleistung</option>
+          <option value="it">IT & Software</option>
+          <option value="sonstige">Sonstige</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Plan</label>
+        <select class="form-input form-select" id="cust-plan">
+          <option value="starter">Starter (149 €)</option>
+          <option value="professional">Professional (299 €)</option>
+          <option value="business">Business (599 €)</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group"><label class="form-label">Website</label><input type="url" class="form-input" id="cust-website" placeholder="https://..."></div>
+    <div class="form-group"><label class="form-label">Adresse</label><input type="text" class="form-input" id="cust-address" placeholder="Straße, PLZ Ort"></div>
+    <div class="form-group"><label class="form-label">Notizen</label><textarea class="form-input" id="cust-notes-field" rows="2" placeholder="Notizen..."></textarea></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-add-customer')">Abbrechen</button>
+      <button class="btn" id="btn-save-customer" onclick="saveCustomer()">Kunde erstellen</button>
+    </div>
+  </div>
+</div>
+
+<!-- Call Protocol Modal -->
+<div class="modal-overlay" id="modal-call-protocol">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">Anruf protokollieren</h3>
+      <button class="modal-close" onclick="closeModal('modal-call-protocol')">&times;</button>
+    </div>
+    <input type="hidden" id="cp-customer-id">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="form-group"><label class="form-label">Richtung</label>
+        <select class="form-input form-select" id="cp-direction">
+          <option value="outbound">↗ Ausgehend</option>
+          <option value="inbound">↙ Eingehend</option>
+        </select>
+      </div>
+      <div class="form-group"><label class="form-label">Ergebnis</label>
+        <select class="form-input form-select" id="cp-outcome">
+          <option value="reached">Erreicht</option>
+          <option value="voicemail">Mailbox</option>
+          <option value="no_answer">Nicht erreicht</option>
+          <option value="busy">Besetzt</option>
+          <option value="callback">Rückruf</option>
+          <option value="follow_up">Follow-up</option>
+        </select>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="form-group"><label class="form-label">Datum & Uhrzeit</label><input type="datetime-local" class="form-input" id="cp-called-at"></div>
+      <div class="form-group"><label class="form-label">Dauer (Minuten)</label><input type="number" class="form-input" id="cp-duration" placeholder="0" min="0"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Betreff</label><input type="text" class="form-input" id="cp-subject" placeholder="Worum ging es?"></div>
+    <div class="form-group"><label class="form-label">Notizen</label><textarea class="form-input" id="cp-notes" rows="3" placeholder="Gesprächsnotizen..."></textarea></div>
+    <div style="display:grid;grid-template-columns:1fr auto;gap:12px;align-items:end;">
+      <div class="form-group"><label class="form-label">Follow-up Datum</label><input type="date" class="form-input" id="cp-followup-date"></div>
+      <div class="form-group" style="padding-bottom:2px;"><label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;"><input type="checkbox" id="cp-create-task" checked> Task erstellen</label></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-call-protocol')">Abbrechen</button>
+      <button class="btn" onclick="saveCallProtocol()">Protokoll speichern</button>
+    </div>
+  </div>
+</div>
+
+<!-- CSV Import Modal -->
+<div class="modal-overlay" id="modal-csv-import">
+  <div class="modal" style="max-width:600px;">
+    <div class="modal-header">
+      <h3 class="modal-title">Kunden aus CSV importieren</h3>
+      <button class="modal-close" onclick="closeModal('modal-csv-import')">&times;</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">CSV-Datei auswählen</label>
+      <input type="file" class="form-input" id="csv-file-input" accept=".csv,.txt" onchange="handleCSVFile(this)">
+      <p style="font-size:11px;color:var(--tx3);margin-top:6px;">Erwartete Spalten: Firma, Kontakt, E-Mail, Telefon, Branche, Plan, Website, Adresse, Notizen<br>Trennzeichen: Komma oder Semikolon. Encoding: UTF-8.</p>
+    </div>
+    <div style="font-weight:600;font-size:13px;margin-bottom:8px;" id="csv-import-count"></div>
+    <div id="csv-preview-content" style="max-height:250px;overflow:auto;"></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-csv-import')">Abbrechen</button>
+      <button class="btn" id="btn-csv-import" onclick="importCSVCustomers()">Importieren</button>
+    </div>
+  </div>
+</div>
+
+<!-- Time Off Request Modal -->
+<div class="modal-overlay" id="modal-time-off">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 class="modal-title">Abwesenheit beantragen</h3>
+      <button class="modal-close" onclick="closeModal('modal-time-off')">&times;</button>
+    </div>
+    <div class="form-group"><label class="form-label">Typ</label>
+      <select class="form-input form-select" id="to-type">
+        <option value="vacation">Urlaub</option>
+        <option value="sick">Krankheit</option>
+        <option value="training">Fortbildung</option>
+        <option value="other">Sonstiges</option>
+      </select>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div class="form-group"><label class="form-label">Von</label><input type="date" class="form-input" id="to-start"></div>
+      <div class="form-group"><label class="form-label">Bis</label><input type="date" class="form-input" id="to-end"></div>
+    </div>
+    <div style="display:flex;gap:16px;margin-bottom:12px;">
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;"><input type="checkbox" id="to-half-start"> Halber Tag (Start)</label>
+      <label style="display:flex;align-items:center;gap:6px;font-size:12px;cursor:pointer;"><input type="checkbox" id="to-half-end"> Halber Tag (Ende)</label>
+    </div>
+    <div class="form-group"><label class="form-label">Notiz</label><textarea class="form-input" id="to-note" rows="2" placeholder="Optional..."></textarea></div>
+    <div class="modal-footer">
+      <button class="btn btn-outline" onclick="closeModal('modal-time-off')">Abbrechen</button>
+      <button class="btn" onclick="AvailabilityModule.saveTimeOffRequest()">Beantragen</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/modal.js"></script>
+<script src="js/error-handler.js"></script>
+<script>ErrorHandler.init();</script>
+<script src="js/logger.js"></script>
+<script src="js/supabase-init.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/db/calls.js"></script>
+<script src="js/db/assistants.js"></script>
+<script src="js/db/profiles.js"></script>
+<script src="js/db/leads.js"></script>
+<script src="js/db/messaging.js"></script>
+<script src="js/db/customers.js"></script>
+<script src="js/db/tools.js"></script>
+<script src="js/db.js"></script>
+<script src="js/auth-guard.js"></script>
+<script src="js/pricing-data.js"></script>
+<script src="js/config.js"></script>
+<script src="js/dashboard-components.js"></script>
+<script src="js/sales-customers.js"></script>
+<script src="js/availability.js"></script>
+<script src="js/notifications.js"></script>
+<script src="js/crm-enhancements.js"></script>
+<script src="js/global-search.js"></script>
+<script src="js/keyboard-shortcuts.js"></script>
+<script src="js/sales.js"></script>
+<script src="js/theme-toggle.js"></script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});</script>
+<script src="js/idle-timeout.js"></script>
+<script src="cookie-consent.js"></script>
+</body>
+</html>

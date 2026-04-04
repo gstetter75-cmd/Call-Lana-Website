@@ -3,12 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
   <title>Kontakt — Call Lana</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <link rel="stylesheet" href="css/design.css" />
   <script>
     tailwind.config = {
       theme: { extend: {
@@ -65,7 +66,7 @@
                   <span class="lang-de">Erlebe Call Lana live in einer persönlichen Demo. Wir zeigen dir, wie dein KI-Assistent in weniger als 15 Minuten einsatzbereit ist.</span>
                   <span class="lang-en hidden">Experience Call Lana live in a personal demo. We'll show you how your AI assistant is ready in 30 minutes.</span>
                 </p>
-                <a href="demo.html" class="btn-brand inline-flex items-center gap-2 px-5 py-2.5 text-sm font-bold rounded-xl">
+                <a href="#kontakt-formular" class="btn-brand inline-flex items-center gap-2 px-5 py-2.5 text-sm font-bold rounded-xl">
                   <span class="lang-de">Jetzt Demo anfragen</span>
                   <span class="lang-en hidden">Request a demo</span>
                   <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
@@ -82,7 +83,7 @@
               </div>
               <div>
                 <h3 class="font-display font-semibold text-lg mb-1">E-Mail</h3>
-                <a href="mailto:kontakt@call-lana.de" class="font-body text-sm text-brand-400 hover:text-brand-300 transition-colors duration-200">kontakt@call-lana.de</a>
+                <a href="mailto:info@call-lana.de" class="font-body text-sm text-brand-400 hover:text-brand-300 transition-colors duration-200">info@call-lana.de</a>
               </div>
             </div>
           </div>
@@ -134,7 +135,7 @@
               <span class="lang-en hidden">Send us a message</span>
             </h2>
 
-            <form class="space-y-5" onsubmit="event.preventDefault();">
+            <form id="contactForm" class="space-y-5" onsubmit="handleContactSubmit(event)">
 
               <!-- Name -->
               <div>
@@ -142,7 +143,7 @@
                   <span class="lang-de">Name *</span>
                   <span class="lang-en hidden">Name *</span>
                 </label>
-                <input type="text" required class="form-input" placeholder="Max Mustermann" />
+                <input type="text" id="cf-name" required class="form-input" placeholder="Max Mustermann" />
               </div>
 
               <!-- E-Mail -->
@@ -151,7 +152,7 @@
                   <span class="lang-de">E-Mail *</span>
                   <span class="lang-en hidden">Email *</span>
                 </label>
-                <input type="email" required class="form-input" placeholder="max@unternehmen.de" />
+                <input type="email" id="cf-email" required class="form-input" placeholder="max@unternehmen.de" />
               </div>
 
               <!-- Branche -->
@@ -160,7 +161,7 @@
                   <span class="lang-de">Branche</span>
                   <span class="lang-en hidden">Industry</span>
                 </label>
-                <select class="form-input">
+                <select id="cf-branche" class="form-input">
                   <option value="" disabled selected>
                     Bitte wählen...
                   </option>
@@ -180,7 +181,7 @@
                   <span class="lang-de">Nachricht *</span>
                   <span class="lang-en hidden">Message *</span>
                 </label>
-                <textarea required rows="5" class="form-input" placeholder="Wie können wir dir helfen?"></textarea>
+                <textarea id="cf-message" required rows="5" class="form-input" placeholder="Wie können wir dir helfen?"></textarea>
               </div>
 
               <!-- Datenschutz -->
@@ -193,11 +194,12 @@
               </div>
 
               <!-- Submit -->
-              <button type="submit" class="btn-brand w-full">
+              <button type="submit" id="cf-submit" class="btn-brand w-full">
                 <span class="lang-de">Nachricht senden</span>
                 <span class="lang-en hidden">Send message</span>
                 <svg class="w-5 h-5 ml-2 inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
               </button>
+              <p id="cf-status" class="text-sm text-center hidden"></p>
             </form>
           </div>
         </div>
@@ -218,7 +220,7 @@
         <span class="lang-de">Lass dir in einem kurzen Gespräch zeigen, wie Call Lana deinen Betrieb entlastet.</span>
         <span class="lang-en hidden">Let us show you in a short call how Call Lana can lighten your workload.</span>
       </p>
-      <a href="demo.html" class="btn-brand inline-flex items-center px-8 py-4 text-base font-bold rounded-xl">
+      <a href="#kontakt-formular" class="btn-brand inline-flex items-center px-8 py-4 text-base font-bold rounded-xl">
         <span class="lang-de">Sprich mit einem Call Lana Experten</span>
         <span class="lang-en hidden">Talk to a Call Lana expert</span>
         <svg class="w-5 h-5 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7l5 5m0 0l-5 5m5-5H6"/></svg>
@@ -235,8 +237,7 @@
         <div class="flex items-center gap-3">
           <svg class="w-6 h-6 text-brand-400" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
           <div>
-            <span class="font-display font-bold text-gray-900">Trustpilot 4.8</span>
-            <span class="text-gray-500 text-sm ml-1">/5</span>
+            <span class="font-display font-bold text-gray-900">Made in Germany</span>
           </div>
         </div>
 
@@ -262,6 +263,52 @@
 
   <div id="footer-container"></div>
 
-  <script src="components.js"></script>
+  <script src="js/components.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/logger.js"></script>
+<script src="js/supabase-init.js"></script>
+<script src="js/db/messaging.js"></script>
+<script>
+async function handleContactSubmit(e) {
+  e.preventDefault();
+  var btn = document.getElementById('cf-submit');
+  var name = document.getElementById('cf-name').value.trim();
+  var email = document.getElementById('cf-email').value.trim();
+  var branche = document.getElementById('cf-branche').value;
+  var message = document.getElementById('cf-message').value.trim();
+
+  if (!name || name.length < 2) { showStatus('Bitte gib deinen Namen ein.', 'error'); return; }
+  if (!message || message.length < 10) { showStatus('Bitte schreibe eine Nachricht (mind. 10 Zeichen).', 'error'); return; }
+
+  btn.disabled = true;
+  btn.style.opacity = '0.6';
+  showStatus('Wird gesendet…', 'info');
+
+  var result = await dbMessaging.submitContactForm({
+    name: name,
+    email: email,
+    company: branche || 'Kontaktformular',
+    message: 'Branche: ' + (branche || 'k.A.') + '\n\nNachricht:\n' + message
+  });
+
+  if (result.success) {
+    document.getElementById('contactForm').reset();
+    showStatus('Nachricht gesendet! Wir melden uns in Kürze.', 'success');
+  } else {
+    showStatus('Fehler beim Senden. Bitte versuche es erneut oder schreib an info@call-lana.de', 'error');
+  }
+  btn.disabled = false;
+  btn.style.opacity = '1';
+}
+function showStatus(msg, type) {
+  var el = document.getElementById('cf-status');
+  el.textContent = msg;
+  el.className = 'text-sm text-center mt-2';
+  el.classList.add(type === 'success' ? 'text-green-600' : type === 'error' ? 'text-red-500' : 'text-gray-500');
+  el.classList.remove('hidden');
+}
+</script>
+<script src="i18n.js"></script>
+<script src="cookie-consent.js"></script>
 </body>
 </html>

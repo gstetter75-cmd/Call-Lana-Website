@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+Disallow: /dashboard.html
+Disallow: /settings.html
+Disallow: /admin.html
+Disallow: /sales.html
+Disallow: /login.html
+Disallow: /registrierung.html
+Disallow: /reset-password.html
+
+Sitemap: https://call-lana.de/sitemap.xml

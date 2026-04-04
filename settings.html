@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<meta name="robots" content="noindex">
+<title>Einstellungen – Call Lana Dashboard</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#7c3aed">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Syne:wght@600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/common.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+/* Settings-specific overrides (base styles in common.css) */
+body{display:flex;overflow:hidden;}
+.page-desc{margin-bottom:40px;}
+
+/* SETTINGS GRID */
+.settings-grid{display:grid;grid-template-columns:240px 1fr;gap:24px;max-width:1100px;}
+.settings-nav{display:flex;flex-direction:column;gap:2px;}
+.sn-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-radius:10px;cursor:pointer;transition:all .2s;text-decoration:none;color:var(--tx3);font-size:14px;font-weight:500;border:1px solid transparent;}
+.sn-item:hover{background:rgba(124,58,237,.06);color:var(--tx2);}
+.sn-item.active{background:rgba(124,58,237,.12);border-color:var(--border2);color:var(--pu3);font-weight:600;}
+.settings-content{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px;}
+.sc-section{margin-bottom:40px;padding-bottom:32px;border-bottom:1px solid var(--border);}
+.sc-section:last-child{margin-bottom:0;padding-bottom:0;border-bottom:none;}
+.sc-section h2{font-family:'Syne',sans-serif;font-size:1.2rem;font-weight:700;margin-bottom:6px;color:var(--tx);}
+.sc-section p{color:var(--tx3);font-size:.88rem;margin-bottom:24px;line-height:1.7;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;}
+.fgrp{display:flex;flex-direction:column;gap:7px;margin-bottom:16px;}
+label{font-size:12px;font-weight:700;color:var(--tx3);letter-spacing:.04em;text-transform:uppercase;}
+.finp{background:var(--bg3);border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;color:var(--tx);font-size:14px;font-family:'Manrope',sans-serif;outline:none;transition:all .2s;width:100%;}
+.finp::placeholder{color:var(--tx3);}.finp:focus{border-color:var(--pu);background:rgba(124,58,237,.05);box-shadow:0 0 0 3px rgba(124,58,237,.15);}
+.finp:disabled{opacity:.5;cursor:not-allowed;}
+.btn-save{background:linear-gradient(135deg,var(--pu),var(--pu2));border:none;border-radius:10px;padding:12px 24px;color:white;font-weight:700;font-size:14px;font-family:'Manrope',sans-serif;cursor:pointer;transition:all .2s;box-shadow:0 0 16px rgba(124,58,237,.3);}
+.btn-save:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 0 24px rgba(124,58,237,.5);}
+.btn-save:disabled{opacity:.5;cursor:not-allowed;}
+.btn-secondary{background:var(--bg3);border:1.5px solid var(--border);border-radius:10px;padding:12px 24px;color:var(--tx2);font-weight:600;font-size:14px;font-family:'Manrope',sans-serif;cursor:pointer;transition:all .2s;}
+.btn-secondary:hover{border-color:var(--border2);color:var(--tx);}
+.btn-danger{background:rgba(248,113,113,.1);border:1.5px solid rgba(248,113,113,.3);border-radius:10px;padding:12px 24px;color:var(--red);font-weight:700;font-size:14px;font-family:'Manrope',sans-serif;cursor:pointer;transition:all .2s;}
+.btn-danger:hover{background:rgba(248,113,113,.2);}
+
+/* TOGGLE SWITCH */
+.toggle-row{display:flex;align-items:center;justify-content:space-between;padding:14px 0;}
+.toggle-left{flex:1;}
+.toggle-left strong{display:block;font-size:14px;color:var(--tx);margin-bottom:3px;}
+.toggle-left span{font-size:12px;color:var(--tx3);}
+.toggle-switch{width:48px;height:26px;background:var(--border);border-radius:50px;position:relative;cursor:pointer;transition:background .2s;flex-shrink:0;}
+.toggle-switch.on{background:var(--pu);}
+.toggle-switch::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;background:white;border-radius:50%;transition:left .2s;box-shadow:0 1px 4px rgba(0,0,0,.3);}
+.toggle-switch.on::after{left:25px;}
+
+/* INFO/WARN/DANGER BOX */
+.info-box{background:rgba(34,211,238,.08);border:1px solid rgba(34,211,238,.25);border-radius:12px;padding:16px 18px;font-size:13px;color:var(--cyan);margin:16px 0;}
+.warn-box{background:rgba(251,146,60,.08);border:1px solid rgba(251,146,60,.25);border-radius:12px;padding:16px 18px;font-size:13px;color:var(--orange);margin:16px 0;}
+.danger-box{background:rgba(248,113,113,.08);border:1px solid rgba(248,113,113,.25);border-radius:12px;padding:16px 18px;font-size:13px;color:var(--red);margin:16px 0;}
+.err-msg{font-size:12px;color:var(--red);min-height:16px;display:block;}
+
+/* TOAST */
+.toast{position:fixed;top:20px;right:20px;background:var(--card);border:1px solid var(--border2);border-radius:12px;padding:14px 18px;font-size:13px;color:var(--green);box-shadow:0 0 24px rgba(0,0,0,.4);z-index:999;opacity:0;transform:translateY(-20px);transition:all .3s;pointer-events:none;}
+.toast.show{opacity:1;transform:translateY(0);}
+.toast.error{color:var(--red);border-color:rgba(248,113,113,.3);}
+
+/* OVERLAY */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:9;}
+
+/* RESPONSIVE */
+@media(max-width:900px){.settings-grid{grid-template-columns:1fr;}.settings-nav{flex-direction:row;overflow-x:auto;gap:4px;}}
+@media(max-width:768px){
+  .sidebar{position:fixed;left:0;top:0;bottom:0;transform:translateX(-100%);z-index:20;}
+  .sidebar.open{transform:translateX(0);}
+  .sidebar-overlay.open{display:block;}
+  .sb-close{display:block;}
+  .topbar-hamburger{display:block;}
+  .topbar{padding:0 16px;}
+  .content{padding:16px 12px;}
+  .form-row{grid-template-columns:1fr;}
+  .settings-nav-item{padding:10px 14px;font-size:12px;}
+  .conn-grid{grid-template-columns:1fr !important;}
+}
+@media(max-width:500px){
+  h1{font-size:1.15rem;}
+  .page-desc{font-size:.82rem;}
+  .settings-body{padding:16px;}
+  .form-input,.form-select{padding:10px 12px;font-size:13px;}
+}
+</style>
+</head>
+<body class="auth-pending">
+<a href="#main" class="skip-link">Zum Inhalt springen</a>
+
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<div id="sidebar-container"></div>
+
+<div class="main" id="main">
+  <div class="topbar">
+    <button class="topbar-hamburger" id="hamburgerBtn" aria-label="Menü">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="topbar-breadcrumb">Call Lana / <span>Einstellungen</span></div>
+  </div>
+  <div class="content">
+    <h1>Einstellungen</h1>
+    <p class="page-desc">Verwalte dein Konto, deine Sicherheit und Benachrichtigungen.</p>
+
+    <div class="settings-grid">
+      <!-- SETTINGS NAV -->
+      <div class="settings-nav">
+        <a href="#profile" class="sn-item active" data-tab="profile"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Profil</a>
+        <a href="#security" class="sn-item" data-tab="security"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Sicherheit</a>
+        <a href="#notifications" class="sn-item" data-tab="notifications"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>Benachrichtigungen</a>
+        <a href="#emergency" class="sn-item" data-tab="emergency"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>Notfall</a>
+        <a href="#calendar" class="sn-item" data-tab="calendar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/><path d="M8 2v4M16 2v4"/></svg>Kalender</a>
+        <a href="#forwarding" class="sn-item" data-tab="forwarding"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 17 20 12 15 7"/><path d="M4 18v-2a4 4 0 014-4h12"/></svg>Weiterleitung</a>
+        <a href="#addons" class="sn-item" data-tab="addons"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Add-Ons</a>
+        <a href="#connectors" class="sn-item" data-tab="connectors"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Connectoren</a>
+        <a href="#danger" class="sn-item" data-tab="danger"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Gefahrenzone</a>
+      </div>
+
+      <!-- SETTINGS CONTENT -->
+      <div class="settings-content">
+        <!-- PROFILE TAB -->
+        <div class="tab-content" id="tab-profile">
+          <div class="sc-section">
+            <h2>Profil-Informationen</h2>
+            <p>Aktualisiere deine persönlichen Informationen.</p>
+            <div class="form-row">
+              <div class="fgrp"><label for="firstName">Vorname</label><input type="text" class="finp" id="firstName" placeholder="Max"></div>
+              <div class="fgrp"><label for="lastName">Nachname</label><input type="text" class="finp" id="lastName" placeholder="Mustermann"></div>
+            </div>
+            <div class="fgrp"><label for="email">E-Mail-Adresse</label><input type="email" class="finp" id="email" disabled></div>
+            <div class="fgrp"><label for="company">Unternehmen</label><input type="text" class="finp" id="company" placeholder="Musterfirma GmbH"></div>
+            <div class="fgrp"><label for="industry">Branche</label><input type="text" class="finp" id="industry" placeholder="z.B. Arztpraxis"></div>
+            <button class="btn-save" id="saveProfileBtn" onclick="saveProfile()">Änderungen speichern</button>
+            <span class="err-msg" id="profile-err"></span>
+          </div>
+
+          <div class="sc-section">
+            <h2>Rechnungsadresse</h2>
+            <p>Diese Adresse wird auf deinen Rechnungen als Empfänger verwendet.</p>
+            <div class="fgrp"><label for="billingCompany">Firma / Name</label><input type="text" class="finp" id="billingCompany" placeholder="Musterfirma GmbH"></div>
+            <div class="fgrp"><label for="billingStreet">Straße</label><input type="text" class="finp" id="billingStreet" placeholder="Musterstraße 1"></div>
+            <div class="form-row">
+              <div class="fgrp"><label for="billingZip">PLZ</label><input type="text" class="finp" id="billingZip" placeholder="12345"></div>
+              <div class="fgrp"><label for="billingCity">Ort</label><input type="text" class="finp" id="billingCity" placeholder="Musterstadt"></div>
+            </div>
+            <div class="form-row">
+              <div class="fgrp"><label for="billingCountry">Land</label><input type="text" class="finp" id="billingCountry" placeholder="Deutschland" value="Deutschland"></div>
+              <div class="fgrp"><label for="billingVatId">USt-IdNr. (optional)</label><input type="text" class="finp" id="billingVatId" placeholder="DE123456789"></div>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-left">
+                <strong>Rechnungen automatisch per E-Mail senden</strong>
+                <span>Rechnungen werden nach Erstellung automatisch an deine E-Mail gesendet</span>
+              </div>
+              <div class="toggle-switch" id="autoInvoiceEmail" data-key="auto_invoice_email" onclick="toggleNotif(this)"></div>
+            </div>
+            <button class="btn-save" style="margin-top:16px;" onclick="saveBillingAddress()">Rechnungsadresse speichern</button>
+            <span class="err-msg" id="billing-addr-err"></span>
+          </div>
+        </div>
+
+        <!-- SECURITY TAB -->
+        <div class="tab-content" id="tab-security" style="display:none;">
+          <div class="sc-section">
+            <h2>Passwort ändern</h2>
+            <p>Wähle ein starkes Passwort mit mindestens 8 Zeichen.</p>
+            <div class="fgrp"><label for="newPw">Neues Passwort</label><input type="password" class="finp" id="newPw" placeholder="Mindestens 8 Zeichen"></div>
+            <div class="fgrp"><label for="newPw2">Passwort bestätigen</label><input type="password" class="finp" id="newPw2" placeholder="Passwort wiederholen"></div>
+            <span class="err-msg" id="pw-err"></span>
+            <button class="btn-save" id="savePwBtn" onclick="changePassword()">Passwort aktualisieren</button>
+          </div>
+          <div class="sc-section">
+            <h2>Sitzungen</h2>
+            <p>Du bist aktuell auf diesem Gerät angemeldet.</p>
+            <div class="info-box">🔐 Letzte Anmeldung: <span id="lastLogin">–</span></div>
+          </div>
+        </div>
+
+        <!-- NOTIFICATIONS TAB -->
+        <div class="tab-content" id="tab-notifications" style="display:none;">
+          <div class="sc-section">
+            <h2>E-Mail-Benachrichtigungen</h2>
+            <p>Wähle, wann du E-Mails von uns erhalten möchtest.</p>
+            <div class="toggle-row"><div class="toggle-left"><strong>Anrufzusammenfassungen</strong><span>Täglich um 18:00 Uhr — Zusammenfassung aller Anrufe</span></div><div class="toggle-switch on" data-key="notify_summary" onclick="toggleNotif(this)"></div></div>
+            <div class="toggle-row"><div class="toggle-left"><strong>Wichtige Weiterleitung</strong><span>Sofort — Wenn ein Anruf an dich weitergeleitet wurde</span></div><div class="toggle-switch on" data-key="notify_forward" onclick="toggleNotif(this)"></div></div>
+            <div class="toggle-row"><div class="toggle-left"><strong>Produktupdates</strong><span>Monatlich — Neue Features und Verbesserungen</span></div><div class="toggle-switch" data-key="notify_updates" onclick="toggleNotif(this)"></div></div>
+            <div class="toggle-row"><div class="toggle-left"><strong>Marketing</strong><span>Gelegentlich — Tipps und Best Practices</span></div><div class="toggle-switch" data-key="notify_marketing" onclick="toggleNotif(this)"></div></div>
+            <button class="btn-save" style="margin-top:16px;" onclick="saveNotifications()">Einstellungen speichern</button>
+          </div>
+        </div>
+
+        <!-- CONNECTORS TAB -->
+        <div class="tab-content" id="tab-connectors" style="display:none;">
+          <div class="sc-section">
+            <h2>Connectoren</h2>
+            <p>Verbinde externe Tools und Dienste mit Call Lana. Aehnlich wie Plugins werden Connectoren hier eingerichtet und stehen dann im Dashboard zur Verfuegung.</p>
+
+            <!-- Search & Filter -->
+            <div style="display:flex;gap:12px;margin-bottom:16px;flex-wrap:wrap;">
+              <input type="text" class="finp" id="connSearchInput" placeholder="Connector suchen..." style="max-width:260px;" oninput="filterConnectors()">
+              <select class="finp" id="connCategoryFilter" style="max-width:200px;" onchange="filterConnectors()">
+                <option value="Alle">Alle Kategorien</option>
+              </select>
+            </div>
+
+            <!-- Connected connectors -->
+            <div id="connConnectedSection" style="margin-bottom:28px;display:none;">
+              <h3 style="font-size:14px;font-weight:700;color:var(--green);margin-bottom:12px;">Verbunden (<span id="connConnectedCount">0</span>)</h3>
+              <div id="connConnectedGrid" style="display:grid;grid-template-columns:1fr;gap:10px;"></div>
+            </div>
+
+            <!-- Available connectors grid -->
+            <h3 style="font-size:14px;font-weight:700;color:var(--tx2);margin-bottom:12px;" id="connAvailableLabel">Verfuegbar</h3>
+            <div id="connAvailableGrid" style="display:grid;grid-template-columns:1fr;gap:8px;"></div>
+          </div>
+        </div>
+
+        <!-- Connector Connect Modal -->
+        <div class="modal-overlay" id="connModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:100;display:none;align-items:center;justify-content:center;">
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:32px;max-width:500px;width:90%;max-height:90vh;overflow-y:auto;">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+              <div style="display:flex;align-items:center;gap:12px;">
+                <span id="connModalIcon" style="font-size:1.8rem;"></span>
+                <div>
+                  <h2 id="connModalTitle" style="margin:0;font-size:1.1rem;"></h2>
+                  <span id="connModalCategory" style="font-size:11px;color:var(--tx3);"></span>
+                </div>
+              </div>
+              <button onclick="closeConnModal()" style="background:none;border:none;color:var(--tx3);font-size:22px;cursor:pointer;padding:4px 8px;">&times;</button>
+            </div>
+            <p id="connModalDesc" style="font-size:13px;color:var(--tx2);margin-bottom:20px;line-height:1.6;"></p>
+
+            <!-- OAuth -->
+            <div id="connFormOAuth" style="display:none;">
+              <p style="font-size:12px;color:var(--tx3);margin-bottom:16px;">Du wirst zu <strong id="connOAuthName"></strong> weitergeleitet, um den Zugriff zu autorisieren. Call Lana erhaelt nur Lesezugriff auf die benoetigten Daten.</p>
+              <button class="btn-save" style="width:100%;" onclick="connStartOAuth()">Mit <span id="connOAuthBtn"></span> verbinden</button>
+            </div>
+
+            <!-- API Key -->
+            <div id="connFormApiKey" style="display:none;">
+              <div class="fgrp">
+                <label for="connApiKeyInput">API-Key</label>
+                <input type="password" class="finp" id="connApiKeyInput" placeholder="API-Key eingeben" style="font-family:monospace;">
+              </div>
+              <div id="connApiKeyExtra" class="fgrp" style="display:none;">
+                <label id="connApiKeyExtraLabel">Subdomain / URL</label>
+                <input type="text" class="finp" id="connApiKeyExtraInput">
+              </div>
+              <p style="font-size:11px;color:var(--tx3);margin-bottom:16px;" id="connApiKeyHelp"></p>
+              <button class="btn-save" style="width:100%;" onclick="connSaveApiKey()">Verbindung speichern</button>
+            </div>
+
+            <!-- Webhook -->
+            <div id="connFormWebhook" style="display:none;">
+              <div class="fgrp">
+                <label>Webhook-URL</label>
+                <div style="display:flex;gap:8px;">
+                  <input type="text" class="finp" id="connWebhookUrl" readonly style="font-family:monospace;font-size:12px;">
+                  <button class="btn-secondary" style="white-space:nowrap;" onclick="connCopyWebhook()">Kopieren</button>
+                </div>
+              </div>
+              <div class="fgrp">
+                <label>Webhook-Secret</label>
+                <div style="display:flex;gap:8px;">
+                  <input type="password" class="finp" id="connWebhookSecret" readonly style="font-family:monospace;font-size:12px;">
+                  <button class="btn-secondary" style="white-space:nowrap;" onclick="connToggleSecret()">Anzeigen</button>
+                </div>
+              </div>
+              <p style="font-size:11px;color:var(--tx3);margin-bottom:16px;" id="connWebhookHelp"></p>
+              <button class="btn-save" style="width:100%;" onclick="connActivateWebhook()">Webhook aktivieren</button>
+            </div>
+
+            <!-- SIP -->
+            <div id="connFormSip" style="display:none;">
+              <div class="fgrp"><label>SIP-Server / Registrar</label><input type="text" class="finp" id="connSipServer" placeholder="z.B. sip.sipgate.de"></div>
+              <div class="fgrp"><label>SIP-Benutzername</label><input type="text" class="finp" id="connSipUser" placeholder="Benutzername oder Rufnummer"></div>
+              <div class="fgrp"><label>SIP-Passwort</label><input type="password" class="finp" id="connSipPass" placeholder="Passwort"></div>
+              <div class="fgrp"><label>Port (optional)</label><input type="text" class="finp" id="connSipPort" placeholder="5060"></div>
+              <p style="font-size:11px;color:var(--tx3);margin-bottom:16px;">Trage die SIP-Zugangsdaten deines Providers oder deiner Fritzbox ein. Die Verbindung wird verschluesselt uebertragen.</p>
+              <button class="btn-save" style="width:100%;" onclick="connSaveSip()">SIP-Verbindung speichern</button>
+            </div>
+
+            <!-- Forwarding -->
+            <div id="connFormForward" style="display:none;">
+              <div class="fgrp">
+                <label>Call Lana Rufnummer</label>
+                <div style="display:flex;gap:8px;">
+                  <input type="text" class="finp" id="connForwardNumber" readonly style="font-family:monospace;font-weight:700;font-size:15px;">
+                  <button class="btn-secondary" style="white-space:nowrap;" onclick="connCopyForward()">Kopieren</button>
+                </div>
+              </div>
+              <p style="font-size:12px;color:var(--tx2);margin-bottom:16px;" id="connForwardHelp"></p>
+              <div style="background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:16px;">
+                <h4 style="font-size:12px;font-weight:700;margin-bottom:10px;color:var(--tx);">Einrichtung in 3 Schritten:</h4>
+                <ol style="font-size:12px;color:var(--tx2);padding-left:20px;display:flex;flex-direction:column;gap:6px;">
+                  <li>Kopiere die Call Lana Rufnummer oben</li>
+                  <li>Richte eine Rufumleitung bei deinem Telefonanbieter oder in der Fritzbox ein</li>
+                  <li>Waehle, wann umgeleitet werden soll (immer, bei Besetzt, nach X Sekunden)</li>
+                </ol>
+              </div>
+              <button class="btn-save" style="width:100%;" onclick="connActivateForward()">Rufumleitung aktiviert - Testen</button>
+            </div>
+
+            <!-- Coming Soon -->
+            <div id="connFormInfo" style="display:none;">
+              <div style="background:rgba(251,146,60,.08);border:1px solid rgba(251,146,60,.25);border-radius:10px;padding:16px;text-align:center;">
+                <p style="font-size:13px;color:var(--orange);font-weight:600;margin-bottom:6px;">Bald verfuegbar</p>
+                <p style="font-size:12px;color:var(--tx3);">Diese Integration wird in Kuerze freigeschaltet.</p>
+              </div>
+              <button class="btn-secondary" style="width:100%;margin-top:16px;" onclick="connNotifyReady()">Benachrichtigen, wenn verfuegbar</button>
+            </div>
+
+            <!-- Disconnect button (only for connected) -->
+            <div id="connDisconnectSection" style="display:none;margin-top:20px;padding-top:16px;border-top:1px solid var(--border);">
+              <button class="btn-danger" style="width:100%;" onclick="connDisconnect()">Connector trennen</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- EMERGENCY TAB (Spec §4.4) -->
+        <div class="tab-content" id="tab-emergency" style="display:none;">
+          <div class="sc-section">
+            <h2>Notfall-Konfiguration</h2>
+            <p>Definiere, wie dringende Anrufe behandelt werden sollen. Bei einem erkannten Notfall wird die Person sofort benachrichtigt.</p>
+            <div class="fgrp"><label for="emergencyPhone">Notfall-Handynummer</label><input type="tel" class="finp" id="emergencyPhone" placeholder="+49 170 1234567"></div>
+            <div class="fgrp">
+              <label for="emergencyChannel">Benachrichtigungskanal</label>
+              <select class="finp" id="emergencyChannel">
+                <option value="sms">SMS</option>
+                <option value="call">Anruf</option>
+                <option value="whatsapp">WhatsApp</option>
+                <option value="all">Alle Kanäle</option>
+              </select>
+            </div>
+            <div class="fgrp">
+              <label for="emergencyKeywords">Notfall-Keywords</label>
+              <input type="text" class="finp" id="emergencyKeywords" placeholder="Rohrbruch, Wasserschaden, Notfall, dringend">
+              <span style="font-size:11px;color:var(--tx3);margin-top:4px;display:block;">Komma-getrennte Schlüsselwörter. Wenn ein Anrufer diese nennt, wird sofort benachrichtigt.</span>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-left">
+                <strong>Notfall-Modus aktiv</strong>
+                <span>Erkennt Notfälle automatisch und leitet Benachrichtigungen weiter</span>
+              </div>
+              <div class="toggle-switch on" id="emergencyActive" data-key="emergency_active" onclick="toggleNotif(this)"></div>
+            </div>
+            <button class="btn-save" style="margin-top:16px;" onclick="SettingsExtra.saveEmergency()">Notfall-Einstellungen speichern</button>
+            <span class="err-msg" id="emergency-err"></span>
+          </div>
+        </div>
+
+        <!-- CALENDAR TAB (Spec §4.4) -->
+        <div class="tab-content" id="tab-calendar" style="display:none;">
+          <div class="sc-section">
+            <h2>Kalender-Integration</h2>
+            <p>Verbinde deinen Google Kalender, damit Lana Termine direkt buchen kann.</p>
+            <div id="calendarStatus" class="info-box">📅 Kein Kalender verbunden.</div>
+            <button class="btn-save" id="btnConnectCalendar" onclick="SettingsExtra.connectCalendar()">
+              <span style="display:inline-flex;align-items:center;gap:8px;">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/><path d="M8 2v4M16 2v4"/></svg>
+                Google Kalender verbinden
+              </span>
+            </button>
+          </div>
+          <div class="sc-section">
+            <h2>Termin-Einstellungen</h2>
+            <p>Konfiguriere die Standard-Terminparameter für automatische Buchungen.</p>
+            <div class="form-row">
+              <div class="fgrp">
+                <label for="slotDuration">Termindauer (Minuten)</label>
+                <select class="finp" id="slotDuration">
+                  <option value="15">15 min</option>
+                  <option value="30" selected>30 min</option>
+                  <option value="45">45 min</option>
+                  <option value="60">60 min</option>
+                  <option value="90">90 min</option>
+                </select>
+              </div>
+              <div class="fgrp">
+                <label for="bookingWindow">Buchungsfenster (Tage)</label>
+                <select class="finp" id="bookingWindow">
+                  <option value="7">7 Tage</option>
+                  <option value="14" selected>14 Tage</option>
+                  <option value="30">30 Tage</option>
+                  <option value="60">60 Tage</option>
+                </select>
+              </div>
+            </div>
+            <div class="fgrp">
+              <label>Buchbare Zeiten</label>
+              <div class="form-row">
+                <div class="fgrp" style="margin:0;"><label for="bookingStart" style="font-size:11px;">Von</label><input type="time" class="finp" id="bookingStart" value="08:00"></div>
+                <div class="fgrp" style="margin:0;"><label for="bookingEnd" style="font-size:11px;">Bis</label><input type="time" class="finp" id="bookingEnd" value="18:00"></div>
+              </div>
+            </div>
+            <button class="btn-save" style="margin-top:16px;" onclick="SettingsExtra.saveCalendar()">Kalender-Einstellungen speichern</button>
+            <span class="err-msg" id="calendar-err"></span>
+          </div>
+        </div>
+
+        <!-- FORWARDING TAB (Spec §4.4) -->
+        <div class="tab-content" id="tab-forwarding" style="display:none;">
+          <div class="sc-section">
+            <h2>Weiterleitungsregeln</h2>
+            <p>Definiere Regeln, wann und wohin Anrufe weitergeleitet werden sollen. Regeln werden in Reihenfolge der Priorität abgearbeitet.</p>
+            <button class="btn-save" style="margin-bottom:16px;font-size:13px;padding:10px 20px;" onclick="SettingsExtra.addForwardingRule()">+ Neue Regel</button>
+            <div id="forwardingRules">
+              <div style="color:var(--tx3);font-size:13px;text-align:center;padding:24px;">Keine Weiterleitungsregeln konfiguriert.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ADD-ONS TAB (Spec §4.4) -->
+        <div class="tab-content" id="tab-addons" style="display:none;">
+          <div class="sc-section">
+            <h2>Add-Ons</h2>
+            <p>Aktiviere zusätzliche Funktionen für deine KI-Assistenten.</p>
+            <div class="toggle-row">
+              <div class="toggle-left">
+                <strong>WhatsApp-Integration</strong>
+                <span>Anrufzusammenfassungen und Termine per WhatsApp erhalten</span>
+              </div>
+              <div class="toggle-switch" id="addonWhatsapp" data-key="addon_whatsapp" onclick="toggleNotif(this)"></div>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-left">
+                <strong>Outbound-Anrufe</strong>
+                <span>Lana ruft Kunden proaktiv zurück (Terminbestätigung, Follow-ups)</span>
+              </div>
+              <div class="toggle-switch" id="addonOutbound" data-key="addon_outbound" onclick="toggleNotif(this)"></div>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-left">
+                <strong>Bewertungen sammeln</strong>
+                <span>Lana fragt nach Gesprächen nach einer kurzen Bewertung</span>
+              </div>
+              <div class="toggle-switch" id="addonReviews" data-key="addon_reviews" onclick="toggleNotif(this)"></div>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-left">
+                <strong>Lead Scoring</strong>
+                <span>Automatische Bewertung von Anrufern nach Qualifizierungskriterien</span>
+              </div>
+              <div class="toggle-switch on" id="addonLeadScoring" data-key="addon_lead_scoring" onclick="toggleNotif(this)"></div>
+            </div>
+            <div class="toggle-row">
+              <div class="toggle-left">
+                <strong>Sentiment-Analyse</strong>
+                <span>Stimmung des Anrufers automatisch erkennen und dokumentieren</span>
+              </div>
+              <div class="toggle-switch" id="addonSentiment" data-key="addon_sentiment" onclick="toggleNotif(this)"></div>
+            </div>
+            <button class="btn-save" style="margin-top:16px;" onclick="SettingsExtra.saveAddons()">Add-Ons speichern</button>
+          </div>
+        </div>
+
+        <!-- DANGER TAB -->
+        <div class="tab-content" id="tab-danger" style="display:none;">
+          <div class="sc-section">
+            <h2>Konto löschen</h2>
+            <p>Lösche dein Konto und alle damit verbundenen Daten permanent.</p>
+            <div class="danger-box">⚠️ <strong>Achtung:</strong> Diese Aktion kann nicht rückgängig gemacht werden. Alle deine Gesprächsdaten, Einstellungen und Transkripte werden unwiderruflich gelöscht.</div>
+            <button class="btn-danger" onclick="deleteAccount()">Konto permanent löschen</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="js/impersonation.js"></script>
+<script src="js/modal.js"></script>
+<script src="js/error-handler.js"></script>
+<script>ErrorHandler.init();</script>
+<script src="js/logger.js"></script>
+<script src="js/supabase-init.js"></script>
+<script src="js/auth.js"></script>
+<script src="js/db/calls.js"></script>
+<script src="js/db/assistants.js"></script>
+<script src="js/db/profiles.js"></script>
+<script src="js/db/leads.js"></script>
+<script src="js/db/messaging.js"></script>
+<script src="js/db/customers.js"></script>
+<script src="js/db/tools.js"></script>
+<script src="js/db.js"></script>
+<script src="js/auth-guard.js"></script>
+<script src="js/pricing-data.js"></script>
+<script src="js/config.js"></script>
+<script src="js/dashboard-components.js"></script>
+<script src="js/settings.js"></script>
+<script src="js/settings-extra.js"></script>
+<script src="js/theme-toggle.js"></script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});</script>
+<script src="js/idle-timeout.js"></script>
+<script src="cookie-consent.js"></script>
+</body>
+</html>
