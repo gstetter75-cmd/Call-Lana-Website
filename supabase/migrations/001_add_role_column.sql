@@ -19,9 +19,9 @@ END $$;
 ALTER TABLE profiles ADD COLUMN IF NOT EXISTS is_active BOOLEAN NOT NULL DEFAULT true;
 
 -- 4. Set initial roles for existing users (ADJUST EMAILS AS NEEDED)
--- UPDATE profiles SET role = 'superadmin' WHERE email = 'g.stetter@gmx.net';
--- UPDATE profiles SET role = 'sales' WHERE email = 'gstetter75@googlemail.com';
--- UPDATE profiles SET role = 'customer' WHERE email = 'info@gero-nikolov.com';
+-- UPDATE profiles SET role = 'superadmin' WHERE email = 'admin@example.invalid';
+-- UPDATE profiles SET role = 'sales' WHERE email = 'sales@example.invalid';
+-- UPDATE profiles SET role = 'customer' WHERE email = 'customer@example.invalid';
 
 -- 5. RLS Policy: Users can read their own profile
 CREATE POLICY IF NOT EXISTS "users_read_own_profile" ON profiles

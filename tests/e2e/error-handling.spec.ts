@@ -1,6 +1,8 @@
 import { test, expect } from '../fixtures/auth.fixture';
 import { test as base } from '@playwright/test';
 
+const TEST_ADMIN_EMAIL = process.env.TEST_ADMIN_EMAIL || '';
+
 test.describe('Error Handling', () => {
 
   // --- Login errors ---
@@ -24,8 +26,9 @@ test.describe('Error Handling', () => {
   });
 
   base('login with wrong password shows error message', async ({ page }) => {
+    base.skip(!TEST_ADMIN_EMAIL, 'TEST_ADMIN_EMAIL env var must be set for this test');
     await page.goto('/login.html');
-    await page.fill('#login-email', 'gstetter75@googlemail.com');
+    await page.fill('#login-email', TEST_ADMIN_EMAIL);
     await page.fill('#login-password', 'totallyWrongPassword123');
     await page.click('button[type="submit"]');
     await page.waitForTimeout(3000);

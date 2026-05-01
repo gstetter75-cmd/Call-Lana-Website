@@ -75,24 +75,26 @@ test.describe('Role-Based Access Control', () => {
   // --- Data isolation ---
 
   test('customer profile shows own email', async ({ customerPage: page }) => {
+    test.skip(!CUSTOMER_EMAIL, 'TEST_CUSTOMER_EMAIL env var must be set for this test');
     await page.goto('/settings.html');
     await page.waitForFunction(() => !document.body.classList.contains('auth-pending'), { timeout: 10_000 });
     await page.waitForTimeout(1000);
     const emailField = page.locator('#email');
     if (await emailField.count() > 0) {
       const emailValue = await emailField.inputValue();
-      expect(emailValue).toContain('g.stetter@gmx.net');
+      expect(emailValue).toContain(CUSTOMER_EMAIL);
     }
   });
 
   test('admin profile shows own email', async ({ adminPage: page }) => {
+    test.skip(!ADMIN_EMAIL, 'TEST_ADMIN_EMAIL env var must be set for this test');
     await page.goto('/settings.html');
     await page.waitForFunction(() => !document.body.classList.contains('auth-pending'), { timeout: 10_000 });
     await page.waitForTimeout(1000);
     const emailField = page.locator('#email');
     if (await emailField.count() > 0) {
       const emailValue = await emailField.inputValue();
-      expect(emailValue).toContain('gstetter75@googlemail.com');
+      expect(emailValue).toContain(ADMIN_EMAIL);
     }
   });
 
