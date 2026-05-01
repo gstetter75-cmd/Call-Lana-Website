@@ -115,10 +115,7 @@ label{font-size:12px;font-weight:700;color:var(--tx3);letter-spacing:.04em;text-
         <a href="#security" class="sn-item" data-tab="security"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>Sicherheit</a>
         <a href="#notifications" class="sn-item" data-tab="notifications"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>Benachrichtigungen</a>
         <a href="#emergency" class="sn-item" data-tab="emergency"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>Notfall</a>
-        <a href="#calendar" class="sn-item" data-tab="calendar"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/><path d="M8 2v4M16 2v4"/></svg>Kalender</a>
-        <a href="#forwarding" class="sn-item" data-tab="forwarding"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 17 20 12 15 7"/><path d="M4 18v-2a4 4 0 014-4h12"/></svg>Weiterleitung</a>
         <a href="#addons" class="sn-item" data-tab="addons"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>Add-Ons</a>
-        <a href="#connectors" class="sn-item" data-tab="connectors"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>Connectoren</a>
         <a href="#danger" class="sn-item" data-tab="danger"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Gefahrenzone</a>
       </div>
 
@@ -323,35 +320,15 @@ label{font-size:12px;font-weight:700;color:var(--tx3);letter-spacing:.04em;text-
           </div>
         </div>
 
-        <!-- EMERGENCY TAB (Spec §4.4) -->
+        <!-- EMERGENCY TAB — moved to Betrieb -->
         <div class="tab-content" id="tab-emergency" style="display:none;">
           <div class="sc-section">
             <h2>Notfall-Konfiguration</h2>
-            <p>Definiere, wie dringende Anrufe behandelt werden sollen. Bei einem erkannten Notfall wird die Person sofort benachrichtigt.</p>
-            <div class="fgrp"><label for="emergencyPhone">Notfall-Handynummer</label><input type="tel" class="finp" id="emergencyPhone" placeholder="+49 170 1234567"></div>
-            <div class="fgrp">
-              <label for="emergencyChannel">Benachrichtigungskanal</label>
-              <select class="finp" id="emergencyChannel">
-                <option value="sms">SMS</option>
-                <option value="call">Anruf</option>
-                <option value="whatsapp">WhatsApp</option>
-                <option value="all">Alle Kanäle</option>
-              </select>
+            <p>Notdienst, Notfall-Telefonnummer und Notfall-Stichworte pflegst du jetzt im Bereich <strong>Betrieb</strong>. Dort findest du auch Öffnungszeiten und Anrufverhalten.</p>
+            <div class="info-box" style="margin:0 0 20px;">
+              Damit gibt es nur noch eine Stelle, an der diese Angaben gepflegt werden.
             </div>
-            <div class="fgrp">
-              <label for="emergencyKeywords">Notfall-Keywords</label>
-              <input type="text" class="finp" id="emergencyKeywords" placeholder="Rohrbruch, Wasserschaden, Notfall, dringend">
-              <span style="font-size:11px;color:var(--tx3);margin-top:4px;display:block;">Komma-getrennte Schlüsselwörter. Wenn ein Anrufer diese nennt, wird sofort benachrichtigt.</span>
-            </div>
-            <div class="toggle-row">
-              <div class="toggle-left">
-                <strong>Notfall-Modus aktiv</strong>
-                <span>Erkennt Notfälle automatisch und leitet Benachrichtigungen weiter</span>
-              </div>
-              <div class="toggle-switch on" id="emergencyActive" data-key="emergency_active" onclick="toggleNotif(this)"></div>
-            </div>
-            <button class="btn-save" style="margin-top:16px;" onclick="SettingsExtra.saveEmergency()">Notfall-Einstellungen speichern</button>
-            <span class="err-msg" id="emergency-err"></span>
+            <a class="btn-save" style="display:inline-block;text-decoration:none;text-align:center;" href="dashboard.html#business">Zum Bereich Betrieb</a>
           </div>
         </div>
 
@@ -361,10 +338,10 @@ label{font-size:12px;font-weight:700;color:var(--tx3);letter-spacing:.04em;text-
             <h2>Kalender-Integration</h2>
             <p>Verbinde deinen Google Kalender, damit Lana Termine direkt buchen kann.</p>
             <div id="calendarStatus" class="info-box">📅 Kein Kalender verbunden.</div>
-            <button class="btn-save" id="btnConnectCalendar" onclick="SettingsExtra.connectCalendar()">
+            <button class="btn-save" id="btnConnectCalendar" disabled style="opacity:.5;cursor:not-allowed;" title="Google Kalender-Integration wird eingerichtet">
               <span style="display:inline-flex;align-items:center;gap:8px;">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M3 10h18"/><path d="M8 2v4M16 2v4"/></svg>
-                Google Kalender verbinden
+                Google Kalender verbinden (Demnächst verfügbar)
               </span>
             </button>
           </div>
@@ -423,15 +400,15 @@ label{font-size:12px;font-weight:700;color:var(--tx3);letter-spacing:.04em;text-
             <p>Aktiviere zusätzliche Funktionen für deine KI-Assistenten.</p>
             <div class="toggle-row">
               <div class="toggle-left">
-                <strong>WhatsApp-Integration</strong>
-                <span>Anrufzusammenfassungen und Termine per WhatsApp erhalten</span>
+                <strong>WhatsApp-Integration</strong> <span style="font-size:10px;background:rgba(124,58,237,.12);color:var(--pu);padding:2px 7px;border-radius:20px;font-weight:600;">Demnächst</span>
+                <span>Anrufzusammenfassungen und Termine per WhatsApp erhalten — noch nicht aktiv</span>
               </div>
               <div class="toggle-switch" id="addonWhatsapp" data-key="addon_whatsapp" onclick="toggleNotif(this)"></div>
             </div>
             <div class="toggle-row">
               <div class="toggle-left">
-                <strong>Outbound-Anrufe</strong>
-                <span>Lana ruft Kunden proaktiv zurück (Terminbestätigung, Follow-ups)</span>
+                <strong>Outbound-Anrufe</strong> <span style="font-size:10px;background:rgba(124,58,237,.12);color:var(--pu);padding:2px 7px;border-radius:20px;font-weight:600;">Demnächst</span>
+                <span>Lana ruft Kunden proaktiv zurück (Terminbestätigung, Follow-ups) — noch nicht aktiv</span>
               </div>
               <div class="toggle-switch" id="addonOutbound" data-key="addon_outbound" onclick="toggleNotif(this)"></div>
             </div>

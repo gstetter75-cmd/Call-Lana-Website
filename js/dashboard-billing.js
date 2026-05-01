@@ -51,55 +51,34 @@ async function confirmTopup() {
 
   const btn = document.getElementById('topupConfirmBtn');
   btn.disabled = true;
-  btn.textContent = 'Wird geprüft...';
+  btn.textContent = 'Weiterleitung zu Stripe…';
 
-  const user = await clanaAuth.getUser();
-  if (!user) { showToast('Nicht angemeldet.', true); btn.disabled = false; updateTopupButton(); return; }
-
-  // BILLING GATE: require an active payment method before allowing topup.
-  // Without this check any authenticated user could call atomic_balance_topup
-  // directly and credit their balance without a real payment.
-  // NOTE: a server-side Stripe charge must gate the RPC before going live.
   try {
-    const { data: pms, error: pmErr } = await supabaseClient
-      .from('payment_methods')
-      .select('id, status')
-      .eq('user_id', user.id)
-      .eq('status', 'active')
-      .limit(1);
+    // Create a Stripe Checkout Session and redirect.
+    // Balance is credited server-side by the stripe-webhook Edge Function
+    // ONLY after checkout.session.completed fires — never by the browser.
+    const { data, error } = await supabaseClient.functions.invoke('create-checkout-session', {
+      body: { mode: 'topup', amount_cents: amount }
+    });
 
-    if (pmErr) throw pmErr;
-    if (!pms || pms.length === 0) {
-      showToast('Bitte hinterlege zuerst eine Zahlungsmethode.', true);
+    if (error || !data?.url) {
+      const msg = (error?.message || data?.error || '');
+      if (msg.toLowerCase().includes('not configured') || msg.toLowerCase().includes('not set')) {
+        showToast('Stripe-Konfiguration erforderlich. Bitte STRIPE_SECRET_KEY in den Edge-Function-Secrets setzen.', true);
+      } else {
+        showToast('Fehler beim Erstellen der Zahlung: ' + (msg || 'Bitte versuche es erneut.'), true);
+      }
       btn.disabled = false;
       updateTopupButton();
       return;
     }
+
+    // Redirect to Stripe Checkout — balance is credited by the webhook on success.
+    window.location.href = data.url;
+
   } catch (err) {
-    Logger.error('confirmTopup.pmCheck', err);
-    showToast('Zahlungsmethode konnte nicht geprüft werden. Bitte versuche es erneut.', true);
-    btn.disabled = false;
-    updateTopupButton();
-    return;
-  }
-
-  btn.textContent = 'Wird aufgeladen...';
-
-  try {
-    // Atomic balance topup via PostgreSQL function (prevents race conditions)
-    const { data, error } = await supabaseClient.rpc('atomic_balance_topup', {
-      p_user_id: currentUser.id,
-      p_amount_cents: amount
-    });
-    if (error) throw error;
-
-    showToast('Guthaben aufgeladen: ' + formatCents(amount));
-    closeTopupModal();
-    await loadBillingData();
-  } catch (err) {
-    Logger.error('topupBalance', err);
-    showToast('Aufladung fehlgeschlagen. Bitte versuchen Sie es erneut.', true);
-  } finally {
+    Logger.error('confirmTopup', err);
+    showToast('Zahlungsverbindung fehlgeschlagen. Bitte versuche es erneut.', true);
     btn.disabled = false;
     updateTopupButton();
   }

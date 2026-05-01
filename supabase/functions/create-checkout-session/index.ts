@@ -1,13 +1,26 @@
 // Create Stripe Checkout Session — For top-ups and plan upgrades
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import Stripe from 'https://esm.sh/stripe@14?target=deno';
+import Stripe from 'https://esm.sh/stripe@17?target=denonext';
 
-const corsHeaders = {
-  'Access-Control-Allow-Origin': Deno.env.get('ALLOWED_ORIGIN') || '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
-};
+const ALLOWED_ORIGINS = [
+  'https://call-lana.de',
+  'http://localhost:3000',
+];
+
+function buildCorsHeaders(req: Request): Record<string, string> {
+  const origin = req.headers.get('Origin') ?? '';
+  const allowOrigin = ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  return {
+    'Access-Control-Allow-Origin': allowOrigin,
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+    'Vary': 'Origin',
+  };
+}
 
 Deno.serve(async (req) => {
+  const corsHeaders = buildCorsHeaders(req);
+
   if (req.method === 'OPTIONS') {
     return new Response('ok', { headers: corsHeaders });
   }
@@ -35,7 +48,10 @@ Deno.serve(async (req) => {
     if (authError || !user) throw new Error('Unauthorized');
 
     const { mode, amount_cents, plan, success_url, cancel_url } = await req.json();
-    const stripe = new Stripe(stripeKey, { apiVersion: '2023-10-16' });
+    const stripe = new Stripe(stripeKey, {
+      apiVersion: '2023-10-16',
+      httpClient: Stripe.createFetchHttpClient(),
+    });
 
     // Get or create Stripe customer
     const { data: sub } = await createClient(
@@ -72,8 +88,8 @@ Deno.serve(async (req) => {
           quantity: 1,
         }],
         metadata: { user_id: user.id, type: 'topup' },
-        success_url: success_url || `${Deno.env.get('ALLOWED_ORIGIN')}/dashboard.html?payment=success`,
-        cancel_url: cancel_url || `${Deno.env.get('ALLOWED_ORIGIN')}/dashboard.html?payment=cancelled`,
+        success_url: success_url || `${Deno.env.get('ALLOWED_ORIGIN') || 'https://call-lana.de'}/dashboard.html?payment=success`,
+        cancel_url: cancel_url || `${Deno.env.get('ALLOWED_ORIGIN') || 'https://call-lana.de'}/dashboard.html?payment=cancelled`,
       });
     } else if (mode === 'subscription') {
       // Plan upgrade/change
@@ -85,8 +101,8 @@ Deno.serve(async (req) => {
         mode: 'subscription',
         line_items: [{ price: priceId, quantity: 1 }],
         metadata: { user_id: user.id, plan: plan || 'starter' },
-        success_url: success_url || `${Deno.env.get('ALLOWED_ORIGIN')}/dashboard.html?payment=success&plan=${plan}`,
-        cancel_url: cancel_url || `${Deno.env.get('ALLOWED_ORIGIN')}/dashboard.html?payment=cancelled`,
+        success_url: success_url || `${Deno.env.get('ALLOWED_ORIGIN') || 'https://call-lana.de'}/dashboard.html?payment=success&plan=${plan}`,
+        cancel_url: cancel_url || `${Deno.env.get('ALLOWED_ORIGIN') || 'https://call-lana.de'}/dashboard.html?payment=cancelled`,
       });
     } else {
       throw new Error('Invalid mode. Use "topup" or "subscription".');

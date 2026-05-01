@@ -42,8 +42,21 @@ const Components = {
     if (emailEl) emailEl.textContent = profile?.email || '';
     if (avatarEl) avatarEl.textContent = AuthGuard.getInitials(profile);
 
-    // Highlight active page
+    // Rewrite bare-hash dashboard links (#home, #assistants, ...) to point at
+    // dashboard.html when the sidebar is loaded on a different shell page
+    // (settings.html, sales.html, admin.html). Without this, clicking "Home"
+    // on settings.html only changes the hash and traps the user on the page.
     const currentPage = location.pathname.split('/').pop().replace('.html', '') || 'dashboard';
+    if (currentPage !== 'dashboard') {
+      sidebar.querySelectorAll('.sb-item').forEach(item => {
+        const href = item.getAttribute('href') || '';
+        if (item.dataset.page && href.startsWith('#') && href.length > 1) {
+          item.setAttribute('href', 'dashboard.html' + href);
+        }
+      });
+    }
+
+    // Highlight active page
     const hash = location.hash.replace('#', '');
     sidebar.querySelectorAll('.sb-item').forEach(item => {
       const href = item.getAttribute('href') || '';

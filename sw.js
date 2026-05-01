@@ -3,7 +3,7 @@
 //   HTML + JS → Network-first (always get latest code, fallback to cache offline)
 //   CSS + Images + Fonts → Cache-first (static assets, fast loading)
 //   Supabase API → Skip (let browser handle)
-const CACHE_VERSION = 4; // bumped 2026-04-02 to force CSS cache invalidation
+const CACHE_VERSION = 6; // bumped 2026-04-17 — assistant editor, billing checkout, connector honesty patches
 const CACHE_NAME = 'calllana-v' + CACHE_VERSION;
 
 // Derive base path from SW scope (works on any deployment URL)

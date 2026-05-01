@@ -15,6 +15,20 @@ const AuthGuard = {
   },
 
   async init() {
+    // Optimistic reveal: if a non-expired session is already in storage, show
+    // the app shell immediately so navigation between protected pages does not
+    // sit on a blank dark `auth-pending` screen for the duration of getUser()'s
+    // network round trip. The full server-side validation still runs below; if
+    // it fails we sign out and redirect to login as before.
+    // Why: this only un-hides existing DOM — every Supabase query still
+    // requires a server-validated JWT, so no access boundary is moved.
+    try {
+      const { data: { session } } = await supabaseClient.auth.getSession();
+      if (session && (!session.expires_at || session.expires_at * 1000 > Date.now())) {
+        this._revealContent();
+      }
+    } catch (_) { /* fall through to full check */ }
+
     // Use getUser() for server-side token verification (not cached getSession)
     const user = await window.clanaAuth.getUser();
     if (!user) {

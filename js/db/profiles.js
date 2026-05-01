@@ -24,8 +24,18 @@ const dbProfiles = {
     try {
       const user = await auth.getUser();
       if (!user) throw new Error('Not authenticated');
-      if (user.id !== userId && user.user_metadata?.role !== 'superadmin') {
-        throw new Error('Unauthorized: can only update own profile');
+
+      if (user.id !== userId) {
+        // Cross-user update requires superadmin. Read the role from the profiles
+        // table only — never from user_metadata (privilege-escalation vector).
+        const { data: callerProfile, error: roleErr } = await supabaseClient
+          .from('profiles')
+          .select('role')
+          .eq('id', user.id)
+          .single();
+        if (roleErr || callerProfile?.role !== 'superadmin') {
+          throw new Error('Unauthorized: can only update own profile');
+        }
       }
 
       const { data, error } = await supabaseClient

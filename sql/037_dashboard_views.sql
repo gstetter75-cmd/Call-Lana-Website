@@ -61,8 +61,8 @@ CREATE OR REPLACE VIEW customer_minutes_usage AS
 SELECT
   p.id AS customer_id,
   p.email,
-  p.first_name,
-  p.last_name,
+  p.full_name,
+  p.company_name,
   s.plan,
   COALESCE(
     (SELECT ROUND(SUM(c.duration_seconds) / 60.0, 1)

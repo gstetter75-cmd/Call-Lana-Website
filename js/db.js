@@ -1,7 +1,8 @@
 // Database Helper Functions — Facade
 // Loads modules from js/db/*.js and combines into single clanaDB object
 // Depends on: js/db/calls.js, js/db/assistants.js, js/db/profiles.js,
-//             js/db/leads.js, js/db/messaging.js, js/db/customers.js, js/db/tools.js
+//             js/db/leads.js, js/db/messaging.js, js/db/customers.js, js/db/tools.js,
+//             js/db/business.js
 //             (loaded via script tags before this file)
 const db = Object.assign({},
   typeof dbCalls !== 'undefined' ? dbCalls : {},
@@ -10,7 +11,8 @@ const db = Object.assign({},
   typeof dbLeads !== 'undefined' ? dbLeads : {},
   typeof dbMessaging !== 'undefined' ? dbMessaging : {},
   typeof dbCustomers !== 'undefined' ? dbCustomers : {},
-  typeof dbTools !== 'undefined' ? dbTools : {}
+  typeof dbTools !== 'undefined' ? dbTools : {},
+  typeof dbBusiness !== 'undefined' ? dbBusiness : {}
 );
 
 // Utility Functions

@@ -249,9 +249,8 @@ BEGIN
       s.used_minutes,
       s.overage_minutes,
       p.organization_id,
-      p.first_name,
-      p.last_name,
-      p.company,
+      p.full_name,
+      p.company_name,
       p.email      AS profile_email,
       p.street     AS profile_street,
       p.zip        AS profile_zip,
@@ -286,13 +285,10 @@ BEGIN
       v_recipient_country := COALESCE(rec.org_country,  rec.profile_country, 'Deutschland');
       v_recipient_vat_id  := COALESCE(rec.org_vat_id,   rec.profile_vat_id);
     ELSE
-      v_recipient_name    := trim(
-                               COALESCE(rec.first_name, '') || ' ' ||
-                               COALESCE(rec.last_name,  '')
-                             );
+      v_recipient_name    := COALESCE(trim(rec.full_name), '');
       -- Fall back to company name if full name is blank
       IF v_recipient_name = '' THEN
-        v_recipient_name := COALESCE(rec.company, 'Unbekannt');
+        v_recipient_name := COALESCE(rec.company_name, 'Unbekannt');
       END IF;
       v_recipient_street  := rec.profile_street;
       v_recipient_zip     := rec.profile_zip;

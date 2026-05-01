@@ -53,6 +53,21 @@ body:has(#impersonation-banner) .content{margin-top:36px;}
 .auth-pending .content { visibility: hidden; }
 .auth-pending .sidebar { visibility: hidden; }
 .auth-pending .topbar { visibility: hidden; }
+
+/* Reserve the sidebar gutter while components/sidebar.html is still being
+   fetched, so revealing the page does not trigger a 240px horizontal content
+   shift when the sidebar HTML finally injects. The :empty selector stops
+   matching once the <aside> child is present, so this only affects the brief
+   pre-injection window. Mobile sidebar is position:fixed and overlays the
+   content, so it does not need a reserved gutter. */
+@media (min-width: 769px) {
+  #sidebar-container:empty {
+    width: var(--sidebar-w);
+    flex-shrink: 0;
+    background: var(--sidebar);
+    border-right: 1px solid var(--border);
+  }
+}
 html { height: 100%; }
 body {
   font-family: 'Manrope', sans-serif;

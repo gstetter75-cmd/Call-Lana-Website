@@ -20,11 +20,6 @@ body{display:flex;overflow:hidden;}
 </style>
 </head>
 <body class="auth-pending">
-<!-- ===== TEMPORARY DEBUG MARKER — REMOVE AFTER VERIFICATION ===== -->
-<div id="debug-marker" style="position:fixed;top:0;left:0;right:0;z-index:99999;background:#FF0000;color:#FFFFFF;font-family:monospace;font-size:15px;font-weight:bold;text-align:center;padding:8px 20px;letter-spacing:0.05em;box-shadow:0 4px 20px rgba(0,0,0,0.5);">
-  ⚠️ LOCAL TEST BUILD — dashboard.html AKTIV — 2026-04-02 ⚠️
-</div>
-<!-- ===== END DEBUG MARKER ===== -->
 <a href="#main" class="skip-link">Zum Inhalt springen</a>
 
 <div class="sidebar-overlay" id="sidebarOverlay"></div>
@@ -104,7 +99,7 @@ body{display:flex;overflow:hidden;}
             </svg>
             <div class="donut-center" id="donutCenter">0 €</div>
           </div>
-          <button class="btn-balance" onclick="showToast('Zahlungsanbindung wird bald verfügbar sein.')">Guthaben kaufen</button>
+          <button class="btn-balance" onclick="navigateToPage('billing')">Guthaben kaufen</button>
         </div>
       </div>
 
@@ -157,6 +152,201 @@ body{display:flex;overflow:hidden;}
       </div>
     </div>
 
+    <!-- ===================== BETRIEB ===================== -->
+    <div id="page-business" class="page-section">
+      <div class="page-title-row">
+        <h1>Betrieb</h1>
+      </div>
+      <p class="page-desc">Strukturierte Angaben zu deinem Handwerksbetrieb.</p>
+
+      <div class="info-box" style="margin-bottom:20px;">
+        Diese Angaben helfen uns, deinen Assistenten passend einzurichten. Änderungen werden nicht automatisch live übernommen.
+      </div>
+
+      <!-- A. STAMMDATEN -->
+      <div class="card" style="padding:20px 24px;margin-bottom:20px;">
+        <h2 style="margin:0 0 16px;font-size:16px;">Stammdaten</h2>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Firmenname</label>
+            <input type="text" class="form-input" id="bizCompany" disabled tabindex="-1" style="background:var(--bg3);opacity:.75;cursor:not-allowed;">
+            <div class="form-hint">In den <a href="settings.html" style="color:var(--pu3);">Einstellungen</a> ändern.</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Gewerk *</label>
+            <select class="form-select" id="bizTrade">
+              <option value="">Bitte auswählen…</option>
+              <option value="heizung_sanitaer">Heizung / Sanitär / Klempnerei</option>
+              <option value="elektrotechnik">Elektrotechnik</option>
+              <option value="dachdecker">Dachdeckerei</option>
+              <option value="maler_lackierer">Maler / Lackierer</option>
+              <option value="fliesenleger">Fliesen-, Platten- und Mosaikleger</option>
+              <option value="schreiner_tischler">Schreinerei / Tischlerei</option>
+              <option value="bauunternehmen">Bauunternehmen / Hoch- &amp; Tiefbau</option>
+              <option value="garten_landschaft">Garten- und Landschaftsbau</option>
+              <option value="schluesseldienst">Schlüsseldienst</option>
+              <option value="klimatechnik">Kälte- / Klimatechnik</option>
+              <option value="bodenleger">Bodenleger / Parkett</option>
+              <option value="trockenbau">Trockenbau / Stuckateur</option>
+              <option value="geruestbau">Gerüstbau</option>
+              <option value="schaedlingsbekaempfung">Schädlingsbekämpfung</option>
+              <option value="reinigung">Gebäudereinigung</option>
+              <option value="sonstiges">Sonstiges</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Ansprechpartner *</label>
+            <input type="text" class="form-input" id="bizContactName" placeholder="Vor- und Nachname">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Telefonnummer Ansprechpartner *</label>
+            <input type="tel" class="form-input" id="bizContactPhone" placeholder="+49 170 1234567">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Website</label>
+          <input type="url" class="form-input" id="bizWebsite" placeholder="https://…">
+          <div class="form-hint">Optional.</div>
+        </div>
+      </div>
+
+      <!-- B. LEISTUNGEN & EINSATZGEBIET -->
+      <div class="card" style="padding:20px 24px;margin-bottom:20px;">
+        <h2 style="margin:0 0 16px;font-size:16px;">Leistungen &amp; Einsatzgebiet</h2>
+
+        <div class="form-group">
+          <label class="form-label">Leistungen *</label>
+          <div class="form-hint" style="margin-bottom:10px;">Wähle, welche Arten von Aufträgen du übernimmst. Mindestens eine auswählen, oder unten unter „Sonstige Leistungen" ergänzen.</div>
+          <div id="bizServices" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;">
+            <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;cursor:pointer;font-size:13px;"><input type="checkbox" value="reparatur">Reparatur</label>
+            <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;cursor:pointer;font-size:13px;"><input type="checkbox" value="wartung">Wartung</label>
+            <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;cursor:pointer;font-size:13px;"><input type="checkbox" value="notdienst">Notdienst</label>
+            <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;cursor:pointer;font-size:13px;"><input type="checkbox" value="neuinstallation">Neuinstallation / Neubau</label>
+            <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;cursor:pointer;font-size:13px;"><input type="checkbox" value="sanierung">Sanierung / Renovierung</label>
+            <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;cursor:pointer;font-size:13px;"><input type="checkbox" value="beratung">Beratung / Aufmaß</label>
+            <label style="display:flex;align-items:center;gap:10px;padding:10px 12px;border:1px solid var(--border);border-radius:10px;cursor:pointer;font-size:13px;"><input type="checkbox" value="inspektion">Inspektion / Prüfung</label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Sonstige Leistungen</label>
+          <input type="text" class="form-input" id="bizServicesCustom" placeholder="z.B. Smart-Home-Installation, Gerätemontage">
+          <div class="form-hint">Optional. Freitext für Leistungen, die oben nicht aufgelistet sind.</div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Einsatzgebiet (PLZ-Bereiche)</label>
+            <input type="text" class="form-input" id="bizAreaZips" placeholder="z.B. 80331, 80333, 80335">
+            <div class="form-hint">Komma-getrennt, jeweils 5 Ziffern.</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Einsatzgebiet (Region/Stadt)</label>
+            <input type="text" class="form-input" id="bizAreaText" placeholder="z.B. München und Umgebung (50 km)">
+            <div class="form-hint">Optional, falls keine PLZ-Liste passt.</div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Neukunden annehmen *</label>
+          <div style="display:flex;gap:18px;flex-wrap:wrap;margin-top:6px;font-size:13px;">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="radio" name="bizAccepts" value="yes"> Ja</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="radio" name="bizAccepts" value="peak_only"> Nur in Stoßzeiten</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="radio" name="bizAccepts" value="no"> Nein, derzeit voll</label>
+          </div>
+        </div>
+      </div>
+
+      <!-- C. NOTFALL -->
+      <div class="card" style="padding:20px 24px;margin-bottom:20px;">
+        <h2 style="margin:0 0 6px;font-size:16px;">Notfall</h2>
+        <div class="form-hint" style="margin-bottom:14px;">Diese Angaben helfen uns, dringende Fälle richtig zu behandeln.</div>
+
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-title">Notdienst aktiv</div>
+            <div class="toggle-desc">Speichert deine Notfall-Konfiguration. Die Live-Aktivierung übernimmt unser Support.</div>
+          </div>
+          <label class="toggle"><input type="checkbox" id="bizEmergencyActive"><span class="toggle-slider"></span></label>
+        </div>
+
+        <div class="form-row" style="margin-top:8px;">
+          <div class="form-group">
+            <label class="form-label">Notfall-Telefonnummer</label>
+            <input type="tel" class="form-input" id="bizEmergencyPhone" placeholder="+49 170 1234567">
+            <div class="form-hint">An diese Nummer leitet Lana erkannte Notfälle weiter.</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Notfall-Stichworte</label>
+            <input type="text" class="form-input" id="bizEmergencyKeywords" placeholder="z.B. Wasserrohrbruch, kein Strom, Heizungsausfall">
+            <div class="form-hint">Komma-getrennt. Lana erkennt diese Begriffe als Notfall.</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- D. ÖFFNUNGSZEITEN -->
+      <div class="card" style="padding:20px 24px;margin-bottom:20px;">
+        <h2 style="margin:0 0 6px;font-size:16px;">Öffnungszeiten</h2>
+        <div class="form-hint" style="margin-bottom:14px;">Wann ist dein Betrieb regulär erreichbar? Außerhalb dieser Zeiten nimmt Lana den Anruf trotzdem entgegen.</div>
+
+        <div id="bizHoursTable" style="display:flex;flex-direction:column;gap:8px;"></div>
+      </div>
+
+      <!-- E. ANRUFVERHALTEN -->
+      <div class="card" style="padding:20px 24px;margin-bottom:20px;">
+        <h2 style="margin:0 0 16px;font-size:16px;">Anrufverhalten</h2>
+
+        <div class="form-group">
+          <label class="form-label">Termin direkt vereinbaren?</label>
+          <div style="display:flex;gap:18px;flex-wrap:wrap;margin-top:6px;font-size:13px;">
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="radio" name="bizBooking" value="direct"> Ja, direkt buchen</label>
+            <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="radio" name="bizBooking" value="callback"> Nein, Rückruf vereinbaren</label>
+          </div>
+          <div class="form-hint">Im Rückruf-Modus nimmt Lana die Anfrage auf und plant einen Rückruf ein.</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Standard-Rückrufzeit</label>
+          <select class="form-select" id="bizCallbackWindow">
+            <option value="today">Noch heute</option>
+            <option value="24h">Innerhalb von 24 Stunden</option>
+            <option value="48h">Innerhalb von 48 Stunden</option>
+          </select>
+          <div class="form-hint">Greift nur, wenn „Rückruf vereinbaren" gewählt ist.</div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Was Lana nicht annehmen soll</label>
+          <textarea class="form-textarea" id="bizDoNotHandle" rows="3" placeholder="z. B. keine Gasinstallationen, keine Versicherungsfälle"></textarea>
+          <div class="form-hint">Optional. Hilft uns, klare Grenzen für deinen Assistenten festzulegen.</div>
+        </div>
+      </div>
+
+      <!-- F. ASSISTENTEN-BRIEFING (read-only summary for support) -->
+      <div class="card" style="padding:20px 24px;margin-bottom:20px;">
+        <h2 style="margin:0 0 6px;font-size:16px;">Assistenten-Briefing</h2>
+        <div class="form-hint" style="margin-bottom:14px;">Automatisch aus deinen Betriebsdaten erzeugt. Hilft unserem Team, deinen Assistenten passend einzurichten. Wird nicht automatisch in den Live-Assistenten übernommen.</div>
+
+        <textarea class="form-textarea" id="bizBriefing" rows="14" readonly aria-label="Assistenten-Briefing" style="font-family:'SFMono-Regular','Consolas','Courier New',monospace;font-size:12.5px;line-height:1.55;background:var(--bg3);"></textarea>
+
+        <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:12px;">
+          <button class="btn-secondary" id="btnCopyBriefing" type="button">Briefing kopieren</button>
+          <span id="bizCopyStatus" class="form-hint" style="margin:0;"></span>
+        </div>
+      </div>
+
+      <!-- SAVE -->
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+        <button class="btn-primary" id="btnSaveBusiness">Betriebsdaten speichern</button>
+        <span id="bizErr" style="color:var(--red);font-size:13px;"></span>
+      </div>
+    </div>
+
     <!-- ===================== ASSISTANTS ===================== -->
     <div id="page-assistants" class="page-section">
       <div class="page-title-row">
@@ -180,72 +370,66 @@ body{display:flex;overflow:hidden;}
       </div>
       <p class="page-desc" id="editDesc">Konfiguriere deinen Assistenten.</p>
 
+      <div class="info-box" style="margin-bottom:20px;">
+        <strong>Hinweis:</strong> Änderungen werden gespeichert. Die Live-Telefonannahme wird nicht automatisch aus dem Dashboard gesteuert — die Aktivierung und Aktualisierung deines Assistenten übernimmt unser Support. Bei Fragen: <a href="mailto:info@call-lana.de" style="color:var(--pu3);">info@call-lana.de</a>.
+      </div>
+
       <!-- TABS -->
       <div class="editor-tabs">
         <button class="editor-tab active" data-tab="tab-behavior">Verhalten</button>
-        <button class="editor-tab" data-tab="tab-technical">Technisches</button>
-        <button class="editor-tab" data-tab="tab-tools">Tools</button>
         <button class="editor-tab" data-tab="tab-postprocess">Nachverarbeitung</button>
-        <button class="editor-tab" data-tab="tab-outbound">Outbound</button>
       </div>
 
       <!-- TAB: Verhalten -->
       <div class="editor-panel active" id="tab-behavior">
-        <div class="form-group">
-          <label class="form-label">Name</label>
-          <input type="text" class="form-input" id="edName" placeholder="z.B. Lana Empfang">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Name</label>
+            <input type="text" class="form-input" id="edName" placeholder="z.B. Lana Empfang">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Telefonnummer</label>
+            <input type="text" class="form-input" id="edPhoneNumber" placeholder="Wird vom Support eingetragen" readonly tabindex="-1" style="background:var(--bg3);opacity:.75;cursor:not-allowed;">
+            <div class="form-hint">Die Rufnummer wird von unserem Support zugewiesen und hier angezeigt. Änderungen sind nur über den Support möglich.</div>
+          </div>
         </div>
         <div class="form-row">
           <div class="form-group">
             <label class="form-label">Stimme</label>
-            <select class="form-select" id="edVoice">
-              <option value="Marie">Marie</option>
-              <option value="Hans">Hans</option>
-              <option value="Lena">Lena</option>
-              <option value="Stefan">Stefan</option>
-              <option value="Anna">Anna</option>
+            <select class="form-select" id="edVoice" disabled aria-disabled="true" style="background:var(--bg3);opacity:.75;cursor:not-allowed;">
+              <option value="Marie">Marie (weiblich, Deutsch)</option>
             </select>
+            <div class="form-hint">Aktuell ist eine Stimme verfügbar.</div>
           </div>
           <div class="form-group">
             <label class="form-label">Sprache</label>
-            <select class="form-select" id="edLang">
+            <select class="form-select" id="edLang" disabled aria-disabled="true" style="background:var(--bg3);opacity:.75;cursor:not-allowed;">
               <option value="de">Deutsch</option>
-              <option value="en">Englisch</option>
-              <option value="fr">Französisch</option>
-              <option value="es">Spanisch</option>
-              <option value="it">Italienisch</option>
             </select>
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Startnachricht</label>
-          <textarea class="form-textarea" id="edGreeting" placeholder="Hallo, hier ist Lana von [Firma]. Wie kann ich Ihnen helfen?"></textarea>
-          <div class="form-hint">Diese Nachricht wird beim Gesprächsbeginn abgespielt.</div>
-        </div>
-      </div>
-
-      <!-- TAB: Technisches -->
-      <div class="editor-panel" id="tab-technical">
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label">Modell</label>
-            <select class="form-select" id="edModel">
-              <option value="gpt-4">GPT-4</option>
-              <option value="gpt-4o">GPT-4o</option>
-              <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
-              <option value="claude-sonnet">Claude Sonnet</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="form-label">Temperatur</label>
-            <input type="number" class="form-input" id="edTemp" min="0" max="2" step="0.1" value="0.7">
-            <div class="form-hint">0 = präzise, 1 = kreativ, 2 = sehr kreativ</div>
+            <div class="form-hint">Lana spricht aktuell ausschließlich Deutsch.</div>
           </div>
         </div>
         <div class="form-group">
           <label class="form-label">Max. Gesprächsdauer (Sekunden)</label>
           <input type="number" class="form-input" id="edMaxDuration" min="30" max="3600" step="30" value="300">
-          <div class="form-hint">Maximale Dauer eines Gesprächs in Sekunden.</div>
+          <div class="form-hint">Maximale Dauer eines einzelnen Gesprächs in Sekunden.</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Startnachricht</label>
+          <textarea class="form-textarea" id="edGreeting" placeholder="Hallo, hier ist Lana von [Firma]. Wie kann ich Ihnen helfen?"></textarea>
+          <div class="form-hint">Die erste Nachricht, die Lana beim Gesprächsbeginn spricht.</div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">System-Prompt (KI-Anweisungen)</label>
+          <textarea class="form-textarea" id="edSystemPrompt" rows="6" placeholder="Du bist Lana, eine freundliche KI-Telefonassistentin für [Firmenname]. Deine Aufgabe ist es, Anrufe professionell entgegenzunehmen, Termine zu vereinbaren und Fragen zu beantworten. Antworte immer auf Deutsch, kurz und präzise."></textarea>
+          <div class="form-hint">Interne Anweisungen für die Einrichtung. Änderungen werden gespeichert, aber erst nach Übernahme durch unser Team im Live-Betrieb berücksichtigt.</div>
+        </div>
+        <div class="toggle-row" style="margin-top:8px;">
+          <div class="toggle-info">
+            <div class="toggle-title">Status</div>
+            <div class="toggle-desc">Der Status wird von unserem Support gesetzt, sobald dein Assistent für den Live-Betrieb eingerichtet ist. Änderungen sind nur über den Support möglich.</div>
+          </div>
+          <span class="status-badge voicemail" id="edStatusDisplay">Inaktiv</span>
         </div>
       </div>
 
@@ -255,6 +439,7 @@ body{display:flex;overflow:hidden;}
           <div class="toggle-info">
             <div class="toggle-title">Kalender-Integration</div>
             <div class="toggle-desc">Termine direkt im Gespräch buchen und prüfen.</div>
+            <div class="form-hint" style="margin-top:4px;">Erfordert verbundenen Kalender in den Einstellungen (noch nicht verfügbar).</div>
           </div>
           <label class="toggle"><input type="checkbox" id="edToolCalendar"><span class="toggle-slider"></span></label>
         </div>
@@ -269,6 +454,7 @@ body{display:flex;overflow:hidden;}
           <div class="toggle-info">
             <div class="toggle-title">E-Mail versenden</div>
             <div class="toggle-desc">Bestätigungen und Zusammenfassungen per E-Mail senden.</div>
+            <div class="form-hint" style="margin-top:4px;">Erfordert konfigurierte E-Mail-Integration in den Einstellungen (noch nicht verfügbar).</div>
           </div>
           <label class="toggle"><input type="checkbox" id="edToolEmail"><span class="toggle-slider"></span></label>
         </div>
@@ -294,6 +480,7 @@ body{display:flex;overflow:hidden;}
           <div class="toggle-info">
             <div class="toggle-title">Transkript per E-Mail</div>
             <div class="toggle-desc">Das vollständige Gesprächs-Transkript per E-Mail erhalten.</div>
+            <div class="form-hint" style="margin-top:4px;">Erfordert aktive E-Mail-Integration (noch nicht verfügbar). Einstellung wird gespeichert.</div>
           </div>
           <label class="toggle"><input type="checkbox" id="edPostTranscript"><span class="toggle-slider"></span></label>
         </div>
@@ -308,6 +495,7 @@ body{display:flex;overflow:hidden;}
 
       <!-- TAB: Outbound -->
       <div class="editor-panel" id="tab-outbound">
+        <div class="info-box" style="margin-bottom:16px;">Outbound-Anrufe sind noch nicht aktiv. Einstellungen können gespeichert werden und werden aktiviert, sobald diese Funktion bereitsteht.</div>
         <div class="toggle-row">
           <div class="toggle-info">
             <div class="toggle-title">Outbound-Anrufe aktivieren</div>
@@ -378,7 +566,7 @@ body{display:flex;overflow:hidden;}
             <div style="flex:1;">
               <div style="font-weight:700;font-size:14px;margin-bottom:4px;">Neue Nummer beantragen</div>
               <p style="font-size:13px;color:var(--tx3);margin:0 0 10px;">Wir richten dir eine eigene Rufnummer ein — du musst nichts weiterleiten.</p>
-              <a href="mailto:support@calllana.de?subject=Neue%20Rufnummer%20beantragen&body=Hallo%2C%20ich%20m%C3%B6chte%20eine%20neue%20Rufnummer%20f%C3%BCr%20meinen%20Call%20Lana%20Account%20beantragen." class="btn-primary" style="display:inline-block;font-size:13px;padding:9px 18px;text-decoration:none;">Nummer beantragen</a>
+              <a href="mailto:info@call-lana.de?subject=Neue%20Rufnummer%20beantragen&body=Hallo%2C%20ich%20m%C3%B6chte%20eine%20neue%20Rufnummer%20f%C3%BCr%20meinen%20Call%20Lana%20Account%20beantragen." class="btn-primary" style="display:inline-block;font-size:13px;padding:9px 18px;text-decoration:none;">Nummer beantragen</a>
             </div>
           </div>
           <!-- Option 2 -->
@@ -392,7 +580,7 @@ body{display:flex;overflow:hidden;}
                 <li>Bei Besetzt → an Lana-Nummer weiterleiten</li>
                 <li>Lana-Nummer bekommst du per E-Mail nach deiner Anfrage</li>
               </ol>
-              <a href="mailto:support@calllana.de?subject=Weiterleitung%20einrichten&body=Hallo%2C%20ich%20m%C3%B6chte%20meine%20bestehende%20Nummer%20zu%20Call%20Lana%20weiterleiten." class="btn-secondary" style="display:inline-block;font-size:13px;padding:9px 18px;text-decoration:none;">Support kontaktieren</a>
+              <a href="mailto:info@call-lana.de?subject=Weiterleitung%20einrichten&body=Hallo%2C%20ich%20m%C3%B6chte%20meine%20bestehende%20Nummer%20zu%20Call%20Lana%20weiterleiten." class="btn-secondary" style="display:inline-block;font-size:13px;padding:9px 18px;text-decoration:none;">Support kontaktieren</a>
             </div>
           </div>
           <!-- Option 3 -->
@@ -401,7 +589,7 @@ body{display:flex;overflow:hidden;}
             <div style="flex:1;">
               <div style="font-weight:700;font-size:14px;margin-bottom:4px;">Fragen? Wir helfen dir.</div>
               <p style="font-size:13px;color:var(--tx3);margin:0 0 10px;">Unsicher welche Option passt? Schreib uns kurz — wir melden uns innerhalb von 24 Stunden.</p>
-              <a href="mailto:support@calllana.de" class="btn-secondary" style="display:inline-block;font-size:13px;padding:9px 18px;text-decoration:none;">support@calllana.de</a>
+              <a href="mailto:info@call-lana.de" class="btn-secondary" style="display:inline-block;font-size:13px;padding:9px 18px;text-decoration:none;">info@call-lana.de</a>
             </div>
           </div>
         </div>
@@ -550,8 +738,7 @@ body{display:flex;overflow:hidden;}
           <div class="balance-label">Aktuelles Guthaben</div>
           <div class="balance-value-big" id="balanceValue">–</div>
           <div class="balance-sub" id="balanceSub">Lade…</div>
-          <button class="btn-primary" style="margin-top:16px;opacity:.6;cursor:not-allowed;" disabled title="Zahlungsanbindung wird eingerichtet">Guthaben aufladen</button>
-          <p style="font-size:11px;color:var(--tx3);margin-top:8px;">Zahlungsabwicklung wird eingerichtet — in Kürze verfügbar.</p>
+          <button class="btn-primary" style="margin-top:16px;" onclick="openTopupModal()">Guthaben aufladen</button>
         </div>
 
         <!-- Plan Minutes Usage -->
@@ -719,23 +906,42 @@ body{display:flex;overflow:hidden;}
           <button class="modal-close" onclick="closeTopupModal()">&times;</button>
         </div>
         <div class="modal-body">
-          <div style="text-align:center;padding:24px 16px;">
-            <div style="font-size:40px;margin-bottom:16px;">🔧</div>
-            <h3 style="margin:0 0 8px;font-size:16px;font-weight:700;">Zahlungsabwicklung wird eingerichtet</h3>
-            <p style="font-size:13px;color:var(--tx3);margin:0 0 20px;line-height:1.6;">Die Anbindung an den Zahlungsanbieter ist in Arbeit.<br>Du wirst benachrichtigt, sobald Aufladungen verfügbar sind.</p>
-            <a href="mailto:support@calllana.de?subject=Guthaben%20aufladen" style="display:inline-block;font-size:13px;padding:10px 20px;background:var(--pu);color:#fff;border-radius:10px;text-decoration:none;font-weight:600;">Vorab anfragen</a>
+          <p style="font-size:13px;color:var(--tx3);margin:0 0 16px;line-height:1.6;">Wähle einen Betrag oder gib einen eigenen ein. Die Zahlung erfolgt sicher über Stripe.</p>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;">
+            <button type="button" class="topup-btn" data-amount="1000" onclick="selectTopup(this)" style="padding:12px 8px;border:1px solid var(--border);background:var(--bg3);color:var(--tx);border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;transition:background .15s,border-color .15s,color .15s;">10 €</button>
+            <button type="button" class="topup-btn" data-amount="2500" onclick="selectTopup(this)" style="padding:12px 8px;border:1px solid var(--border);background:var(--bg3);color:var(--tx);border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;transition:background .15s,border-color .15s,color .15s;">25 €</button>
+            <button type="button" class="topup-btn active" data-amount="5000" onclick="selectTopup(this)" style="padding:12px 8px;border:1px solid var(--border);background:var(--bg3);color:var(--tx);border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;transition:background .15s,border-color .15s,color .15s;">50 €</button>
+            <button type="button" class="topup-btn" data-amount="10000" onclick="selectTopup(this)" style="padding:12px 8px;border:1px solid var(--border);background:var(--bg3);color:var(--tx);border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;transition:background .15s,border-color .15s,color .15s;">100 €</button>
+            <button type="button" class="topup-btn" data-amount="20000" onclick="selectTopup(this)" style="padding:12px 8px;border:1px solid var(--border);background:var(--bg3);color:var(--tx);border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;transition:background .15s,border-color .15s,color .15s;">200 €</button>
+            <button type="button" class="topup-btn" data-amount="50000" onclick="selectTopup(this)" style="padding:12px 8px;border:1px solid var(--border);background:var(--bg3);color:var(--tx);border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;transition:background .15s,border-color .15s,color .15s;">500 €</button>
           </div>
+          <label style="display:block;font-size:12px;font-weight:600;color:var(--tx3);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em;">Eigener Betrag (€)</label>
+          <input type="number" id="customTopup" min="5" max="1000" step="1" placeholder="z. B. 75" style="width:100%;padding:12px 14px;border:1px solid var(--border);background:var(--bg3);color:var(--tx);border-radius:10px;font-size:14px;box-sizing:border-box;">
+          <p style="font-size:12px;color:var(--tx3);margin:10px 0 0;line-height:1.5;">Mindestbetrag: 5,00 € · Maximalbetrag: 1.000,00 €</p>
         </div>
         <div class="modal-footer">
-          <button class="btn-secondary" onclick="closeTopupModal()">Schließen</button>
+          <button class="btn-secondary" onclick="closeTopupModal()">Abbrechen</button>
+          <button class="btn-primary" id="topupConfirmBtn" onclick="confirmTopup()">50,00 € aufladen</button>
         </div>
       </div>
     </div>
+
+    <style>
+      .topup-btn.active { background: var(--pu) !important; border-color: var(--pu) !important; color: #fff !important; }
+      .topup-btn:hover:not(.active) { border-color: var(--pu); color: var(--tx); }
+      #customTopup:focus { outline: none; border-color: var(--pu); }
+    </style>
 
     <!-- ===================== PAYMENT METHODS ===================== -->
     <div id="page-payment" class="page-section">
       <h1>Zahlungsmethoden</h1>
       <p class="page-desc">Hinterlege eine primäre und eine Ersatz-Zahlungsmethode. Falls die erste fehlschlägt, wird automatisch die zweite verwendet.</p>
+
+      <!-- Billing status notice -->
+      <div style="background:rgba(251,146,60,.08);border:1px solid rgba(251,146,60,.25);border-radius:12px;padding:14px 18px;margin-bottom:24px;font-size:13px;color:var(--tx2);line-height:1.6;">
+        <strong style="color:var(--orange);">Zahlungsabwicklung wird eingerichtet.</strong>
+        Das Hinterlegen und Ändern von Zahlungsmethoden ist derzeit noch nicht möglich. Die Funktion wird aktiviert, sobald die Zahlungsanbindung abgeschlossen ist.
+      </div>
 
       <!-- Primary Payment Method -->
       <div class="data-section" style="margin-bottom:20px;">
@@ -748,7 +954,7 @@ body{display:flex;overflow:hidden;}
             <div class="icon">💳</div>
             <h3>Keine primäre Zahlungsmethode</h3>
             <p>Hinterlege eine Zahlungsmethode, um Call Lana nutzen zu können.</p>
-            <button class="btn-primary" style="margin-top:16px;font-size:13px;padding:10px 20px;" onclick="openPaymentModal(1)">+ Zahlungsmethode hinzufügen</button>
+            <button class="btn-primary" style="margin-top:16px;font-size:13px;padding:10px 20px;opacity:.5;cursor:not-allowed;" disabled>Demnächst verfügbar</button>
           </div>
           <div id="pm1Card" style="display:none;">
             <div style="display:flex;align-items:center;justify-content:space-between;">
@@ -760,7 +966,7 @@ body{display:flex;overflow:hidden;}
                 <div style="font-size:12px;color:var(--tx3);margin-top:4px;" id="pm1Detail">–</div>
               </div>
               <div style="display:flex;gap:8px;">
-                <button class="btn-secondary" style="font-size:12px;padding:8px 14px;" onclick="openPaymentModal(1)">Ändern</button>
+                <button class="btn-secondary" style="font-size:12px;padding:8px 14px;opacity:.5;cursor:not-allowed;" disabled title="Noch nicht aktiv">Ändern</button>
                 <button class="btn-danger" style="font-size:12px;padding:8px 14px;" onclick="removePaymentMethod(1)">Entfernen</button>
               </div>
             </div>
@@ -779,7 +985,7 @@ body{display:flex;overflow:hidden;}
             <div class="icon">🔄</div>
             <h3>Keine Ersatz-Zahlungsmethode</h3>
             <p>Falls die primäre Zahlungsmethode fehlschlägt, wird die Ersatz-Methode belastet.</p>
-            <button class="btn-secondary" style="margin-top:16px;font-size:13px;padding:10px 20px;" onclick="openPaymentModal(2)">+ Ersatz hinzufügen</button>
+            <button class="btn-secondary" style="margin-top:16px;font-size:13px;padding:10px 20px;opacity:.5;cursor:not-allowed;" disabled>Demnächst verfügbar</button>
           </div>
           <div id="pm2Card" style="display:none;">
             <div style="display:flex;align-items:center;justify-content:space-between;">
@@ -791,7 +997,7 @@ body{display:flex;overflow:hidden;}
                 <div style="font-size:12px;color:var(--tx3);margin-top:4px;" id="pm2Detail">–</div>
               </div>
               <div style="display:flex;gap:8px;">
-                <button class="btn-secondary" style="font-size:12px;padding:8px 14px;" onclick="openPaymentModal(2)">Ändern</button>
+                <button class="btn-secondary" style="font-size:12px;padding:8px 14px;opacity:.5;cursor:not-allowed;" disabled title="Noch nicht aktiv">Ändern</button>
                 <button class="btn-danger" style="font-size:12px;padding:8px 14px;" onclick="removePaymentMethod(2)">Entfernen</button>
               </div>
             </div>
@@ -805,103 +1011,37 @@ body{display:flex;overflow:hidden;}
       </div>
     </div>
 
-    <!-- Payment Method Modal -->
+    <!-- Payment Method Modal — informational state until Stripe backend is live -->
+    <!-- Hidden inputs kept so existing JS event listeners (IBAN/card formatters) don't throw -->
     <div class="modal-overlay" id="paymentModal" style="display:none;">
-      <div class="modal" style="max-width:520px;">
+      <div class="modal" style="max-width:480px;">
         <div class="modal-header">
           <h2 id="pmModalTitle">Zahlungsmethode hinzufügen</h2>
           <button class="modal-close" onclick="closePaymentModal()">&times;</button>
         </div>
         <div class="modal-body">
-          <!-- Payment Type Selector -->
-          <div style="display:flex;gap:10px;margin-bottom:24px;">
-            <button class="pm-type-btn active" data-type="sepa" onclick="selectPaymentType('sepa')">
-              <span>🏦</span> SEPA-Lastschrift
-            </button>
-            <button class="pm-type-btn" data-type="credit_card" onclick="selectPaymentType('credit_card')">
-              <span>💳</span> Kreditkarte
-            </button>
-            <button class="pm-type-btn" data-type="paypal" disabled style="opacity:0.4;cursor:not-allowed;" title="Demnächst verfügbar">
-              <span>🅿️</span> PayPal <span style="font-size:9px;color:var(--tx3);">(bald)</span>
-            </button>
+          <div style="text-align:center;padding:24px 16px;">
+            <div style="font-size:40px;margin-bottom:16px;">🔧</div>
+            <h3 style="margin:0 0 8px;font-size:16px;font-weight:700;">Zahlungsmethoden noch nicht aktiv</h3>
+            <p style="font-size:13px;color:var(--tx3);margin:0 0 20px;line-height:1.6;">
+              Die Anbindung an den Zahlungsanbieter wird derzeit eingerichtet.<br>
+              Das Hinterlegen von Zahlungsmethoden ist noch nicht möglich.
+            </p>
+            <a href="mailto:info@call-lana.de?subject=Zahlungsmethode" style="display:inline-block;font-size:13px;padding:10px 20px;background:var(--pu);color:#fff;border-radius:10px;text-decoration:none;font-weight:600;">Fragen? Kontakt aufnehmen</a>
           </div>
-
-          <!-- SEPA Form -->
-          <div id="formSepa">
-            <div class="form-group">
-              <label class="form-label">Kontoinhaber</label>
-              <input type="text" class="form-input" id="sepaHolder" placeholder="Max Mustermann" autocomplete="name">
-            </div>
-            <div class="form-group">
-              <label class="form-label">IBAN</label>
-              <input type="text" class="form-input" id="sepaIban" placeholder="DE89 3704 0044 0532 0130 00" autocomplete="off" style="font-family:'Manrope',monospace;letter-spacing:.05em;">
-              <div style="font-size:11px;color:var(--tx3);margin-top:4px;" id="ibanHint"></div>
-            </div>
-            <div class="form-group">
-              <label class="form-label">BIC (optional)</label>
-              <input type="text" class="form-input" id="sepaBic" placeholder="Wird automatisch ermittelt" autocomplete="off">
-            </div>
-
-            <!-- SEPA Mandate Confirmation -->
-            <div style="background:rgba(124,58,237,.06);border:1px solid rgba(124,58,237,.15);border-radius:12px;padding:16px;margin-top:16px;">
-              <div style="font-size:13px;font-weight:700;margin-bottom:10px;color:var(--tx);">SEPA-Lastschriftmandat</div>
-              <div style="font-size:12px;color:var(--tx2);line-height:1.7;">
-                Ich ermächtige die <strong>Call Lana GmbH</strong> (Gläubiger-ID: wird bei Aktivierung mitgeteilt),
-                Zahlungen von meinem Konto mittels Lastschrift einzuziehen.
-                Zugleich weise ich mein Kreditinstitut an, die von der Call Lana GmbH
-                auf mein Konto gezogenen Lastschriften einzulösen.
-                <br><br>
-                <strong>Hinweis:</strong> Ich kann innerhalb von acht Wochen, beginnend mit dem
-                Belastungsdatum, die Erstattung des belasteten Betrages verlangen.
-                Es gelten dabei die mit meinem Kreditinstitut vereinbarten Bedingungen.
-              </div>
-              <label style="display:flex;align-items:flex-start;gap:10px;margin-top:14px;cursor:pointer;">
-                <input type="checkbox" id="sepaConsent" style="width:18px;height:18px;margin-top:2px;accent-color:var(--pu);cursor:pointer;">
-                <span style="font-size:13px;color:var(--tx);line-height:1.5;">
-                  Ich bestätige das SEPA-Lastschriftmandat und stimme den
-                  <a href="agb.html" target="_blank" style="color:var(--pu);">AGB</a> sowie der
-                  <a href="datenschutz.html" target="_blank" style="color:var(--pu);">Datenschutzerklärung</a> zu.
-                </span>
-              </label>
-            </div>
-          </div>
-
-          <!-- Credit Card Form -->
-          <div id="formCard" style="display:none;">
-            <div class="form-group">
-              <label class="form-label">Karteninhaber</label>
-              <input type="text" class="form-input" id="cardHolder" placeholder="Max Mustermann" autocomplete="cc-name">
-            </div>
-            <div class="form-group">
-              <label class="form-label">Kartennummer</label>
-              <input type="text" class="form-input" id="cardNumber" placeholder="4242 4242 4242 4242" autocomplete="cc-number" maxlength="19" style="font-family:'Manrope',monospace;letter-spacing:.05em;">
-            </div>
-            <div class="form-row">
-              <div class="form-group">
-                <label class="form-label">Gültig bis</label>
-                <input type="text" class="form-input" id="cardExpiry" placeholder="MM/YY" autocomplete="cc-exp" maxlength="5">
-              </div>
-              <div class="form-group">
-                <label class="form-label">CVC</label>
-                <input type="text" class="form-input" id="cardCvc" placeholder="123" autocomplete="cc-csc" maxlength="4">
-              </div>
-            </div>
-          </div>
-
-          <!-- PayPal Form -->
-          <div id="formPaypal" style="display:none;">
-            <div class="form-group">
-              <label class="form-label">PayPal E-Mail-Adresse</label>
-              <input type="email" class="form-input" id="paypalEmail" placeholder="max@beispiel.de" autocomplete="email">
-            </div>
-            <div class="info-box" style="margin-top:12px;">
-              Du wirst nach dem Speichern zu PayPal weitergeleitet, um die Zahlung zu autorisieren.
-            </div>
+          <!-- Hidden inputs preserve event-listener bindings in dashboard-payment.js -->
+          <div style="display:none;" aria-hidden="true">
+            <input id="sepaHolder"><input id="sepaIban"><input id="sepaBic">
+            <input id="sepaConsent" type="checkbox">
+            <div id="ibanHint"></div>
+            <div id="formSepa"></div><div id="formCard"></div><div id="formPaypal"></div>
+            <input id="cardHolder"><input id="cardNumber"><input id="cardExpiry"><input id="cardCvc">
+            <input id="paypalEmail">
           </div>
         </div>
         <div class="modal-footer">
-          <button class="btn-secondary" onclick="closePaymentModal()">Abbrechen</button>
-          <button class="btn-primary" id="pmSaveBtn" onclick="savePaymentMethod()">Zahlungsmethode speichern</button>
+          <button class="btn-secondary" onclick="closePaymentModal()">Schließen</button>
+          <button class="btn-primary" id="pmSaveBtn" disabled style="opacity:.5;cursor:not-allowed;">Noch nicht verfügbar</button>
         </div>
       </div>
     </div>
@@ -1121,6 +1261,7 @@ body{display:flex;overflow:hidden;}
 <script src="js/db/messaging.js"></script>
 <script src="js/db/customers.js"></script>
 <script src="js/db/tools.js"></script>
+<script src="js/db/business.js"></script>
 <script src="js/db.js"></script>
 <script src="js/auth-guard.js"></script>
 <script src="js/pricing-data.js"></script>
@@ -1178,7 +1319,6 @@ body{display:flex;overflow:hidden;}
 <script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});</script>
 <script src="js/idle-timeout.js"></script>
 <script src="js/confetti.js"></script>
-<script src="js/integration-demo.js"></script>
 <script src="js/push-notifications.js"></script>
 <script src="js/offline-cache.js"></script>
 <script src="js/install-prompt.js"></script>

@@ -38,16 +38,24 @@ async function loadHomeData() {
     document.getElementById('csKosten').textContent = '0%';
   }
 
-  // Balance donut
-  const settingsResult = await clanaDB.getSettings();
-  const settings = settingsResult.success ? settingsResult.data : {};
-  const balance = settings.balance || 0;
-  const maxBalance = Math.max(balance * 1.5, 100);
-  const pct = Math.min(balance / maxBalance, 1);
-  const circumference = 2 * Math.PI * 40;
-  const offset = circumference - (pct * circumference);
-  document.getElementById('donutArc').setAttribute('stroke-dashoffset', offset);
-  document.getElementById('donutCenter').textContent = formatCurrency(balance);
+  // Balance donut — reads subscriptions.balance_cents (authoritative source)
+  try {
+    const { data: sub } = await supabaseClient
+      .from('subscriptions')
+      .select('balance_cents')
+      .eq('user_id', await auth.getEffectiveUserId())
+      .single();
+    const balanceCents = (sub && sub.balance_cents != null) ? sub.balance_cents : 0;
+    const balanceEur   = balanceCents / 100;
+    const maxBalance   = Math.max(balanceEur * 1.5, 10);
+    const pct          = Math.min(balanceEur / maxBalance, 1);
+    const circumference = 2 * Math.PI * 40;
+    const offset = circumference - (pct * circumference);
+    document.getElementById('donutArc').setAttribute('stroke-dashoffset', offset);
+    document.getElementById('donutCenter').textContent = formatCurrency(balanceEur);
+  } catch (err) {
+    document.getElementById('donutCenter').textContent = '0 €';
+  }
 
   // Call chart
   drawCallChart(start, end);

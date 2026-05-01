@@ -15,3 +15,6 @@ temporary screenshots/
 
 # Puppeteer cache
 .cache/
+
+# Supabase CLI local state
+supabase/.temp/

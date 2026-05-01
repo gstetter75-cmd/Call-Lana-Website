@@ -69,10 +69,16 @@ CREATE POLICY "sales_read_org_profiles" ON profiles
 
 -- 5. Auto-create profile on signup
 -- Also syncs role to auth.users metadata for the is_superadmin() helper
+--
+-- SECURITY NOTE: SET search_path = public is required for SECURITY DEFINER
+-- functions. Without it, a malicious user could shadow public.profiles with
+-- a same-named object in a different schema and intercept the insert.
+-- All table references are also schema-qualified (public.profiles) as an
+-- additional defence-in-depth measure.
 CREATE OR REPLACE FUNCTION handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO profiles (id, email, first_name, last_name, company, industry)
+  INSERT INTO public.profiles (id, email, first_name, last_name, company, industry)
   VALUES (
     NEW.id,
     NEW.email,
@@ -87,7 +93,7 @@ BEGIN
   WHERE id = NEW.id;
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 CREATE OR REPLACE TRIGGER on_auth_user_created
   AFTER INSERT ON auth.users

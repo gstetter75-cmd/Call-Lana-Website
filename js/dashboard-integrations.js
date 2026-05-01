@@ -103,7 +103,7 @@ async function loadContacts() {
 }
 
 async function syncIntegration(integrationId) {
-  showToast('Sync gestartet... Daten werden synchronisiert.');
+  showToast('Automatische Synchronisierung ist noch nicht aktiv.', true);
 }
 
 async function disconnectIntegration(integrationId) {

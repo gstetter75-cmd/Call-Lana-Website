@@ -14,18 +14,17 @@ function selectPaymentType(type) {
 }
 
 function openPaymentModal(priority) {
+  // BILLING SAFETY: payment-method tokenization is not yet live. We never open
+  // the modal — no form, no fake save path. A toast keeps the action honest.
   currentPmPriority = priority;
-  document.getElementById('pmModalTitle').textContent =
-    priority === 1 ? 'Primäre Zahlungsmethode' : 'Ersatz-Zahlungsmethode';
-  // Reset forms
-  document.querySelectorAll('#paymentModal input').forEach(i => { i.value = ''; if (i.type === 'checkbox') i.checked = false; });
-  selectPaymentType('sepa');
-  document.getElementById('ibanHint').textContent = '';
-  document.getElementById('paymentModal').style.display = 'flex';
+  if (typeof showToast !== 'undefined') {
+    showToast('Zahlungsanbindung wird derzeit eingerichtet.');
+  }
 }
 
 function closePaymentModal() {
-  document.getElementById('paymentModal').style.display = 'none';
+  const el = document.getElementById('paymentModal');
+  if (el) el.style.display = 'none';
 }
 
 // IBAN formatting and validation
@@ -74,6 +73,12 @@ function validateIban(iban) {
 }
 
 async function savePaymentMethod() {
+  // BILLING SAFETY: Stripe Edge Function 'create-payment-method' is not yet deployed.
+  // Block all save attempts until payment backend is live.
+  showToast('Zahlungsanbindung noch nicht aktiv. Bitte warte auf die offizielle Freischaltung.', true);
+  return;
+
+  /* eslint-disable no-unreachable */
   const btn = document.getElementById('pmSaveBtn');
   const user = await clanaAuth.getUser();
   if (!user) { showToast('Nicht angemeldet.', true); return; }
@@ -150,6 +155,7 @@ async function savePaymentMethod() {
     btn.disabled = false;
     btn.textContent = 'Zahlungsmethode speichern';
   }
+  /* eslint-enable no-unreachable */
 }
 
 async function removePaymentMethod(priority) {

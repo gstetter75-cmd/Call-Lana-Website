@@ -40,6 +40,16 @@ let currentConversationId = null;
     loadAssistants()
   ]);
 
+  // Handle Stripe Checkout return
+  const urlParams = new URLSearchParams(window.location.search);
+  if (urlParams.get('payment') === 'success') {
+    showToast('Zahlung erfolgreich! Dein Guthaben wird in Kürze aktualisiert.');
+    window.history.replaceState({}, '', window.location.pathname);
+  } else if (urlParams.get('payment') === 'cancelled') {
+    showToast('Zahlung abgebrochen.', true);
+    window.history.replaceState({}, '', window.location.pathname);
+  }
+
   // Onboarding checklist
   if (typeof Onboarding !== 'undefined') Onboarding.init(currentUser?.id);
 
@@ -76,6 +86,14 @@ let currentConversationId = null;
   document.getElementById('messageInput')?.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
   });
+
+  // Direct deep-link to #business: load AFTER currentProfile is ready so
+  // contact_name / contact_phone / company fall back correctly for first-time
+  // customers. Mark the page loaded so the lazy-route wrapper does not refetch.
+  if (window.location.hash === '#business') {
+    await loadBusinessProfile();
+    if (typeof _loadedPages !== 'undefined') _loadedPages.add('business');
+  }
 })();
 
 // ==========================================
@@ -105,7 +123,7 @@ function renderHomeAssistants() {
     '<div class="assistant-card" onclick="editAssistant(\'' + a.id + '\')">' +
       '<div class="ac-top">' +
         '<div class="ac-name">' + escHtml(a.name) + '</div>' +
-        '<span class="live-badge ' + (a.status === 'live' ? 'live' : 'offline') + '">' + (a.status === 'live' ? 'LIVE' : 'Offline') + '</span>' +
+        '<span class="live-badge ' + (a.status === 'active' ? 'live' : 'offline') + '">' + (a.status === 'active' ? 'Aktiv' : 'Inaktiv') + '</span>' +
       '</div>' +
       '<div class="ac-phone">' + (a.phone_number || 'Keine Nummer') + '</div>' +
     '</div>'
@@ -120,8 +138,8 @@ function renderAssistantsList() {
   }
   let html = '<div class="table-wrap"><table><thead><tr><th>Name</th><th>Status</th><th>Telefonnummer</th><th>Stimme</th><th>Erstellt</th><th>Aktionen</th></tr></thead><tbody>';
   assistantsList.forEach(a => {
-    const statusCls = a.status === 'live' ? 'completed' : 'voicemail';
-    const statusLabel = a.status === 'live' ? 'LIVE' : 'Offline';
+    const statusCls = a.status === 'active' ? 'completed' : 'voicemail';
+    const statusLabel = a.status === 'active' ? 'Aktiv' : 'Inaktiv';
     html += '<tr>' +
       '<td style="font-weight:600;color:var(--tx);cursor:pointer;" onclick="editAssistant(\'' + a.id + '\')">' + escHtml(a.name) + '</td>' +
       '<td><span class="status-badge ' + statusCls + '">' + statusLabel + '</span></td>' +
@@ -148,7 +166,7 @@ function renderPhonesFromAssistants() {
   container.innerHTML = withPhone.map(a =>
     '<div class="phone-item">' +
       '<div class="phone-number-text">' + escHtml(a.phone_number) + '</div>' +
-      '<span class="status-badge ' + (a.status === 'live' ? 'completed' : 'voicemail') + '">' + (a.status === 'live' ? 'Aktiv' : 'Inaktiv') + '</span>' +
+      '<span class="status-badge ' + (a.status === 'active' ? 'completed' : 'voicemail') + '">' + (a.status === 'active' ? 'Aktiv' : 'Inaktiv') + '</span>' +
       '<div class="phone-assistant">' + escHtml(a.name) + '</div>' +
     '</div>'
   ).join('');
@@ -174,12 +192,21 @@ function editAssistant(id) {
   document.getElementById('editDesc').textContent = 'Konfiguriere deinen Assistenten.';
 
   document.getElementById('edName').value = a.name || '';
-  document.getElementById('edVoice').value = a.voice || 'Marie';
-  document.getElementById('edLang').value = a.language || 'de';
-  document.getElementById('edGreeting').value = a.greeting || '';
-  document.getElementById('edModel').value = a.model || 'gpt-4';
-  document.getElementById('edTemp').value = a.temperature ?? 0.7;
+  document.getElementById('edPhoneNumber').value = a.phone_number || '';
+  // Stimme/Sprache sind aktuell auf einen Wert festgenagelt (Marie / de).
+  // Legacy-Werte aus a.voice / a.language werden bewusst ignoriert, damit
+  // ein Save den Datensatz auf den einzig unterstützten Wert normalisiert.
+  document.getElementById('edVoice').value = 'Marie';
+  document.getElementById('edLang').value = 'de';
   document.getElementById('edMaxDuration').value = a.max_duration || 300;
+  document.getElementById('edGreeting').value = a.greeting || '';
+  document.getElementById('edSystemPrompt').value = a.system_prompt || '';
+  const statusEl = document.getElementById('edStatusDisplay');
+  if (statusEl) {
+    const isActive = a.status === 'active';
+    statusEl.textContent = isActive ? 'Aktiv' : 'Inaktiv';
+    statusEl.className = 'status-badge ' + (isActive ? 'completed' : 'voicemail');
+  }
 
   const tools = a.tools || {};
   document.getElementById('edToolCalendar').checked = !!tools.calendar;
@@ -203,12 +230,17 @@ function editAssistant(id) {
 
 function clearEditorForm() {
   document.getElementById('edName').value = '';
+  document.getElementById('edPhoneNumber').value = '';
   document.getElementById('edVoice').value = 'Marie';
   document.getElementById('edLang').value = 'de';
-  document.getElementById('edGreeting').value = '';
-  document.getElementById('edModel').value = 'gpt-4';
-  document.getElementById('edTemp').value = '0.7';
   document.getElementById('edMaxDuration').value = '300';
+  document.getElementById('edGreeting').value = '';
+  document.getElementById('edSystemPrompt').value = '';
+  const statusEl = document.getElementById('edStatusDisplay');
+  if (statusEl) {
+    statusEl.textContent = 'Inaktiv';
+    statusEl.className = 'status-badge voicemail';
+  }
   document.getElementById('edToolCalendar').checked = false;
   document.getElementById('edToolCRM').checked = false;
   document.getElementById('edToolEmail').checked = false;
@@ -232,14 +264,17 @@ document.getElementById('btnSaveAssistant').addEventListener('click', async () =
   saveBtn.disabled = true;
   saveBtn.textContent = 'Speichern…';
 
+  // Customer-facing save path deliberately omits phone_number and status.
+  // Both are support-owned: phone numbers are assigned by us, and live status
+  // reflects the real runtime hookup — neither is something the customer sets
+  // from the dashboard. Existing DB values are left untouched on update.
   const payload = {
     name,
-    voice: document.getElementById('edVoice').value,
-    language: document.getElementById('edLang').value,
-    greeting: document.getElementById('edGreeting').value,
-    model: document.getElementById('edModel').value,
-    temperature: parseFloat(document.getElementById('edTemp').value),
+    voice: 'Marie',
+    language: 'de',
     max_duration: parseInt(document.getElementById('edMaxDuration').value),
+    greeting: document.getElementById('edGreeting').value,
+    system_prompt: document.getElementById('edSystemPrompt').value.trim() || null,
     tools: {
       calendar: document.getElementById('edToolCalendar').checked,
       crm: document.getElementById('edToolCRM').checked,
@@ -335,67 +370,506 @@ function initCallFilters() {
 }
 
 // ==========================================
-// BILLING
-// ==========================================
-async function loadBilling() {
-  const settingsResult = await clanaDB.getSettings();
-  const settings = settingsResult.success ? settingsResult.data : {};
-  const balance = settings.balance || 0;
-
-  document.getElementById('balanceValue').textContent = formatCurrency(balance);
-  document.getElementById('balanceSub').textContent = balance > 0 ? 'Verfügbar' : 'Kein Guthaben vorhanden';
-
-  const now = new Date();
-  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-  const monthEnd = now.toISOString();
-  const statsResult = await clanaDB.getStats(monthStart, monthEnd);
-
-  if (statsResult.success) {
-    const s = statsResult.stats;
-    document.getElementById('usageCalls').textContent = s.totalCalls.toLocaleString('de-DE');
-    document.getElementById('usageMinutes').textContent = Math.round(s.totalDuration / 60).toLocaleString('de-DE');
-    const cost = (s.totalDuration / 60) * 0.15;
-    document.getElementById('usageCost').textContent = formatCurrency(cost);
-  } else {
-    document.getElementById('usageCalls').textContent = '0';
-    document.getElementById('usageMinutes').textContent = '0';
-    document.getElementById('usageCost').textContent = '0,00 €';
-  }
-}
-
-// ==========================================
 // PLAN
 // ==========================================
 async function loadPlan() {
-  const meta = currentUser?.user_metadata || {};
-  const plan = meta.plan || 'free';
-  const plans = {
-    free: { name: 'Free-Plan', desc: 'Du nutzt den kostenlosen Plan.', features: ['100 Testminuten', '1 Benutzer', 'E-Mail-Support'] },
-    solo: { name: 'Solo-Plan', desc: 'Ideal für Einzelunternehmer.', features: ['1.000 Minuten/Monat', '1 Benutzer', '1 KI-Stimme', 'Eigene Telefonnummer', 'Basis-Reporting'] },
-    team: { name: 'Team-Plan', desc: 'Perfekt für wachsende Teams.', features: ['3.000 Minuten/Monat', 'Unbegrenzte Benutzer', '5 gleichzeitige Gespräche', 'Alle Stimmen', 'CRM-Integration'] },
-    business: { name: 'Business-Plan', desc: 'Für große Unternehmen.', features: ['Unbegrenzte Minuten', 'Eigene KI-Stimme', 'SLA-Garantie 99,9%', 'API-Zugang', 'Dedizierter Account Manager'] }
+  const planLabels = {
+    trial:        { name: 'Testzeitraum',     desc: 'Du nutzt den kostenlosen Testzeitraum.' },
+    starter:      { name: 'Starter-Plan',      desc: 'Ideal für Einzelunternehmer.' },
+    solo:         { name: 'Solo-Plan',         desc: 'Ideal für Einzelunternehmer.' },
+    professional: { name: 'Professional-Plan', desc: 'Für wachsende Teams.' },
+    team:         { name: 'Team-Plan',         desc: 'Perfekt für wachsende Teams.' },
+    business:     { name: 'Business-Plan',     desc: 'Für große Unternehmen.' },
+    enterprise:   { name: 'Enterprise-Plan',   desc: 'Individuelle Lösung.' }
+  };
+  const statusLabels = {
+    trialing: 'Testzeitraum', active: 'Aktiv', past_due: 'Zahlung ausstehend',
+    cancelled: 'Gekündigt', paused: 'Pausiert'
   };
 
-  const p = plans[plan] || plans.free;
-  document.getElementById('planBadge').textContent = plan.charAt(0).toUpperCase() + plan.slice(1);
-  document.getElementById('planName').textContent = p.name;
-  document.getElementById('planDesc').textContent = p.desc;
-  document.getElementById('planFeatures').innerHTML = p.features.map(f => '<li>' + escHtml(f) + '</li>').join('');
-  // Reveal populated content, hide skeleton
+  try {
+    const { data: sub, error } = await supabaseClient
+      .from('subscriptions')
+      .select('plan, status, included_minutes')
+      .eq('user_id', await auth.getEffectiveUserId())
+      .single();
+
+    const plan   = sub && !error ? sub.plan   : 'trial';
+    const status = sub && !error ? sub.status : 'trialing';
+    const mins   = sub && !error ? (sub.included_minutes || 60) : 60;
+
+    const p = planLabels[plan] || planLabels.trial;
+    document.getElementById('planBadge').textContent = statusLabels[status] || status;
+    document.getElementById('planName').textContent  = p.name;
+    document.getElementById('planDesc').textContent  = p.desc;
+    document.getElementById('planFeatures').innerHTML =
+      '<li>' + escHtml(mins + ' Minuten inklusive') + '</li>';
+  } catch (err) {
+    Logger.warn('loadPlan', err);
+    document.getElementById('planBadge').textContent = 'Testzeitraum';
+    document.getElementById('planName').textContent  = 'Testzeitraum';
+    document.getElementById('planDesc').textContent  = 'Plan konnte nicht geladen werden.';
+    document.getElementById('planFeatures').innerHTML = '';
+  }
+
   const skeleton = document.getElementById('planSkeleton');
-  const content = document.getElementById('planContent');
+  const content  = document.getElementById('planContent');
   if (skeleton) skeleton.style.display = 'none';
-  if (content) content.style.display = 'block';
+  if (content)  content.style.display  = 'block';
 }
+
+// ==========================================
+// BUSINESS PROFILE (Betriebsprofil)
+// Loads/saves business_profiles row for the current customer.
+// Firmenname stays in profiles.company — not duplicated here.
+// Emergency settings live in user_settings (jsonb), opening hours in
+// working_hours — neither is duplicated into business_profiles.
+// ==========================================
+let businessProfile = null;
+let businessSettings = null;     // raw user_settings jsonb (for merge on save)
+let businessWorkingHours = [];   // raw working_hours rows (preserves break_* on save)
+
+// 0 = Montag … 6 = Sonntag — matches js/availability.js
+const BIZ_DAY_NAMES = ['Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag'];
+
+function renderBusinessHoursTable(rows) {
+  const container = document.getElementById('bizHoursTable');
+  if (!container) return;
+  // Empty array == brand-new customer who has never saved → friendly defaults
+  // (Mo–Fr open, weekend closed). Once any row exists, render the persisted
+  // is_active state exactly: a missing day means the user explicitly closed it.
+  const hasPersistedHours = Array.isArray(rows) && rows.length > 0;
+  const html = BIZ_DAY_NAMES.map((name, i) => {
+    const wh = rows.find(h => h.day_of_week === i);
+    let isOpen, start, end;
+    if (wh) {
+      isOpen = wh.is_active !== false;
+      start  = wh.start_time?.slice(0,5) || '08:00';
+      end    = wh.end_time?.slice(0,5)   || '17:00';
+    } else if (!hasPersistedHours) {
+      isOpen = (i < 5);
+      start  = '08:00';
+      end    = '17:00';
+    } else {
+      isOpen = false;
+      start  = '08:00';
+      end    = '17:00';
+    }
+    return (
+      '<div class="biz-hours-row" data-day="' + i + '" style="display:grid;grid-template-columns:120px auto 1fr 1fr;gap:12px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);">' +
+        '<div style="font-weight:600;font-size:13px;">' + name + '</div>' +
+        '<label class="toggle"><input type="checkbox" class="biz-hours-active" ' + (isOpen ? 'checked' : '') + '><span class="toggle-slider"></span></label>' +
+        '<input type="time" class="form-input biz-hours-start" value="' + start + '" ' + (isOpen ? '' : 'disabled') + '>' +
+        '<input type="time" class="form-input biz-hours-end"   value="' + end   + '" ' + (isOpen ? '' : 'disabled') + '>' +
+      '</div>'
+    );
+  }).join('');
+  container.innerHTML = html;
+
+  // Wire open/closed toggles to enable/disable time inputs in the same row
+  container.querySelectorAll('.biz-hours-row').forEach(row => {
+    const toggle = row.querySelector('.biz-hours-active');
+    const start  = row.querySelector('.biz-hours-start');
+    const end    = row.querySelector('.biz-hours-end');
+    toggle.addEventListener('change', () => {
+      start.disabled = !toggle.checked;
+      end.disabled   = !toggle.checked;
+    });
+  });
+}
+
+async function loadBusinessProfile() {
+  // Load all three sources in parallel — none are blocking dependencies
+  const [profileRes, settingsRes, hoursRes] = await Promise.all([
+    clanaDB.getBusinessProfile(),
+    clanaDB.getSettings(),
+    clanaDB.getWorkingHours()
+  ]);
+
+  businessProfile      = (profileRes  && profileRes.success  && profileRes.data)  || null;
+  businessSettings     = (settingsRes && settingsRes.success && settingsRes.data) || {};
+  businessWorkingHours = (hoursRes    && hoursRes.success    && hoursRes.data)    || [];
+
+  // Firmenname is sourced from profiles.company (read-only here)
+  const company = (currentProfile && currentProfile.company || '').trim();
+  const companyEl = document.getElementById('bizCompany');
+  if (companyEl) companyEl.value = company || 'In Einstellungen ergänzen';
+
+  // Prefer saved row; fall back to profile defaults for first-time visitors
+  const profileFullName = [currentProfile && currentProfile.first_name, currentProfile && currentProfile.last_name]
+    .filter(Boolean).join(' ').trim();
+  const profilePhone = (currentProfile && currentProfile.phone || '').trim();
+
+  document.getElementById('bizTrade').value = (businessProfile && businessProfile.trade) || '';
+  document.getElementById('bizContactName').value =
+    (businessProfile && businessProfile.contact_name) || profileFullName || '';
+  document.getElementById('bizContactPhone').value =
+    (businessProfile && businessProfile.contact_phone) || profilePhone || '';
+  document.getElementById('bizWebsite').value = (businessProfile && businessProfile.website_url) || '';
+
+  const services = new Set((businessProfile && businessProfile.services) || []);
+  document.querySelectorAll('#bizServices input[type="checkbox"]').forEach(cb => {
+    cb.checked = services.has(cb.value);
+  });
+  document.getElementById('bizServicesCustom').value = (businessProfile && businessProfile.services_custom) || '';
+
+  const zips = (businessProfile && businessProfile.service_area_zips) || [];
+  document.getElementById('bizAreaZips').value = zips.join(', ');
+  document.getElementById('bizAreaText').value = (businessProfile && businessProfile.service_area_text) || '';
+
+  const accepts = (businessProfile && businessProfile.accepts_new_clients) || '';
+  document.querySelectorAll('input[name="bizAccepts"]').forEach(r => { r.checked = (r.value === accepts); });
+
+  // --- Notfall (user_settings jsonb) ---
+  // Default OFF for brand-new users — only enabled once a phone is entered.
+  const s = businessSettings || {};
+  const emActive = !!s.emergency_active;
+  const emActiveEl = document.getElementById('bizEmergencyActive');
+  if (emActiveEl) emActiveEl.checked = emActive;
+  document.getElementById('bizEmergencyPhone').value    = s.emergency_phone || '';
+  document.getElementById('bizEmergencyKeywords').value = (s.emergency_keywords || []).join(', ');
+
+  // --- Öffnungszeiten ---
+  renderBusinessHoursTable(businessWorkingHours);
+
+  // --- Anrufverhalten ---
+  const bookingMode = (businessProfile && businessProfile.booking_mode) || 'callback';
+  document.querySelectorAll('input[name="bizBooking"]').forEach(r => { r.checked = (r.value === bookingMode); });
+  document.getElementById('bizCallbackWindow').value =
+    (businessProfile && businessProfile.callback_window) || '24h';
+  document.getElementById('bizDoNotHandle').value =
+    (businessProfile && businessProfile.do_not_handle) || '';
+
+  const errEl = document.getElementById('bizErr');
+  if (errEl) errEl.textContent = '';
+
+  // Briefing reflects the form state — build once after load.
+  updateAssistantBriefing();
+}
+
+// ==========================================
+// ASSISTENT-BRIEFING (read-only summary for support handoff)
+// ==========================================
+// This is NOT a live runtime config. It exists so the customer can copy a
+// clean German summary of their setup data and send it to support, who then
+// configures the actual assistant. No automatic sync happens anywhere.
+const BIZ_ACCEPTS_LABELS = {
+  yes:        'Ja',
+  peak_only:  'Nur in Stoßzeiten',
+  no:         'Nein, derzeit voll'
+};
+const BIZ_BOOKING_LABELS = {
+  direct:    'Direkt buchen',
+  callback:  'Rückruf vereinbaren'
+};
+const BIZ_CALLBACK_LABELS = {
+  today:  'Noch heute',
+  '24h':  'Innerhalb von 24 Stunden',
+  '48h':  'Innerhalb von 48 Stunden'
+};
+
+function buildAssistantBriefing() {
+  const val = id => (document.getElementById(id)?.value || '').trim();
+
+  const company = val('bizCompany');
+  // loadBusinessProfile fills bizCompany with this placeholder for users
+  // without a saved company name — treat it as empty in the briefing.
+  const companyClean = (company && !company.includes('Einstellungen ergänzen')) ? company : '';
+
+  const tradeVal = document.getElementById('bizTrade')?.value || '';
+  const tradeOpt = tradeVal ? document.querySelector('#bizTrade option[value="' + tradeVal + '"]') : null;
+  const trade = tradeOpt ? tradeOpt.textContent.trim() : '';
+
+  const contactName  = val('bizContactName');
+  const contactPhone = val('bizContactPhone');
+  const website      = val('bizWebsite');
+
+  const services = Array.from(
+    document.querySelectorAll('#bizServices input[type="checkbox"]:checked')
+  ).map(cb => (cb.parentElement?.textContent || '').trim()).filter(Boolean);
+  const servicesCustom = val('bizServicesCustom');
+
+  const areaZips = val('bizAreaZips');
+  const areaText = val('bizAreaText');
+  const acceptsEl = document.querySelector('input[name="bizAccepts"]:checked');
+  const accepts = acceptsEl ? (BIZ_ACCEPTS_LABELS[acceptsEl.value] || '') : '';
+
+  const emergencyActive   = !!document.getElementById('bizEmergencyActive')?.checked;
+  const emergencyPhone    = val('bizEmergencyPhone');
+  const emergencyKeywords = val('bizEmergencyKeywords');
+
+  const bookingEl    = document.querySelector('input[name="bizBooking"]:checked');
+  const bookingMode  = bookingEl ? bookingEl.value : '';
+  const bookingLabel = BIZ_BOOKING_LABELS[bookingMode] || '';
+  const callbackVal  = document.getElementById('bizCallbackWindow')?.value || '';
+  const callbackLabel = BIZ_CALLBACK_LABELS[callbackVal] || '';
+  const doNotHandle = val('bizDoNotHandle');
+
+  const hourLines = [];
+  document.querySelectorAll('#bizHoursTable .biz-hours-row').forEach(row => {
+    const day = parseInt(row.dataset.day, 10);
+    const active = !!row.querySelector('.biz-hours-active')?.checked;
+    const start = row.querySelector('.biz-hours-start')?.value || '';
+    const end   = row.querySelector('.biz-hours-end')?.value   || '';
+    const name = BIZ_DAY_NAMES[day] || ('Tag ' + day);
+    if (active && start && end) {
+      hourLines.push('- ' + name + ': ' + start + ' bis ' + end);
+    } else {
+      hourLines.push('- ' + name + ': geschlossen');
+    }
+  });
+
+  const lines = [];
+  lines.push('Betriebsprofil für Lana');
+  lines.push('');
+  if (companyClean)  lines.push('Firma: ' + companyClean);
+  if (trade)         lines.push('Gewerk: ' + trade);
+  if (contactName || contactPhone) {
+    const parts = [contactName, contactPhone].filter(Boolean).join(', ');
+    lines.push('Ansprechpartner: ' + parts);
+  }
+  if (website)       lines.push('Website: ' + website);
+
+  lines.push('');
+  lines.push('Leistungen:');
+  if (services.length) {
+    services.forEach(s => lines.push('- ' + s));
+  } else {
+    lines.push('- (keine ausgewählt)');
+  }
+  if (servicesCustom) lines.push('Sonstige Leistungen: ' + servicesCustom);
+
+  lines.push('');
+  lines.push('Einsatzgebiet:');
+  if (areaZips) lines.push('- PLZ: ' + areaZips);
+  if (areaText) lines.push('- Region: ' + areaText);
+  if (!areaZips && !areaText) lines.push('- (nicht angegeben)');
+  if (accepts) lines.push('Neukunden: ' + accepts);
+
+  lines.push('');
+  lines.push('Notfall:');
+  lines.push('- Notdienst aktiv: ' + (emergencyActive ? 'Ja' : 'Nein'));
+  if (emergencyPhone)    lines.push('- Notfall-Telefon: ' + emergencyPhone);
+  if (emergencyKeywords) lines.push('- Stichworte: ' + emergencyKeywords);
+
+  lines.push('');
+  lines.push('Öffnungszeiten:');
+  if (hourLines.length) {
+    hourLines.forEach(l => lines.push(l));
+  } else {
+    lines.push('- (noch nicht erfasst)');
+  }
+
+  lines.push('');
+  lines.push('Anrufverhalten:');
+  if (bookingLabel) lines.push('- Terminmodus: ' + bookingLabel);
+  if (bookingMode === 'callback' && callbackLabel) {
+    lines.push('- Standard-Rückrufzeit: ' + callbackLabel);
+  }
+  if (doNotHandle) lines.push('- Nicht annehmen: ' + doNotHandle);
+
+  return lines.join('\n');
+}
+
+function updateAssistantBriefing() {
+  const ta = document.getElementById('bizBriefing');
+  if (!ta) return;
+  ta.value = buildAssistantBriefing();
+}
+
+// Live preview: rebuild briefing whenever any field on the Betrieb page changes.
+// Delegated listener — readonly bizBriefing itself never fires input/change.
+const businessPageEl = document.getElementById('page-business');
+if (businessPageEl) {
+  businessPageEl.addEventListener('input',  updateAssistantBriefing);
+  businessPageEl.addEventListener('change', updateAssistantBriefing);
+}
+
+document.getElementById('btnCopyBriefing')?.addEventListener('click', async () => {
+  const statusEl = document.getElementById('bizCopyStatus');
+  const text = buildAssistantBriefing();
+  const setStatus = (msg, isErr) => {
+    if (!statusEl) return;
+    statusEl.textContent = msg;
+    statusEl.style.color = isErr ? 'var(--red)' : 'var(--tx2)';
+    setTimeout(() => { if (statusEl.textContent === msg) statusEl.textContent = ''; }, 3000);
+  };
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      setStatus('Briefing kopiert.');
+      return;
+    }
+    throw new Error('clipboard unavailable');
+  } catch (e) {
+    // Fallback for non-secure contexts: select the textarea and copy.
+    const ta = document.getElementById('bizBriefing');
+    if (!ta) { setStatus('Kopieren fehlgeschlagen.', true); return; }
+    const wasReadonly = ta.hasAttribute('readonly');
+    ta.removeAttribute('readonly');
+    ta.select();
+    let ok = false;
+    try { ok = document.execCommand('copy'); } catch (_) { ok = false; }
+    if (wasReadonly) ta.setAttribute('readonly', '');
+    ta.setSelectionRange(0, 0);
+    ta.blur();
+    setStatus(ok ? 'Briefing kopiert.' : 'Kopieren fehlgeschlagen.', !ok);
+  }
+});
+
+document.getElementById('btnSaveBusiness')?.addEventListener('click', async () => {
+  const errEl = document.getElementById('bizErr');
+  errEl.textContent = '';
+
+  const trade         = document.getElementById('bizTrade').value;
+  const contactName   = document.getElementById('bizContactName').value.trim();
+  const contactPhone  = document.getElementById('bizContactPhone').value.trim();
+  const website       = document.getElementById('bizWebsite').value.trim();
+  const services      = Array.from(document.querySelectorAll('#bizServices input[type="checkbox"]:checked')).map(cb => cb.value);
+  const servicesCustom = document.getElementById('bizServicesCustom').value.trim();
+
+  // PLZ cleanup: split on comma/whitespace, keep only 5-digit entries, dedupe, preserve input order
+  const rawZips = document.getElementById('bizAreaZips').value;
+  const zipsSeen = new Set();
+  const zipsClean = [];
+  rawZips.split(/[,\s;]+/).forEach(z => {
+    const t = z.trim();
+    if (/^\d{5}$/.test(t) && !zipsSeen.has(t)) { zipsSeen.add(t); zipsClean.push(t); }
+  });
+
+  const areaText  = document.getElementById('bizAreaText').value.trim();
+  const acceptsEl = document.querySelector('input[name="bizAccepts"]:checked');
+  const accepts   = acceptsEl ? acceptsEl.value : '';
+
+  // --- Notfall ---
+  const emergencyActive   = !!document.getElementById('bizEmergencyActive')?.checked;
+  const emergencyPhone    = (document.getElementById('bizEmergencyPhone')?.value || '').trim();
+  const emergencyKeywords = (document.getElementById('bizEmergencyKeywords')?.value || '')
+    .split(',').map(k => k.trim()).filter(Boolean);
+
+  // --- Anrufverhalten ---
+  const bookingEl  = document.querySelector('input[name="bizBooking"]:checked');
+  const bookingMode = bookingEl ? bookingEl.value : 'callback';
+  const callbackWindow = document.getElementById('bizCallbackWindow').value || '24h';
+  const doNotHandle = (document.getElementById('bizDoNotHandle').value || '').trim();
+
+  // --- Öffnungszeiten ---
+  // Always write all 7 days (is_active true for open, false for closed) so the
+  // exact user state round-trips through the DB. Validation only applies to
+  // open days; closed days get safe placeholder times to satisfy the NOT NULL
+  // start_time/end_time columns. Existing break_start/break_end are preserved
+  // since this MVP UI does not edit them.
+  const hoursRows = [];
+  let hoursError = null;
+  document.querySelectorAll('#bizHoursTable .biz-hours-row').forEach(row => {
+    if (hoursError) return;
+    const day = parseInt(row.dataset.day, 10);
+    const active = row.querySelector('.biz-hours-active').checked;
+    const start = row.querySelector('.biz-hours-start').value || '08:00';
+    const end   = row.querySelector('.biz-hours-end').value   || '17:00';
+    if (active) {
+      if (start >= end) {
+        hoursError = 'Startzeit muss vor Endzeit liegen (' + BIZ_DAY_NAMES[day] + ').';
+        return;
+      }
+    }
+    const existing = (businessWorkingHours || []).find(h => h.day_of_week === day) || {};
+    const entry = { day_of_week: day, start_time: start, end_time: end, is_active: !!active };
+    if (existing.break_start && existing.break_end) {
+      entry.break_start = existing.break_start;
+      entry.break_end   = existing.break_end;
+    }
+    hoursRows.push(entry);
+  });
+
+  // Validation
+  if (!trade)        { errEl.textContent = 'Bitte ein Gewerk wählen.'; return; }
+  if (!contactName)  { errEl.textContent = 'Bitte einen Ansprechpartner angeben.'; return; }
+  if (!contactPhone) { errEl.textContent = 'Bitte eine Telefonnummer für den Ansprechpartner angeben.'; return; }
+  if (services.length === 0 && !servicesCustom) {
+    errEl.textContent = 'Bitte mindestens eine Leistung auswählen oder unter „Sonstige Leistungen" eintragen.'; return;
+  }
+  if (zipsClean.length === 0 && !areaText) {
+    errEl.textContent = 'Bitte ein Einsatzgebiet angeben (PLZ-Liste oder Region/Stadt).'; return;
+  }
+  if (!['yes','no','peak_only'].includes(accepts)) {
+    errEl.textContent = 'Bitte angeben, ob Neukunden angenommen werden.'; return;
+  }
+  if (emergencyActive && !emergencyPhone) {
+    errEl.textContent = 'Bitte eine Notfall-Telefonnummer angeben oder den Notdienst deaktivieren.'; return;
+  }
+  if (!['direct','callback'].includes(bookingMode)) {
+    errEl.textContent = 'Bitte angeben, ob Termine direkt vereinbart werden sollen.'; return;
+  }
+  if (!['today','24h','48h'].includes(callbackWindow)) {
+    errEl.textContent = 'Bitte eine Standard-Rückrufzeit wählen.'; return;
+  }
+  if (hoursError) { errEl.textContent = hoursError; return; }
+
+  const btn = document.getElementById('btnSaveBusiness');
+  const orig = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = 'Speichern…';
+
+  const profilePayload = {
+    trade,
+    contact_name:        contactName,
+    contact_phone:       contactPhone,
+    website_url:         website || null,
+    services,
+    services_custom:     servicesCustom || null,
+    service_area_zips:   zipsClean,
+    service_area_text:   areaText || null,
+    accepts_new_clients: accepts,
+    booking_mode:        bookingMode,
+    callback_window:     callbackWindow,
+    do_not_handle:       doNotHandle || null
+  };
+
+  // Merge emergency fields into the existing settings jsonb so unrelated keys
+  // (calendar, modules, alert_channel, …) are preserved. Re-fetch immediately
+  // before merge so edits made elsewhere (settings.html in another tab) are
+  // not clobbered by a stale page-load snapshot. Fall back to the snapshot
+  // only if the fresh fetch fails.
+  const freshRes = await clanaDB.getSettings();
+  const baseSettings = (freshRes && freshRes.success && freshRes.data) || businessSettings || {};
+  const mergedSettings = Object.assign({}, baseSettings, {
+    emergency_active:   emergencyActive,
+    emergency_phone:    emergencyPhone || null,
+    emergency_keywords: emergencyKeywords
+  });
+
+  // Run the three writes in parallel — they target unrelated tables.
+  const [profileRes, settingsRes, hoursRes] = await Promise.all([
+    clanaDB.upsertBusinessProfile(null, profilePayload),
+    clanaDB.saveSettings(mergedSettings),
+    clanaDB.setWorkingHours(hoursRows)
+  ]);
+
+  const failures = [];
+  if (profileRes.success)  businessProfile = profileRes.data;     else failures.push('Stammdaten');
+  if (settingsRes.success) businessSettings = mergedSettings;     else failures.push('Notfall');
+  if (hoursRes.success)    businessWorkingHours = hoursRows;      else failures.push('Öffnungszeiten');
+
+  if (failures.length === 0) {
+    showToast('Betriebsdaten gespeichert.');
+  } else {
+    errEl.textContent = 'Teilweise nicht gespeichert: ' + failures.join(', ') + '.';
+    showToast('Fehler beim Speichern.', true);
+  }
+  updateAssistantBriefing();
+  btn.disabled = false;
+  btn.textContent = orig;
+});
 
 // ==========================================
 // KNOWLEDGE BASE (placeholder)
 // ==========================================
-document.getElementById('btnUploadDoc').addEventListener('click', () => {
+document.getElementById('btnUploadDoc')?.addEventListener('click', () => {
   showToast('Dokument-Upload wird bald verfügbar sein.');
 });
 
-document.getElementById('kbSearch').addEventListener('input', (e) => {
+document.getElementById('kbSearch')?.addEventListener('input', (e) => {
   // Placeholder search - no documents yet
 });
 
@@ -624,19 +1098,15 @@ function showToast(msg, isError) {
 
 const breadcrumbNames = {
   home: 'Home',
+  business: 'Betrieb',
   assistants: 'Assistenten',
   'assistant-edit': 'Assistent bearbeiten',
-  knowledge: 'Wissensdatenbank',
   phones: 'Telefonnummern',
   transactions: 'Anrufverlauf',
   appointments: 'Termine',
   analytics: 'Analytics',
   billing: 'Guthaben',
-  payment: 'Zahlungsmethoden',
-  plans: 'Paket',
-  team: 'Team',
-  messages: 'Nachrichten',
-  integrations: 'Integrationen'
+  payment: 'Zahlungsmethoden'
 };
 
 // Valid dashboard pages whitelist
@@ -644,8 +1114,15 @@ const VALID_PAGES = Object.keys(breadcrumbNames);
 
 function navigateToPage(page, updateHash = true) {
   // Validate page against whitelist — fallback to 'home' for unknown routes
+  const requestedPage = page;
   if (!VALID_PAGES.includes(page) && page !== 'assistant-edit') {
     page = 'home';
+  }
+  // If we had to clamp a hidden/invalid hash (e.g. #team, #plans, #integrations
+  // from removed sections), rewrite the URL so a refresh doesn't re-enter the
+  // dead route.
+  if (requestedPage !== page && window.location.hash.slice(1) === requestedPage) {
+    history.replaceState(null, '', window.location.pathname + window.location.search);
   }
   document.querySelectorAll('.page-section').forEach(p => p.classList.remove('active'));
   const el = document.getElementById('page-' + page);
@@ -725,16 +1202,13 @@ navigateToPage = function(page, updateHash) {
       break;
     case 'appointments': if (typeof AppointmentsPage !== 'undefined') AppointmentsPage.init(); break;
     case 'analytics': if (typeof AnalyticsPage !== 'undefined') AnalyticsPage.init(); break;
-    case 'billing': loadBilling(); loadBillingData(); break;
-    case 'plan': loadPlan(); break;
-    case 'team': loadTeam(); break;
-    case 'messages': loadConversations(); break;
+    case 'billing': loadBillingData(); break;
     case 'payment': loadPaymentMethods(); break;
-    case 'integrations': loadIntegrations(); break;
     case 'invoices': loadInvoices(); break;
+    case 'business': loadBusinessProfile(); break;
   }
 };
 // Also load on initial hash
 if (window.location.hash === '#payment') loadPaymentMethods();
 if (window.location.hash === '#billing') loadBillingData();
-if (window.location.hash === '#integrations') loadIntegrations();
+// #business is loaded inside the auth IIFE once currentProfile is ready.

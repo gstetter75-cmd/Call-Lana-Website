@@ -505,11 +505,12 @@ function openConnModal(provider) {
     document.getElementById('connWebhookUrl').value = 'https://api.call-lana.de/webhooks/' + def.provider + '/' + wid;
     document.getElementById('connWebhookSecret').value = 'whsec_' + Array.from(crypto.getRandomValues(new Uint8Array(24)), b => b.toString(16).padStart(2, '0')).join('');
     document.getElementById('connWebhookHelp').textContent =
-      def.provider === 'zapier' ? 'Trage die Webhook-URL als "Catch Hook" in deinem Zap ein.' :
-      def.provider === 'make' ? 'Nutze die Webhook-URL als Custom Webhook Trigger in Make.' :
-      def.provider === 'n8n' ? 'Verwende die Webhook-URL als Webhook-Node Trigger in n8n.' :
-      def.provider === 'discord' ? 'Trage die URL als Webhook-URL in deinem Discord-Server ein.' :
-      'Trage die Webhook-URL und das Secret in deinem System ein.';
+      'Hinweis: Webhook-Endpunkt noch nicht aktiv — wird eingerichtet. ' + (
+      def.provider === 'zapier' ? 'Zukünftig: Trage die URL als "Catch Hook" in deinem Zap ein.' :
+      def.provider === 'make' ? 'Zukünftig: Nutze die URL als Custom Webhook Trigger in Make.' :
+      def.provider === 'n8n' ? 'Zukünftig: Verwende die URL als Webhook-Node Trigger in n8n.' :
+      def.provider === 'discord' ? 'Zukünftig: Trage die URL als Webhook-URL in deinem Discord-Server ein.' :
+      'Zukünftig: Trage die Webhook-URL und das Secret in deinem System ein.');
   } else if (def.type === 'sip') {
     document.getElementById('connFormSip').style.display = 'block';
     document.getElementById('connSipServer').value = '';
@@ -556,8 +557,9 @@ async function connSaveRecord(provider, label, category, config) {
 
 async function connStartOAuth() {
   if (!connCurrentProvider) return;
-  showToast(connCurrentProvider.label + ': OAuth-Weiterleitung wird vorbereitet...');
-  await connSaveRecord(connCurrentProvider.provider, connCurrentProvider.label, connCurrentProvider.category, { type: 'oauth' });
+  // OAuth server-side callback is not yet configured.
+  // Show an honest message instead of saving a fake "connected" record.
+  showToast(connCurrentProvider.label + ': OAuth-Integration wird eingerichtet — bald verfügbar.', true);
   closeConnModal();
 }
 
@@ -689,33 +691,56 @@ document.getElementById('connModal')?.addEventListener('click', function(e) {
 document.querySelectorAll('.sn-item').forEach(item => {
   item.addEventListener('click', e => {
     e.preventDefault();
-    document.querySelectorAll('.sn-item').forEach(i => i.classList.remove('active'));
-    item.classList.add('active');
     const tab = item.dataset.tab;
-    document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
-    document.getElementById('tab-' + tab).style.display = 'block';
-    if (tab === 'connectors') initConnectorTab();
-    if (typeof SettingsExtra !== 'undefined') SettingsExtra.initTab(tab);
+    // Route every click through the same allowlist guard as direct-hash entry,
+    // so hidden tabs can never be activated from the UI either.
+    if (!activateSettingsTab(tab)) return;
     window.location.hash = tab;
   });
 });
 
-// Open tab from URL hash
+// Visible settings tabs. Hidden tabs (#calendar, #forwarding, #connectors, etc.)
+// are intentionally excluded — their DOM still exists but must never be activated
+// by a direct hash URL.
+const VISIBLE_SETTINGS_TABS = ['profile', 'security', 'notifications', 'emergency', 'addons', 'danger'];
+
+function activateSettingsTab(tab) {
+  if (!VISIBLE_SETTINGS_TABS.includes(tab)) return false;
+  const tabEl = document.getElementById('tab-' + tab);
+  if (!tabEl) return false;
+  document.querySelectorAll('.sn-item').forEach(i => i.classList.remove('active'));
+  document.querySelector('.sn-item[data-tab="' + tab + '"]')?.classList.add('active');
+  document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+  tabEl.style.display = 'block';
+  if (typeof SettingsExtra !== 'undefined') SettingsExtra.initTab(tab);
+  return true;
+}
+
+function resetToProfileTab() {
+  // Drop the hash so a refresh does not re-trigger the hidden-tab path.
+  if (window.location.hash) {
+    history.replaceState(null, '', window.location.pathname + window.location.search);
+  }
+  document.querySelectorAll('.sn-item').forEach(i => i.classList.remove('active'));
+  document.querySelector('.sn-item[data-tab="profile"]')?.classList.add('active');
+  document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
+  const profileTab = document.getElementById('tab-profile');
+  if (profileTab) profileTab.style.display = 'block';
+}
+
+// Open tab from URL hash (on initial load)
 (function() {
   const hash = window.location.hash.replace('#', '');
-  if (hash) {
-    const tabEl = document.getElementById('tab-' + hash);
-    if (tabEl) {
-      document.querySelectorAll('.sn-item').forEach(i => i.classList.remove('active'));
-      const navItem = document.querySelector('.sn-item[data-tab="' + hash + '"]');
-      if (navItem) navItem.classList.add('active');
-      document.querySelectorAll('.tab-content').forEach(t => t.style.display = 'none');
-      tabEl.style.display = 'block';
-      if (hash === 'connectors') initConnectorTab();
-      if (typeof SettingsExtra !== 'undefined') SettingsExtra.initTab(hash);
-    }
-  }
+  if (!hash) return;
+  if (!activateSettingsTab(hash)) resetToProfileTab();
 })();
+
+// Guard against manual hash edits / bookmarks to hidden tabs after load.
+window.addEventListener('hashchange', () => {
+  const hash = window.location.hash.replace('#', '');
+  if (!hash) return;
+  if (!activateSettingsTab(hash)) resetToProfileTab();
+});
 
 // Logout is handled via sidebar-logout in init()
 

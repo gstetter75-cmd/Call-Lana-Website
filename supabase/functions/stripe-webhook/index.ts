@@ -1,6 +1,6 @@
 // Stripe Webhook Handler — Processes payment events
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
-import Stripe from 'https://esm.sh/stripe@14?target=deno';
+import Stripe from 'https://esm.sh/stripe@17?target=denonext';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -21,7 +21,11 @@ Deno.serve(async (req) => {
     });
   }
 
-  const stripe = new Stripe(stripeKey, { apiVersion: '2023-10-16' });
+  const stripe = new Stripe(stripeKey, {
+    apiVersion: '2023-10-16',
+    httpClient: Stripe.createFetchHttpClient(),
+  });
+  const cryptoProvider = Stripe.createSubtleCryptoProvider();
   const supabase = createClient(
     Deno.env.get('SUPABASE_URL')!,
     Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
@@ -32,25 +36,40 @@ Deno.serve(async (req) => {
     const signature = req.headers.get('stripe-signature');
     if (!signature) throw new Error('Missing stripe-signature header');
 
-    const event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
+    const event = await stripe.webhooks.constructEventAsync(
+      body,
+      signature,
+      webhookSecret,
+      undefined,
+      cryptoProvider,
+    );
 
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object;
         const userId = session.metadata?.user_id;
-        if (!userId) break;
+        if (!userId) {
+          throw new Error(`checkout.session.completed missing metadata.user_id (session ${session.id})`);
+        }
 
         if (session.mode === 'payment') {
-          // Top-up payment
+          // Top-up payment. session.id is the stable Stripe idempotency key:
+          // Stripe may redeliver the same checkout.session.completed event,
+          // and the unique index on billing_transactions.reference guarantees
+          // the RPC credits balance at most once per session.
           const amountCents = session.amount_total || 0;
-          await supabase.rpc('atomic_balance_topup', {
+          const { error: topupError } = await supabase.rpc('atomic_balance_topup', {
             p_user_id: userId,
             p_amount_cents: amountCents,
+            p_stripe_reference: session.id,
           });
+          if (topupError) {
+            throw new Error(`atomic_balance_topup failed for user ${userId}: ${topupError.message}`);
+          }
         } else if (session.mode === 'subscription') {
           // Plan upgrade
           const plan = session.metadata?.plan || 'starter';
-          await supabase
+          const { error: updError } = await supabase
             .from('subscriptions')
             .update({
               plan,
@@ -59,6 +78,9 @@ Deno.serve(async (req) => {
               service_active: true,
             })
             .eq('user_id', userId);
+          if (updError) {
+            throw new Error(`subscription update failed for user ${userId}: ${updError.message}`);
+          }
         }
         break;
       }
