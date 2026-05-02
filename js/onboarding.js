@@ -5,11 +5,11 @@
 
 const Onboarding = {
   steps: [
+    { key: 'business_profile', label: 'Betriebsprofil ausfüllen', desc: 'Gewerk, Leistungen und Einsatzgebiet erfassen', icon: '🏠', page: 'business' },
     { key: 'create_assistant', label: 'KI-Assistenten erstellen', desc: 'Erstelle deinen ersten Telefon-Assistenten', icon: '🤖', page: 'assistants' },
     { key: 'assign_number', label: 'Telefonnummer zuweisen', desc: 'Weise deinem Assistenten eine Nummer zu', icon: '📞', page: 'phones' },
     { key: 'configure_greeting', label: 'Begrüßung konfigurieren', desc: 'Passe die Begrüßung deines Assistenten an', icon: '👋', page: 'assistants' },
-    { key: 'first_test_call', label: 'Testanruf durchführen', desc: 'Rufe deine Nummer an und teste den Assistenten', icon: '✅', page: 'transactions' },
-    { key: 'go_live', label: 'Live schalten', desc: 'Aktiviere deinen Assistenten für echte Anrufe', icon: '🚀', page: 'home' }
+    { key: 'first_test_call', label: 'Testanruf durchführen', desc: 'Rufe deine Nummer an und teste den Assistenten', icon: '✅', page: 'transactions' }
   ],
 
   container: null,
@@ -47,7 +47,23 @@ const Onboarding = {
   },
 
   async autoDetect() {
-    // Check if assistant exists → step 1 done
+    // Check if Betriebsprofil is filled in (same minimal completeness rule the
+    // dashboard uses to decide the first-run redirect to #business).
+    if (!this.completedSteps.has('business_profile')) {
+      try {
+        const result = await clanaDB.getBusinessProfile();
+        const ok = !!(result && result.success);
+        const checker = window.isBusinessProfileComplete;
+        if (ok && typeof checker === 'function' && checker(result.data)) {
+          this.completedSteps.add('business_profile');
+          clanaDB.completeOnboardingStep(this.userId, 'business_profile');
+        }
+      } catch (e) {
+        // Non-fatal: leave step as pending if the read fails.
+      }
+    }
+
+    // Check if assistant exists → step "create_assistant" done
     if (!this.completedSteps.has('create_assistant')) {
       const result = await clanaDB.getAssistants();
       if (result.data?.length > 0) {

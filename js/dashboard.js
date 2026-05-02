@@ -93,6 +93,23 @@ let currentConversationId = null;
   if (window.location.hash === '#business') {
     await loadBusinessProfile();
     if (typeof _loadedPages !== 'undefined') _loadedPages.add('business');
+  } else if (!window.location.hash) {
+    // First-time onboarding nudge: customer landed on dashboard.html with no
+    // explicit hash and has not completed the Betriebsprofil yet. Push them
+    // into #business so the first session feels guided, not blank. Skipped
+    // when the user explicitly deep-linked to any other route (#billing,
+    // #appointments, #assistants, …).
+    try {
+      const bpRes = await clanaDB.getBusinessProfile();
+      const bpData = (bpRes && bpRes.success) ? (bpRes.data || null) : null;
+      if (!isBusinessProfileComplete(bpData)) {
+        // Setting hash triggers hashchange → navigateToPage('business', false),
+        // which lazily fires loadBusinessProfile via the navigation wrapper.
+        window.location.hash = 'business';
+      }
+    } catch (err) {
+      Logger.warn('dashboard.firstRunRedirect', err);
+    }
   }
 })();
 
@@ -431,6 +448,29 @@ let businessWorkingHours = [];   // raw working_hours rows (preserves break_* on
 
 // 0 = Montag … 6 = Sonntag — matches js/availability.js
 const BIZ_DAY_NAMES = ['Montag','Dienstag','Mittwoch','Donnerstag','Freitag','Samstag','Sonntag'];
+
+// Minimal completeness check shared by the first-run redirect (dashboard auth
+// IIFE) and the onboarding checklist (js/onboarding.js). A profile counts as
+// complete only if every block the Betrieb form requires on save is set:
+// Gewerk, Ansprechpartner (Name + Telefon), mindestens eine Leistung
+// (Auswahl ODER Freitext) und ein Einsatzgebiet (PLZ-Liste ODER Region/Stadt).
+// Tolerant of null/undefined so it can be called with the raw maybeSingle()
+// result. Stays in sync with the validation in btnSaveBusiness; if those
+// rules change, update this helper too.
+function isBusinessProfileComplete(p) {
+  if (!p) return false;
+  if (!p.trade) return false;
+  if (!p.contact_name  || !String(p.contact_name).trim())  return false;
+  if (!p.contact_phone || !String(p.contact_phone).trim()) return false;
+  const services = Array.isArray(p.services) ? p.services : [];
+  const servicesCustom = (p.services_custom || '').toString().trim();
+  if (services.length === 0 && !servicesCustom) return false;
+  const zips = Array.isArray(p.service_area_zips) ? p.service_area_zips : [];
+  const areaText = (p.service_area_text || '').toString().trim();
+  if (zips.length === 0 && !areaText) return false;
+  return true;
+}
+window.isBusinessProfileComplete = isBusinessProfileComplete;
 
 function renderBusinessHoursTable(rows) {
   const container = document.getElementById('bizHoursTable');
